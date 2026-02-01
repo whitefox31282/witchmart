@@ -1,56 +1,20 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { MapPin, Search } from "lucide-react";
-
-type Node = {
-  id: string;
-  name: string;
-  region: string;
-  city: string;
-  specialties: string[];
-  nextEvent: string;
-  contact: string;
-};
-
-const MOCK_NODES: Node[] = [
-  {
-    id: "wm-001",
-    name: "Green Hollow Node",
-    region: "Appalachia",
-    city: "Asheville, NC",
-    specialties: ["mutual aid", "classes", "repair"],
-    nextEvent: "Community skillshare (placeholder)",
-    contact: "node@witchmart.org",
-  },
-  {
-    id: "wm-002",
-    name: "Harbor Lantern Node",
-    region: "Coastal",
-    city: "Portland, ME",
-    specialties: ["makers market", "food", "sanctuary"],
-    nextEvent: "Seasonal market night (placeholder)",
-    contact: "node@witchmart.org",
-  },
-  {
-    id: "wm-003",
-    name: "Ironwood Circle",
-    region: "Midwest",
-    city: "Madison, WI",
-    specialties: ["survival tech", "guild meetups", "training"],
-    nextEvent: "Node orientation (placeholder)",
-    contact: "node@witchmart.org",
-  },
-];
+import type { SanctuaryNode } from "@shared/schema";
 
 export default function SanctuaryNodes() {
   const [query, setQuery] = useState("");
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return MOCK_NODES;
-    return MOCK_NODES.filter((n) =>
-      [n.name, n.region, n.city, n.specialties.join(" ")].some((v) => v.toLowerCase().includes(q)),
-    );
-  }, [query]);
+  const { data: nodes = [], isLoading, error } = useQuery<SanctuaryNode[]>({
+    queryKey: ["/api/nodes", query],
+    queryFn: async () => {
+      const url = query ? `/api/nodes?q=${encodeURIComponent(query)}` : "/api/nodes";
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Failed to fetch nodes");
+      return response.json();
+    },
+  });
 
   return (
     <div className="space-y-10">
@@ -76,53 +40,76 @@ export default function SanctuaryNodes() {
             />
           </div>
           <div className="text-xs text-muted-foreground" data-testid="text-nodes-count">
-            Showing {filtered.length} node{filtered.length === 1 ? "" : "s"}
+            {isLoading ? "Loading..." : `Showing ${nodes.length} node${nodes.length === 1 ? "" : "s"}`}
           </div>
         </div>
 
+        {error && (
+          <div className="mt-4 rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm text-destructive" data-testid="error-nodes">
+            Failed to load nodes. Please try again.
+          </div>
+        )}
+
         <div className="mt-5 grid gap-4 md:grid-cols-2">
-          {filtered.map((node) => (
-            <article key={node.id} className="rounded-2xl border bg-card p-5 shadow-sm" data-testid={`card-node-${node.id}`}>
+          {nodes.map((node) => (
+            <article key={node.id} className="rounded-2xl border bg-card p-5 shadow-sm" data-testid={`card-node-${node.nodeId}`}>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-sm font-semibold" data-testid={`text-node-name-${node.id}`}>
+                  <div className="text-sm font-semibold" data-testid={`text-node-name-${node.nodeId}`}>
                     {node.name}
                   </div>
                   <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
                     <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span data-testid={`text-node-city-${node.id}`}>{node.city}</span>
+                    <span data-testid={`text-node-city-${node.nodeId}`}>{node.city}</span>
                     <span aria-hidden="true">•</span>
-                    <span data-testid={`text-node-region-${node.id}`}>{node.region}</span>
+                    <span data-testid={`text-node-region-${node.nodeId}`}>{node.region}</span>
                   </div>
                 </div>
-                <span className="rounded-full border bg-background px-2.5 py-1 text-xs" data-testid={`badge-node-id-${node.id}`}>
-                  {node.id}
+                <span className="rounded-full border bg-background px-2.5 py-1 text-xs" data-testid={`badge-node-id-${node.nodeId}`}>
+                  {node.nodeId}
                 </span>
               </div>
 
+              {node.description && (
+                <p className="mt-3 text-sm text-muted-foreground" data-testid={`text-node-desc-${node.nodeId}`}>
+                  {node.description}
+                </p>
+              )}
+
               <div className="mt-3 flex flex-wrap gap-2">
                 {node.specialties.map((s) => (
-                  <span key={s} className="rounded-full bg-muted px-2.5 py-1 text-xs" data-testid={`badge-node-specialty-${node.id}-${s.replaceAll(" ", "_")}`}>
+                  <span key={s} className="rounded-full bg-muted px-2.5 py-1 text-xs" data-testid={`badge-node-specialty-${node.nodeId}-${s.replaceAll(" ", "_")}`}>
                     {s}
                   </span>
                 ))}
               </div>
 
               <div className="mt-4 grid gap-2 text-xs text-muted-foreground">
-                <div data-testid={`text-node-event-${node.id}`}>
-                  <span className="font-semibold text-foreground">Next:</span> {node.nextEvent}
-                </div>
-                <div data-testid={`text-node-contact-${node.id}`}>
-                  <span className="font-semibold text-foreground">Contact:</span> {node.contact}
+                {node.nextEvent && (
+                  <div data-testid={`text-node-event-${node.nodeId}`}>
+                    <span className="font-semibold text-foreground">Next:</span> {node.nextEvent}
+                  </div>
+                )}
+                <div data-testid={`text-node-contact-${node.nodeId}`}>
+                  <span className="font-semibold text-foreground">Contact:</span> {node.contactEmail}
                 </div>
               </div>
 
-              <div className="mt-4 rounded-xl border bg-background/60 p-3 text-xs text-muted-foreground" data-testid={`text-node-safety-${node.id}`}>
+              <div className="mt-4 rounded-xl border bg-background/60 p-3 text-xs text-muted-foreground" data-testid={`text-node-safety-${node.nodeId}`}>
                 Safety note: all events follow posted community guidelines and local laws. (Placeholder.)
               </div>
             </article>
           ))}
         </div>
+
+        {!isLoading && nodes.length === 0 && (
+          <div className="mt-5 rounded-xl border bg-muted/30 p-8 text-center" data-testid="text-no-nodes">
+            <div className="text-sm font-semibold">No nodes found</div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {query ? "Try a different search term" : "No sanctuary nodes have been added yet"}
+            </p>
+          </div>
+        )}
       </section>
     </div>
   );

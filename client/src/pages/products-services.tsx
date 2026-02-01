@@ -1,52 +1,20 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Search, ShoppingBag } from "lucide-react";
-
-type Item = {
-  id: string;
-  title: string;
-  type: "product" | "service";
-  category: string;
-  mode: "local" | "virtual";
-  priceNote: string;
-};
-
-const MOCK_ITEMS: Item[] = [
-  {
-    id: "ps-201",
-    title: "Basic Repair Clinic (group)",
-    type: "service",
-    category: "repair",
-    mode: "local",
-    priceNote: "$ — sliding scale (placeholder)",
-  },
-  {
-    id: "ps-202",
-    title: "Shelf-Stable Pantry Starter",
-    type: "product",
-    category: "ag/food",
-    mode: "local",
-    priceNote: "$ — coop price (placeholder)",
-  },
-  {
-    id: "ps-203",
-    title: "Safety & Planning Workshop",
-    type: "service",
-    category: "classes",
-    mode: "virtual",
-    priceNote: "$ — member discount (placeholder)",
-  },
-];
+import type { ProductService } from "@shared/schema";
 
 export default function ProductsServices() {
   const [query, setQuery] = useState("");
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return MOCK_ITEMS;
-    return MOCK_ITEMS.filter((i) =>
-      [i.title, i.type, i.category, i.mode].some((v) => v.toLowerCase().includes(q)),
-    );
-  }, [query]);
+  const { data: items = [], isLoading, error } = useQuery<ProductService[]>({
+    queryKey: ["/api/products", query],
+    queryFn: async () => {
+      const url = query ? `/api/products?q=${encodeURIComponent(query)}` : "/api/products";
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Failed to fetch products");
+      return response.json();
+    },
+  });
 
   return (
     <div className="space-y-10">
@@ -55,7 +23,7 @@ export default function ProductsServices() {
           Products & Services
         </h1>
         <p className="max-w-3xl text-sm text-muted-foreground" data-testid="text-products-subtitle">
-          A shop/gallery-style overview: survival tech, handmade goods, ag/food, repair, and classes. (Mock data for now.)
+          A shop/gallery-style overview: survival tech, handmade goods, ag/food, repair, and classes.
         </p>
       </header>
 
@@ -72,34 +40,45 @@ export default function ProductsServices() {
             />
           </div>
           <div className="text-xs text-muted-foreground" data-testid="text-products-count">
-            Showing {filtered.length} item{filtered.length === 1 ? "" : "s"}
+            {isLoading ? "Loading..." : `Showing ${items.length} item${items.length === 1 ? "" : "s"}`}
           </div>
         </div>
 
+        {error && (
+          <div className="mt-4 rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm text-destructive" data-testid="error-products">
+            Failed to load products. Please try again.
+          </div>
+        )}
+
         <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((it) => (
-            <article key={it.id} className="rounded-2xl border bg-card p-5 shadow-sm" data-testid={`card-item-${it.id}`}>
+          {items.map((it) => (
+            <article key={it.id} className="rounded-2xl border bg-card p-5 shadow-sm" data-testid={`card-item-${it.itemId}`}>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-sm font-semibold" data-testid={`text-item-title-${it.id}`}>
+                  <div className="text-sm font-semibold" data-testid={`text-item-title-${it.itemId}`}>
                     {it.title}
                   </div>
-                  <div className="mt-1 text-xs text-muted-foreground" data-testid={`text-item-meta-${it.id}`}>
+                  <div className="mt-1 text-xs text-muted-foreground" data-testid={`text-item-meta-${it.itemId}`}>
                     {it.type} • {it.category} • {it.mode}
                   </div>
                 </div>
                 <ShoppingBag className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
               </div>
 
-              <div className="mt-4 rounded-xl border bg-background/60 p-3 text-xs text-muted-foreground" data-testid={`text-item-price-${it.id}`}>
+              {it.description && (
+                <p className="mt-3 text-sm text-muted-foreground" data-testid={`text-item-desc-${it.itemId}`}>
+                  {it.description}
+                </p>
+              )}
+
+              <div className="mt-4 rounded-xl border bg-background/60 p-3 text-xs text-muted-foreground" data-testid={`text-item-price-${it.itemId}`}>
                 {it.priceNote}
               </div>
 
               <button
                 className="wm-focus-ring mt-4 w-full rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95"
-                data-testid={`button-item-view-${it.id}`}
+                data-testid={`button-item-view-${it.itemId}`}
                 onClick={() => {
-                  // mock interaction
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
               >
@@ -108,6 +87,15 @@ export default function ProductsServices() {
             </article>
           ))}
         </div>
+
+        {!isLoading && items.length === 0 && (
+          <div className="mt-5 rounded-xl border bg-muted/30 p-8 text-center" data-testid="text-no-products">
+            <div className="text-sm font-semibold">No products found</div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {query ? "Try a different search term" : "No products have been added yet"}
+            </p>
+          </div>
+        )}
       </section>
     </div>
   );
