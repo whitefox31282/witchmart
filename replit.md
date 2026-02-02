@@ -23,6 +23,43 @@ WitchMart is a member-owned, Pagan-aligned cooperative marketplace and sanctuary
 - `client/src/components/setai-footer.tsx` - Footer with transparency link and revoke button
 - `client/src/pages/transparency.tsx` - Transparency log page
 
+### SetAI Web App Pages (NEW)
+- `client/src/pages/setai-dashboard.tsx` - Main SetAI dashboard with quick links and status
+- `client/src/pages/setai-codex.tsx` - Events, documents, and projects archive with CRUD
+- `client/src/pages/setai-timeline.tsx` - Chronological event visualization
+- `client/src/pages/setai-councils.tsx` - Mode switching and persona selection (7 modes)
+- `client/src/pages/setai-security.tsx` - Pipeline status and security event monitoring
+- `client/src/pages/setai-settings.tsx` - Canon viewer and configuration display
+
+### SetAI Configuration Files
+- `config/canon.json` - System canon with immutables, truth layers, and mode configurations
+- `config/founder_canon.json` - Founder-defined rules and non-negotiables
+- `config/guardian_policies.json` - Security policies for network, output, codex, and mode scopes
+- `config/security_pipeline.json` - 4-stage security pipeline configuration
+
+### SetAI Data Models
+- `codex_events` - Chronological events with trust levels and evidence linking
+- `codex_documents` - Archived documents with metadata
+- `codex_projects` - Tracked projects with status
+- `council_personas` - Available AI personas/modes
+- `mode_preferences` - User mode preferences
+- `security_events` - Security pipeline event logs
+- `guardian_policies` - Active guardian policies
+
+### SetAI API Endpoints
+- `/api/canon` - Get system canon configuration
+- `/api/founder_canon` - Get founder canon rules
+- `/api/guardian_policies` - Get guardian policies
+- `/api/security_pipeline` - Get security pipeline config
+- `/api/codex/events` - CRUD for codex events
+- `/api/codex/documents` - CRUD for codex documents
+- `/api/codex/projects` - CRUD for codex projects
+- `/api/councils/personas` - List available personas
+- `/api/councils/mode/:userId` - Get/set user mode preference
+- `/api/security/events` - List security events
+- `/api/security/policies` - Get active policies
+- `/api/health` - Health check endpoint
+
 ### Mythic Design System
 - **Colors**: Midnight (#0A1F44), Forest (#2E4A2E), Parchment (#F5E8C7), Iron (#4B4B4B)
 - **Fonts**: Cinzel (runic headers), Merriweather (body)
@@ -58,7 +95,7 @@ Preferred communication style: Simple, everyday language.
 - **Database**: PostgreSQL with Drizzle ORM
 - **Schema Location**: `shared/schema.ts` (shared between frontend and backend)
 - **Migrations**: Drizzle Kit with `db:push` command
-- **Tables**: sanctuary_nodes, makers, products_services, member_signups, contact_submissions, blog_posts
+- **Tables**: sanctuary_nodes, makers, products_services, member_signups, contact_submissions, blog_posts, codex_events, codex_documents, codex_projects, council_personas, mode_preferences, security_events, guardian_policies
 
 ### Project Structure
 - `client/` - React frontend application

@@ -23,6 +23,12 @@ import Join from "./pages/join";
 import Blog from "./pages/blog";
 import ContactSupport from "./pages/contact-support";
 import Transparency from "./pages/transparency";
+import SetAIDashboard from "./pages/setai-dashboard";
+import SetAICodex from "./pages/setai-codex";
+import SetAITimeline from "./pages/setai-timeline";
+import SetAICouncils from "./pages/setai-councils";
+import SetAISecurity from "./pages/setai-security";
+import SetAISettings from "./pages/setai-settings";
 
 const NAV = [
   { label: "Home", href: "/" },
@@ -48,6 +54,7 @@ const FULL_NAV = [
   { label: "Blog / Updates", href: "/blog" },
   { label: "Contact / Support", href: "/contact" },
   { label: "Transparency Log", href: "/transparency" },
+  { label: "SetAI Dashboard", href: "/setai" },
 ] as const;
 
 function SiteShell({ children }: { children: React.ReactNode }) {
@@ -183,6 +190,13 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/contact" component={ContactSupport} />
       <Route path="/transparency" component={Transparency} />
+
+      <Route path="/setai" component={SetAIDashboard} />
+      <Route path="/setai/codex" component={SetAICodex} />
+      <Route path="/setai/timeline" component={SetAITimeline} />
+      <Route path="/setai/councils" component={SetAICouncils} />
+      <Route path="/setai/security" component={SetAISecurity} />
+      <Route path="/setai/settings" component={SetAISettings} />
 
       <Route component={NotFound} />
     </Switch>
