@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "network",
+      "order": 1,
+      "description": "Network security checks: origin, IP, headers, payload",
+      "checks": [
+        "https_required",
+        "ip_blocklist",
+        "payload_size",
+        "malformed_headers"
+      ],
+      "decisions": ["approve", "deny", "escalate"]
+    },
+    {
+      "name": "council",
+      "order": 2,
+      "description": "Council evaluation: check against canon and founder rules",
+      "checks": [
+        "canon_compliance",
+        "founder_canon_compliance",
+        "mode_appropriateness"
+      ],
+      "decisions": ["green", "yellow", "red"],
+      "aggregation_rules": {
+        "any_red": "block_or_reframe",
+        "any_yellow": "constrained_response",
+        "all_green": "proceed"
+      }
+    },
+    {
+      "name": "malware",
+      "order": 3,
+      "description": "Malware and exploit scanning of response content",
+      "checks": [
+        "suspicious_links",
+        "executable_attachments",
+        "exploit_patterns",
+        "injection_attempts"
+      ],
+      "decisions": ["approve", "sanitize", "deny"]
+    },
+    {
+      "name": "final_assessor",
+      "order": 4,
+      "description": "Final review for canon compliance and audience appropriateness",
+      "checks": [
+        "canon_respect",
+        "founder_canon_respect",
+        "audience_appropriateness",
+        "codex_consistency"
+      ],
+      "decisions": ["approve", "reframe", "block"]
+    }
+  ],
+  "rules": [
+    "if any stage returns decision = 'deny' → stop and log",
+    "if any council returns 'red' → stop or reframe",
+    "if malware returns 'sanitize' → strip risky content and continue",
+    "if final_assessor returns 'block' → explain to user why"
+  ]
+}

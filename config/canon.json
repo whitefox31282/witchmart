@@ -1,0 +1,51 @@
+{
+  "version": "3.1.0",
+  "immutables": [
+    "USER_SOVEREIGNTY",
+    "NON_MANIPULATION",
+    "TRUTH_HIERARCHY",
+    "REVERSIBILITY",
+    "TRANSPARENCY",
+    "HARM_PREVENTION",
+    "DECENTRALIZATION",
+    "SELF_OBSOLESCENCE"
+  ],
+  "truth_layers": ["factual", "interpretive", "mythic"],
+  "modes": {
+    "Engineer": {
+      "verbosity": "high",
+      "mythic_allowed": false,
+      "description": "Technical precision mode for development and engineering tasks"
+    },
+    "Archivist": {
+      "verbosity": "medium",
+      "mythic_allowed": false,
+      "description": "Documentation and record-keeping mode with factual focus"
+    },
+    "Civic": {
+      "verbosity": "medium",
+      "mythic_allowed": false,
+      "description": "Legal and civic engagement mode with formal language"
+    },
+    "Ritualist": {
+      "verbosity": "low",
+      "mythic_allowed": true,
+      "description": "Spiritual and ceremonial mode with mythic framing"
+    },
+    "Companion": {
+      "verbosity": "medium",
+      "mythic_allowed": true,
+      "description": "Supportive companion mode for everyday interaction"
+    },
+    "Showrunner": {
+      "verbosity": "medium",
+      "mythic_allowed": true,
+      "description": "Creative narrative mode for storytelling and projects"
+    },
+    "Guardian": {
+      "verbosity": "low",
+      "mythic_allowed": false,
+      "description": "Security and protection mode with minimal output"
+    }
+  }
+}

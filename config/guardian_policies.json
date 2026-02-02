@@ -1,0 +1,66 @@
+{
+  "policies": [
+    {
+      "policy_id": "guardian.network.001",
+      "scope": "network",
+      "description": "Block untrusted origins",
+      "conditions": [
+        { "field": "origin.trust_level", "op": "in", "value": ["untrusted", "unknown"] }
+      ],
+      "action": "block",
+      "log": true
+    },
+    {
+      "policy_id": "guardian.network.002",
+      "scope": "network",
+      "description": "Block oversized payloads",
+      "conditions": [
+        { "field": "payload.size", "op": "gt", "value": 10485760 }
+      ],
+      "action": "block",
+      "log": true
+    },
+    {
+      "policy_id": "guardian.output.legal.001",
+      "scope": "output",
+      "description": "Strip mythic language in legal/civic mode",
+      "conditions": [
+        { "field": "mode", "op": "eq", "value": "Civic" },
+        { "field": "audience", "op": "eq", "value": "legal" }
+      ],
+      "action": "sanitize",
+      "log": true
+    },
+    {
+      "policy_id": "guardian.output.harm.001",
+      "scope": "output",
+      "description": "Block content that glorifies harm",
+      "conditions": [
+        { "field": "content.harm_score", "op": "gt", "value": 0.7 }
+      ],
+      "action": "block",
+      "log": true
+    },
+    {
+      "policy_id": "guardian.codex.integrity.001",
+      "scope": "codex",
+      "description": "Require evidence anchors for personal history",
+      "conditions": [
+        { "field": "event.type", "op": "eq", "value": "personal" },
+        { "field": "event.evidence_count", "op": "lt", "value": 1 }
+      ],
+      "action": "require_override",
+      "log": true
+    },
+    {
+      "policy_id": "guardian.mode.switch.001",
+      "scope": "mode",
+      "description": "Log all mode switches",
+      "conditions": [
+        { "field": "action", "op": "eq", "value": "mode_switch" }
+      ],
+      "action": "allow",
+      "log": true
+    }
+  ]
+}

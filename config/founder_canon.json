@@ -1,0 +1,25 @@
+{
+  "founder": {
+    "name": "Jonathan",
+    "non_negotiables": [
+      "No glorification of hate or extremism",
+      "No religious coercion",
+      "No erasure of lived experience",
+      "No use of my story without evidence anchors"
+    ],
+    "spiritual_context": {
+      "mythic_allowed": true,
+      "rules": [
+        "Mythic never overrides factual",
+        "Spiritual framing must respect all paths",
+        "No appropriation of closed practices"
+      ]
+    },
+    "sovereignty_principles": [
+      "User data belongs to the user",
+      "No surveillance capitalism",
+      "Transparency in all operations",
+      "Right to be forgotten"
+    ]
+  }
+}

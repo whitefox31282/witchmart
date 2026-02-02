@@ -8,6 +8,13 @@ import {
   memberSignups,
   contactSubmissions,
   blogPosts,
+  codexEvents,
+  codexDocuments,
+  codexProjects,
+  councilPersonas,
+  modePreferences,
+  securityEvents,
+  guardianPolicies,
   type SanctuaryNode,
   type InsertSanctuaryNode,
   type Maker,
@@ -20,6 +27,20 @@ import {
   type InsertContactSubmission,
   type BlogPost,
   type InsertBlogPost,
+  type CodexEvent,
+  type InsertCodexEvent,
+  type CodexDocument,
+  type InsertCodexDocument,
+  type CodexProject,
+  type InsertCodexProject,
+  type CouncilPersona,
+  type InsertCouncilPersona,
+  type ModePreference,
+  type InsertModePreference,
+  type SecurityEvent,
+  type InsertSecurityEvent,
+  type GuardianPolicy,
+  type InsertGuardianPolicy,
 } from "@shared/schema";
 
 const { Pool } = pg;
@@ -64,6 +85,41 @@ export interface IStorage {
   createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
   updateBlogPost(id: number, post: Partial<InsertBlogPost>): Promise<BlogPost | undefined>;
   deleteBlogPost(id: number): Promise<boolean>;
+
+  // SetAI Codex - Events
+  getAllCodexEvents(): Promise<CodexEvent[]>;
+  getCodexEventById(id: number): Promise<CodexEvent | undefined>;
+  createCodexEvent(event: InsertCodexEvent): Promise<CodexEvent>;
+  updateCodexEvent(id: number, event: Partial<InsertCodexEvent>): Promise<CodexEvent | undefined>;
+  deleteCodexEvent(id: number): Promise<boolean>;
+
+  // SetAI Codex - Documents
+  getAllCodexDocuments(): Promise<CodexDocument[]>;
+  getCodexDocumentById(id: number): Promise<CodexDocument | undefined>;
+  createCodexDocument(doc: InsertCodexDocument): Promise<CodexDocument>;
+  updateCodexDocument(id: number, doc: Partial<InsertCodexDocument>): Promise<CodexDocument | undefined>;
+  deleteCodexDocument(id: number): Promise<boolean>;
+
+  // SetAI Codex - Projects
+  getAllCodexProjects(): Promise<CodexProject[]>;
+  getCodexProjectById(id: number): Promise<CodexProject | undefined>;
+  createCodexProject(project: InsertCodexProject): Promise<CodexProject>;
+  updateCodexProject(id: number, project: Partial<InsertCodexProject>): Promise<CodexProject | undefined>;
+  deleteCodexProject(id: number): Promise<boolean>;
+
+  // SetAI Councils
+  getAllCouncilPersonas(): Promise<CouncilPersona[]>;
+  getCouncilPersonaByName(name: string): Promise<CouncilPersona | undefined>;
+  createCouncilPersona(persona: InsertCouncilPersona): Promise<CouncilPersona>;
+  getModePreference(userId: string): Promise<ModePreference | undefined>;
+  setModePreference(pref: InsertModePreference): Promise<ModePreference>;
+
+  // SetAI Security
+  getAllSecurityEvents(): Promise<SecurityEvent[]>;
+  getRecentSecurityEvents(limit: number): Promise<SecurityEvent[]>;
+  createSecurityEvent(event: InsertSecurityEvent): Promise<SecurityEvent>;
+  getAllGuardianPolicies(): Promise<GuardianPolicy[]>;
+  getActiveGuardianPolicies(): Promise<GuardianPolicy[]>;
 }
 
 class PostgresStorage implements IStorage {
@@ -246,6 +302,133 @@ class PostgresStorage implements IStorage {
   async deleteBlogPost(id: number): Promise<boolean> {
     const result = await this.db.delete(blogPosts).where(eq(blogPosts.id, id)).returning();
     return result.length > 0;
+  }
+
+  // SetAI Codex - Events
+  async getAllCodexEvents(): Promise<CodexEvent[]> {
+    return await this.db.select().from(codexEvents).orderBy(sql`${codexEvents.timestamp} DESC`);
+  }
+
+  async getCodexEventById(id: number): Promise<CodexEvent | undefined> {
+    const result = await this.db.select().from(codexEvents).where(eq(codexEvents.id, id));
+    return result[0];
+  }
+
+  async createCodexEvent(event: InsertCodexEvent): Promise<CodexEvent> {
+    const result = await this.db.insert(codexEvents).values(event).returning();
+    return result[0];
+  }
+
+  async updateCodexEvent(id: number, event: Partial<InsertCodexEvent>): Promise<CodexEvent | undefined> {
+    const result = await this.db.update(codexEvents).set({ ...event, updatedAt: new Date() }).where(eq(codexEvents.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteCodexEvent(id: number): Promise<boolean> {
+    const result = await this.db.delete(codexEvents).where(eq(codexEvents.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // SetAI Codex - Documents
+  async getAllCodexDocuments(): Promise<CodexDocument[]> {
+    return await this.db.select().from(codexDocuments).orderBy(sql`${codexDocuments.createdAt} DESC`);
+  }
+
+  async getCodexDocumentById(id: number): Promise<CodexDocument | undefined> {
+    const result = await this.db.select().from(codexDocuments).where(eq(codexDocuments.id, id));
+    return result[0];
+  }
+
+  async createCodexDocument(doc: InsertCodexDocument): Promise<CodexDocument> {
+    const result = await this.db.insert(codexDocuments).values(doc).returning();
+    return result[0];
+  }
+
+  async updateCodexDocument(id: number, doc: Partial<InsertCodexDocument>): Promise<CodexDocument | undefined> {
+    const result = await this.db.update(codexDocuments).set({ ...doc, updatedAt: new Date() }).where(eq(codexDocuments.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteCodexDocument(id: number): Promise<boolean> {
+    const result = await this.db.delete(codexDocuments).where(eq(codexDocuments.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // SetAI Codex - Projects
+  async getAllCodexProjects(): Promise<CodexProject[]> {
+    return await this.db.select().from(codexProjects).orderBy(codexProjects.name);
+  }
+
+  async getCodexProjectById(id: number): Promise<CodexProject | undefined> {
+    const result = await this.db.select().from(codexProjects).where(eq(codexProjects.id, id));
+    return result[0];
+  }
+
+  async createCodexProject(project: InsertCodexProject): Promise<CodexProject> {
+    const result = await this.db.insert(codexProjects).values(project).returning();
+    return result[0];
+  }
+
+  async updateCodexProject(id: number, project: Partial<InsertCodexProject>): Promise<CodexProject | undefined> {
+    const result = await this.db.update(codexProjects).set({ ...project, updatedAt: new Date() }).where(eq(codexProjects.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteCodexProject(id: number): Promise<boolean> {
+    const result = await this.db.delete(codexProjects).where(eq(codexProjects.id, id)).returning();
+    return result.length > 0;
+  }
+
+  // SetAI Councils
+  async getAllCouncilPersonas(): Promise<CouncilPersona[]> {
+    return await this.db.select().from(councilPersonas).orderBy(councilPersonas.name);
+  }
+
+  async getCouncilPersonaByName(name: string): Promise<CouncilPersona | undefined> {
+    const result = await this.db.select().from(councilPersonas).where(eq(councilPersonas.name, name));
+    return result[0];
+  }
+
+  async createCouncilPersona(persona: InsertCouncilPersona): Promise<CouncilPersona> {
+    const result = await this.db.insert(councilPersonas).values(persona).returning();
+    return result[0];
+  }
+
+  async getModePreference(userId: string): Promise<ModePreference | undefined> {
+    const result = await this.db.select().from(modePreferences).where(eq(modePreferences.userId, userId));
+    return result[0];
+  }
+
+  async setModePreference(pref: InsertModePreference): Promise<ModePreference> {
+    const existing = await this.getModePreference(pref.userId);
+    if (existing) {
+      const result = await this.db.update(modePreferences).set({ ...pref, updatedAt: new Date() }).where(eq(modePreferences.userId, pref.userId)).returning();
+      return result[0];
+    }
+    const result = await this.db.insert(modePreferences).values(pref).returning();
+    return result[0];
+  }
+
+  // SetAI Security
+  async getAllSecurityEvents(): Promise<SecurityEvent[]> {
+    return await this.db.select().from(securityEvents).orderBy(sql`${securityEvents.createdAt} DESC`);
+  }
+
+  async getRecentSecurityEvents(limit: number): Promise<SecurityEvent[]> {
+    return await this.db.select().from(securityEvents).orderBy(sql`${securityEvents.createdAt} DESC`).limit(limit);
+  }
+
+  async createSecurityEvent(event: InsertSecurityEvent): Promise<SecurityEvent> {
+    const result = await this.db.insert(securityEvents).values(event).returning();
+    return result[0];
+  }
+
+  async getAllGuardianPolicies(): Promise<GuardianPolicy[]> {
+    return await this.db.select().from(guardianPolicies).orderBy(guardianPolicies.policyId);
+  }
+
+  async getActiveGuardianPolicies(): Promise<GuardianPolicy[]> {
+    return await this.db.select().from(guardianPolicies).where(eq(guardianPolicies.active, true)).orderBy(guardianPolicies.policyId);
   }
 }
 
