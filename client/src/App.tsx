@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useSetAIConsent } from "@/components/setai-consent-modal";
 import { RavensWhisper } from "@/components/ravens-whisper";
 import { SetAIFooter } from "@/components/setai-footer";
+import { DarkModeToggle } from "@/components/dark-mode-toggle";
 import NotFound from "@/pages/not-found";
 
 import Home from "./pages/home";
@@ -103,6 +104,7 @@ function SiteShell({ children }: { children: React.ReactNode }) {
             </nav>
 
             <div className="flex items-center gap-2">
+              <DarkModeToggle />
               <Link
                 href="/join"
                 className="wm-focus-ring hidden sm:inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90"

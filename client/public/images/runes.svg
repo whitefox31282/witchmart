@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" fill="none">
+  <!-- Elder Futhark inspired runes (stylized, not exact) -->
+  <!-- Fehu (wealth) -->
+  <path d="M15 35V5M15 5L25 15M15 15L25 25" stroke="#0A1F44" stroke-width="2" stroke-linecap="round"/>
+  <!-- Uruz (strength) -->
+  <path d="M45 5V35M45 5L55 15V25L45 35" stroke="#0A1F44" stroke-width="2" stroke-linecap="round"/>
+  <!-- Ansuz (wisdom) -->
+  <path d="M75 35V5M75 10L85 20M75 20L85 30" stroke="#0A1F44" stroke-width="2" stroke-linecap="round"/>
+  <!-- Raido (journey) -->
+  <path d="M105 35V5M105 5L115 15L105 20" stroke="#0A1F44" stroke-width="2" stroke-linecap="round"/>
+  <!-- Gebo (gift) -->
+  <path d="M130 10L150 30M150 10L130 30" stroke="#0A1F44" stroke-width="2" stroke-linecap="round"/>
+  <!-- Wunjo (joy) -->
+  <path d="M175 35V5M175 5L185 15" stroke="#0A1F44" stroke-width="2" stroke-linecap="round"/>
+</svg>

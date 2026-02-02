@@ -11,10 +11,38 @@ import {
 } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
+// SetAI Consent Middleware - Rejects POST/PUT/PATCH without consent
+function requireConsent(req: any, res: any, next: any) {
+  // Skip for GET and DELETE methods
+  if (req.method === "GET" || req.method === "DELETE") {
+    return next();
+  }
+  
+  // Skip for revoke endpoint (allows users to revoke without prior consent)
+  // Note: req.path is relative to mount point, so it's "/revoke" not "/api/revoke"
+  if (req.path === "/revoke") {
+    return next();
+  }
+  
+  // Check for consent in body
+  const consent = req.body?.consent;
+  if (consent !== true && consent !== "true") {
+    return res.status(403).json({
+      error: "SetAI Gate: Consent required. You must agree to transient session data only.",
+      code: "CONSENT_REQUIRED"
+    });
+  }
+  
+  next();
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Apply SetAI consent middleware to all API routes
+  app.use("/api", requireConsent);
+
   // Sanctuary Nodes
   app.get("/api/nodes", async (req, res) => {
     try {

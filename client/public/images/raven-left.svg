@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Raven silhouette facing left - no face details -->
+  <path d="M48 20C48 20 52 16 56 16C52 20 52 24 52 28C52 32 48 36 44 38C44 42 42 46 38 48C34 50 28 50 24 48C20 46 16 42 14 36C12 30 12 24 16 18C20 12 28 10 36 12C44 14 48 18 48 20Z" fill="#0A1F44"/>
+  <path d="M18 24C18 24 14 22 10 24C14 26 16 28 18 30" stroke="#0A1F44" stroke-width="2" stroke-linecap="round"/>
+  <path d="M44 38L48 42L52 40" stroke="#0A1F44" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="26" cy="22" r="2" fill="#F5E8C7"/>
+</svg>

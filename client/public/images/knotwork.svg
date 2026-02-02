@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" fill="none">
+  <!-- Celtic knotwork border pattern -->
+  <path d="M0 20C10 10 20 30 30 20C40 10 50 30 60 20C70 10 80 30 90 20C100 10 110 30 120 20C130 10 140 30 150 20C160 10 170 30 180 20C190 10 200 30 200 20" stroke="#2E4A2E" stroke-width="2" fill="none"/>
+  <path d="M0 20C10 30 20 10 30 20C40 30 50 10 60 20C70 30 80 10 90 20C100 30 110 10 120 20C130 30 140 10 150 20C160 30 170 10 180 20C190 30 200 10 200 20" stroke="#4B4B4B" stroke-width="2" fill="none"/>
+</svg>

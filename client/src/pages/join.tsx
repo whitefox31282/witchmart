@@ -39,7 +39,7 @@ export default function Join() {
   const copy = useMemo(() => ROLE_COPY[role], [role]);
 
   const submitMutation = useMutation({
-    mutationFn: async (data: InsertMemberSignup) => {
+    mutationFn: async (data: InsertMemberSignup & { consent: boolean }) => {
       const response = await fetch("/api/member-signups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -71,7 +71,7 @@ export default function Join() {
   });
 
   const doSubmit = (data: InsertMemberSignup) => {
-    submitMutation.mutate(data);
+    submitMutation.mutate({ ...data, consent: true });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
