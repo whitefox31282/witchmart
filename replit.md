@@ -4,6 +4,36 @@
 
 WitchMart is a member-owned, Pagan-aligned cooperative marketplace and sanctuary network. The platform allows users to find local sanctuary nodes, connect with makers and guilds, explore products and services, and join the community. It features a full-stack architecture with a React frontend and Express backend, using PostgreSQL for data persistence.
 
+**Protected by SetAI** - A sovereignty-first, zero-exploitation, trauma-informed platform with no corporate trackers or data mining.
+
+## SetAI Sovereignty Layer
+
+### Core Principles
+- **Zero Surveillance**: No Google Analytics, Meta pixels, or third-party trackers
+- **Data Sovereignty**: Users own 100% of their data; only anonymous session IDs are used
+- **Transient Storage**: All session data is stored in browser sessionStorage only
+- **Instant Revocation**: Users can clear all data with one click
+- **Harm Prevention**: Content is scanned for potential harm with double-confirmation warnings
+
+### SetAI Components
+- `client/src/lib/setai-gate.ts` - Core consent, harm detection, and revocation logic
+- `client/src/components/setai-consent-modal.tsx` - Consent flow and harm warning modals
+- `client/src/components/ravens-whisper.tsx` - Floating chat placeholder with mythic framing
+- `client/src/components/grounding-statement.tsx` - Trauma-informed grounding with crisis resources
+- `client/src/components/setai-footer.tsx` - Footer with transparency link and revoke button
+- `client/src/pages/transparency.tsx` - Transparency log page
+
+### Mythic Design System
+- **Colors**: Midnight (#0A1F44), Forest (#2E4A2E), Parchment (#F5E8C7), Iron (#4B4B4B)
+- **Fonts**: Cinzel (runic headers), Merriweather (body)
+- **Imagery**: Ravens as watchers, runes as guidance, Yggdrasil knotwork
+
+### Crisis Resources
+- 988 Suicide & Crisis Lifeline
+- Trans Lifeline: 877-565-8860
+- Trevor Project: 866-488-7386
+- Crisis Text Line: Text HOME to 741741
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.

@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { GroundingStatement } from "@/components/grounding-statement";
+import { scanFormForHarm, logTransparencyEvent } from "@/lib/setai-gate";
+import { SetAIHarmWarning } from "@/components/setai-consent-modal";
 import type { InsertMemberSignup } from "@shared/schema";
 
 type Role = "Community" | "Maker" | "Guild" | "Node Owner";
@@ -29,6 +32,8 @@ export default function Join() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
+  const [showHarmWarning, setShowHarmWarning] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState<InsertMemberSignup | null>(null);
   const { toast } = useToast();
 
   const copy = useMemo(() => ROLE_COPY[role], [role]);
@@ -47,8 +52,9 @@ export default function Join() {
       return response.json();
     },
     onSuccess: () => {
+      logTransparencyEvent("member_signup", `Role: ${role}`);
       toast({
-        title: "Signup submitted!",
+        title: "Welcome to the sanctuary!",
         description: "Thank you for joining WitchMart. We'll be in touch soon.",
       });
       setName("");
@@ -64,6 +70,10 @@ export default function Join() {
     },
   });
 
+  const doSubmit = (data: InsertMemberSignup) => {
+    submitMutation.mutate(data);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) {
@@ -74,19 +84,39 @@ export default function Join() {
       });
       return;
     }
-    submitMutation.mutate({ name: name.trim(), email: email.trim(), role, notes: notes.trim() || null });
+
+    const data: InsertMemberSignup = {
+      name: name.trim(),
+      email: email.trim(),
+      role,
+      notes: notes.trim() || null,
+    };
+
+    // Check for harm triggers
+    if (scanFormForHarm({ name, notes })) {
+      setPendingSubmit(data);
+      setShowHarmWarning(true);
+      return;
+    }
+
+    doSubmit(data);
   };
 
   return (
     <div className="space-y-10">
       <header className="space-y-3">
-        <h1 className="wm-hero-title text-3xl font-semibold" data-testid="text-join-title">
-          Join / Get Involved
-        </h1>
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">🌿</span>
+          <h1 className="wm-hero-title text-3xl font-semibold" data-testid="text-join-title">
+            Enter the Sanctuary
+          </h1>
+        </div>
         <p className="max-w-3xl text-sm text-muted-foreground" data-testid="text-join-subtitle">
-          Choose how you want to participate. Submit your interest and we'll follow up.
+          Choose how you want to participate in our member-owned cooperative. Your data is protected by SetAI.
         </p>
       </header>
+
+      <GroundingStatement />
 
       <section className="grid gap-4 lg:grid-cols-3">
         <form className="rounded-2xl border bg-card p-6 shadow-sm lg:col-span-2" onSubmit={handleSubmit}>
@@ -160,6 +190,15 @@ export default function Join() {
               </label>
             </div>
 
+            <div className="mt-4 rounded-xl border border-forest/20 bg-forest/5 p-4">
+              <label className="flex items-start gap-3">
+                <input type="checkbox" required className="mt-1" data-testid="checkbox-consent" />
+                <span className="text-xs text-muted-foreground">
+                  I consent to <strong>transient session data only</strong>. I own my data. I can revoke at any time (instant delete).
+                </span>
+              </label>
+            </div>
+
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <button
                 type="submit"
@@ -167,33 +206,60 @@ export default function Join() {
                 className="wm-focus-ring inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-md hover:opacity-95 disabled:opacity-50"
                 data-testid="button-submit-signup"
               >
-                {submitMutation.isPending ? "Submitting..." : "Submit"}
+                {submitMutation.isPending ? "Submitting..." : "Enter Sanctuary"}
               </button>
               <button
                 type="button"
                 className="wm-focus-ring inline-flex items-center justify-center rounded-full border bg-card px-5 py-3 text-sm font-semibold shadow-sm hover:bg-muted/60"
                 data-testid="button-discord-invite"
-                onClick={() => alert("Placeholder: add Discord/community invite link.")}
+                onClick={() => alert("Community invite coming soon - ravens are preparing the space.")}
               >
-                Discord / Community Invite
+                Join Community Chat
               </button>
             </div>
           </div>
         </form>
 
         <aside className="rounded-2xl border bg-card p-6 shadow-sm">
-          <div className="text-sm font-semibold" data-testid="text-join-safety-title">
-            Up-front safety
+          <div className="flex items-center gap-2">
+            <span>🦅</span>
+            <div className="text-sm font-semibold" data-testid="text-join-safety-title">
+              SetAI Protection
+            </div>
           </div>
           <p className="mt-2 text-sm text-muted-foreground" data-testid="text-join-safety-body">
-            All participation must follow published safety standards and local laws. This site is for coordination and transparency.
+            All participation follows published safety standards. Your data is stored only in your browser session - never on our servers without explicit consent.
           </p>
 
-          <div className="mt-4 rounded-xl border bg-background/60 p-4 text-xs text-muted-foreground" data-testid="text-join-disclaimer">
-            Your submission will be saved and reviewed by our team.
+          <div className="mt-4 space-y-2">
+            <div className="rounded-xl border bg-background/60 p-3 text-xs text-muted-foreground">
+              <strong>Zero surveillance</strong> - No Google Analytics or corporate trackers
+            </div>
+            <div className="rounded-xl border bg-background/60 p-3 text-xs text-muted-foreground">
+              <strong>Data sovereignty</strong> - You own 100% of your data
+            </div>
+            <div className="rounded-xl border bg-background/60 p-3 text-xs text-muted-foreground">
+              <strong>Instant revocation</strong> - Clear all data with one click
+            </div>
           </div>
         </aside>
       </section>
+
+      {showHarmWarning && (
+        <SetAIHarmWarning
+          onConfirm={() => {
+            setShowHarmWarning(false);
+            if (pendingSubmit) {
+              doSubmit(pendingSubmit);
+              setPendingSubmit(null);
+            }
+          }}
+          onCancel={() => {
+            setShowHarmWarning(false);
+            setPendingSubmit(null);
+          }}
+        />
+      )}
     </div>
   );
 }

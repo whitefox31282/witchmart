@@ -324,5 +324,18 @@ export async function registerRoutes(
     }
   });
 
+  // SetAI: Consent revocation endpoint
+  // NOTE: This endpoint only acknowledges the revocation request.
+  // No user data is stored server-side for anonymous sessions.
+  // The console log below is for development debugging only and
+  // should be removed or disabled in production to maintain
+  // the zero-retention promise.
+  app.post("/api/revoke", async (_req, res) => {
+    if (process.env.NODE_ENV === "development") {
+      console.log("[SetAI] Revocation acknowledged (dev mode only)");
+    }
+    res.json({ success: true, message: "Consent revoked. All session data cleared." });
+  });
+
   return httpServer;
 }

@@ -1,0 +1,19 @@
+{
+  "name": "WitchMart",
+  "short_name": "WitchMart",
+  "description": "Member-owned, Pagan-aligned cooperative marketplace and sanctuary network. Protected by SetAI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A1F44",
+  "theme_color": "#2E4A2E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "social", "lifestyle"]
+}

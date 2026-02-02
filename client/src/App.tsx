@@ -4,6 +4,9 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useSetAIConsent } from "@/components/setai-consent-modal";
+import { RavensWhisper } from "@/components/ravens-whisper";
+import { SetAIFooter } from "@/components/setai-footer";
 import NotFound from "@/pages/not-found";
 
 import Home from "./pages/home";
@@ -18,8 +21,19 @@ import Resources from "./pages/resources";
 import Join from "./pages/join";
 import Blog from "./pages/blog";
 import ContactSupport from "./pages/contact-support";
+import Transparency from "./pages/transparency";
 
 const NAV = [
+  { label: "Home", href: "/" },
+  { label: "Sanctuary Nodes", href: "/sanctuary-nodes" },
+  { label: "Makers & Guilds", href: "/makers-guilds" },
+  { label: "Products & Services", href: "/products-services" },
+  { label: "Join", href: "/join" },
+  { label: "Safety", href: "/safety-certification" },
+  { label: "Blog", href: "/blog" },
+] as const;
+
+const FULL_NAV = [
   { label: "Home", href: "/" },
   { label: "About WitchMart", href: "/about" },
   { label: "How It Works", href: "/how-it-works" },
@@ -32,13 +46,14 @@ const NAV = [
   { label: "Join / Get Involved", href: "/join" },
   { label: "Blog / Updates", href: "/blog" },
   { label: "Contact / Support", href: "/contact" },
+  { label: "Transparency Log", href: "/transparency" },
 ] as const;
 
 function SiteShell({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   return (
-    <div className="min-h-screen wm-grain bg-background text-foreground">
+    <div className="flex min-h-screen flex-col wm-grain bg-background text-foreground">
       <a
         href="#main"
         className="wm-focus-ring sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 rounded-md bg-card px-4 py-2 shadow-lg"
@@ -59,11 +74,11 @@ function SiteShell({ children }: { children: React.ReactNode }) {
                 className="grid size-9 place-items-center rounded-xl border bg-card shadow-sm"
                 aria-hidden="true"
               >
-                <span className="wm-hero-title text-sm font-semibold">WM</span>
+                <span className="text-xl">🦅</span>
               </div>
               <div className="leading-tight">
                 <div className="wm-hero-title text-base font-semibold">WitchMart</div>
-                <div className="text-xs text-muted-foreground">Member-owned cooperative</div>
+                <div className="text-xs text-muted-foreground">Protected by SetAI</div>
               </div>
             </Link>
 
@@ -93,7 +108,7 @@ function SiteShell({ children }: { children: React.ReactNode }) {
                 className="wm-focus-ring hidden sm:inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 active:opacity-90"
                 data-testid="button-join-header"
               >
-                Join
+                Enter Sanctuary
               </Link>
 
               <details className="lg:hidden relative">
@@ -105,7 +120,7 @@ function SiteShell({ children }: { children: React.ReactNode }) {
                 </summary>
                 <div className="absolute right-0 mt-2 w-[min(92vw,420px)] overflow-hidden rounded-2xl border bg-card shadow-lg">
                   <div className="p-2">
-                    {NAV.map((item) => {
+                    {FULL_NAV.map((item) => {
                       const active = location === item.href;
                       return (
                         <Link
@@ -129,49 +144,11 @@ function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main id="main" className="mx-auto max-w-6xl px-4 py-10" tabIndex={-1}>
+      <main id="main" className="mx-auto max-w-6xl flex-1 px-4 py-10" tabIndex={-1}>
         {children}
       </main>
 
-      <footer className="border-t bg-background/60">
-        <div className="mx-auto max-w-6xl px-4 py-10">
-          <div className="grid gap-6 lg:grid-cols-3">
-            <div>
-              <div className="wm-hero-title text-lg font-semibold" data-testid="text-footer-title">
-                WitchMart
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground" data-testid="text-footer-mission">
-                A member-owned, Pagan-aligned cooperative marketplace and sanctuary network.
-              </p>
-            </div>
-            <div>
-              <div className="text-sm font-semibold" data-testid="text-footer-disclaimer-title">
-                Safety & Legal
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground" data-testid="text-footer-disclaimer">
-                This prototype is for community information and onboarding. It is not legal advice, medical advice, or a substitute
-                for local regulations. Follow published safety guidance and coordinate responsibly.
-              </p>
-            </div>
-            <div>
-              <div className="text-sm font-semibold" data-testid="text-footer-transparency-title">
-                Transparency
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground" data-testid="text-footer-transparency">
-                We publish clear pricing rules, community standards, and public-facing reports. Member ownership means member
-                oversight.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8 flex flex-col gap-2 border-t pt-6 text-xs text-muted-foreground">
-            <div data-testid="text-footer-copyright">© {new Date().getFullYear()} WitchMart (prototype)</div>
-            <div data-testid="text-footer-note">
-              Built for accessibility: keyboard-friendly navigation, strong contrast, and clear hierarchy.
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SetAIFooter />
     </div>
   );
 }
@@ -191,9 +168,24 @@ function Router() {
       <Route path="/join" component={Join} />
       <Route path="/blog" component={Blog} />
       <Route path="/contact" component={ContactSupport} />
+      <Route path="/transparency" component={Transparency} />
 
       <Route component={NotFound} />
     </Switch>
+  );
+}
+
+function AppContent() {
+  const { ConsentModal, consentGiven } = useSetAIConsent();
+
+  return (
+    <>
+      {ConsentModal}
+      <SiteShell>
+        <Router />
+      </SiteShell>
+      {consentGiven && <RavensWhisper />}
+    </>
   );
 }
 
@@ -202,9 +194,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <SiteShell>
-          <Router />
-        </SiteShell>
+        <AppContent />
       </TooltipProvider>
     </QueryClientProvider>
   );

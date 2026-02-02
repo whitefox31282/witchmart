@@ -211,6 +211,25 @@
 }
 
 @layer utilities {
+  /* Mythic color utilities for SetAI components */
+  .bg-midnight { background-color: #0A1F44; }
+  .bg-forest { background-color: #2E4A2E; }
+  .bg-parchment { background-color: #F5E8C7; }
+  .bg-iron { background-color: #4B4B4B; }
+  
+  .text-midnight { color: #0A1F44; }
+  .text-forest { color: #2E4A2E; }
+  .text-parchment { color: #F5E8C7; }
+  .text-iron { color: #4B4B4B; }
+  
+  .border-midnight { border-color: #0A1F44; }
+  .border-forest { border-color: #2E4A2E; }
+  .border-parchment { border-color: #F5E8C7; }
+  .border-iron { border-color: #4B4B4B; }
+  
+  .font-cinzel { font-family: 'Cinzel', serif; }
+  .font-inter { font-family: 'Inter', sans-serif; }
+
   input[type="search"]::-webkit-search-cancel-button {
     @apply hidden;
   }
