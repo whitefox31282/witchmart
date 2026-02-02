@@ -8,7 +8,14 @@ import {
   insertMemberSignupSchema,
   insertContactSubmissionSchema,
   insertBlogPostSchema,
+  insertCodexEventSchema,
+  insertCodexDocumentSchema,
+  insertCodexProjectSchema,
+  insertSecurityEventSchema,
+  insertModePreferenceSchema,
 } from "@shared/schema";
+import fs from "fs";
+import path from "path";
 import { fromZodError } from "zod-validation-error";
 
 // SetAI Consent Middleware - Rejects POST/PUT/PATCH without consent
@@ -363,6 +370,324 @@ export async function registerRoutes(
       console.log("[SetAI] Revocation acknowledged (dev mode only)");
     }
     res.json({ success: true, message: "Consent revoked. All session data cleared." });
+  });
+
+  // ============================================================================
+  // SETAI CANON ROUTES
+  // ============================================================================
+  
+  app.get("/api/canon", async (_req, res) => {
+    try {
+      const canonPath = path.join(process.cwd(), "config", "canon.json");
+      const canon = JSON.parse(fs.readFileSync(canonPath, "utf-8"));
+      res.json(canon);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/founder_canon", async (_req, res) => {
+    try {
+      const founderCanonPath = path.join(process.cwd(), "config", "founder_canon.json");
+      const founderCanon = JSON.parse(fs.readFileSync(founderCanonPath, "utf-8"));
+      res.json(founderCanon);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/guardian_policies", async (_req, res) => {
+    try {
+      const policiesPath = path.join(process.cwd(), "config", "guardian_policies.json");
+      const policies = JSON.parse(fs.readFileSync(policiesPath, "utf-8"));
+      res.json(policies);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/security_pipeline", async (_req, res) => {
+    try {
+      const pipelinePath = path.join(process.cwd(), "config", "security_pipeline.json");
+      const pipeline = JSON.parse(fs.readFileSync(pipelinePath, "utf-8"));
+      res.json(pipeline);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================================================
+  // SETAI CODEX ROUTES
+  // ============================================================================
+
+  // Codex Events
+  app.get("/api/codex/events", async (_req, res) => {
+    try {
+      const events = await storage.getAllCodexEvents();
+      res.json(events);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/codex/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const event = await storage.getCodexEventById(id);
+      if (!event) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+      res.json(event);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/codex/events", async (req, res) => {
+    try {
+      const result = insertCodexEventSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: fromZodError(result.error).message });
+      }
+      const event = await storage.createCodexEvent(result.data);
+      res.status(201).json(event);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.patch("/api/codex/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const event = await storage.updateCodexEvent(id, req.body);
+      if (!event) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+      res.json(event);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/codex/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteCodexEvent(id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Codex Documents
+  app.get("/api/codex/documents", async (_req, res) => {
+    try {
+      const documents = await storage.getAllCodexDocuments();
+      res.json(documents);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/codex/documents/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const document = await storage.getCodexDocumentById(id);
+      if (!document) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      res.json(document);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/codex/documents", async (req, res) => {
+    try {
+      const result = insertCodexDocumentSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: fromZodError(result.error).message });
+      }
+      const document = await storage.createCodexDocument(result.data);
+      res.status(201).json(document);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.patch("/api/codex/documents/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const document = await storage.updateCodexDocument(id, req.body);
+      if (!document) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      res.json(document);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/codex/documents/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteCodexDocument(id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Codex Projects
+  app.get("/api/codex/projects", async (_req, res) => {
+    try {
+      const projects = await storage.getAllCodexProjects();
+      res.json(projects);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/codex/projects/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const project = await storage.getCodexProjectById(id);
+      if (!project) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      res.json(project);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/codex/projects", async (req, res) => {
+    try {
+      const result = insertCodexProjectSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: fromZodError(result.error).message });
+      }
+      const project = await storage.createCodexProject(result.data);
+      res.status(201).json(project);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.patch("/api/codex/projects/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const project = await storage.updateCodexProject(id, req.body);
+      if (!project) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      res.json(project);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/codex/projects/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteCodexProject(id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================================================
+  // SETAI COUNCILS ROUTES
+  // ============================================================================
+
+  app.get("/api/councils/personas", async (_req, res) => {
+    try {
+      const personas = await storage.getAllCouncilPersonas();
+      res.json(personas);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/councils/mode/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const pref = await storage.getModePreference(userId);
+      if (!pref) {
+        return res.json({ defaultPersona: "Companion", verbosity: "medium" });
+      }
+      res.json(pref);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/councils/mode", async (req, res) => {
+    try {
+      const result = insertModePreferenceSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: fromZodError(result.error).message });
+      }
+      const pref = await storage.setModePreference(result.data);
+      res.status(201).json(pref);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================================================
+  // SETAI SECURITY ROUTES
+  // ============================================================================
+
+  app.get("/api/security/events", async (req, res) => {
+    try {
+      const { limit } = req.query;
+      if (limit && typeof limit === "string") {
+        const events = await storage.getRecentSecurityEvents(parseInt(limit));
+        return res.json(events);
+      }
+      const events = await storage.getAllSecurityEvents();
+      res.json(events);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/security/events", async (req, res) => {
+    try {
+      const result = insertSecurityEventSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: fromZodError(result.error).message });
+      }
+      const event = await storage.createSecurityEvent(result.data);
+      res.status(201).json(event);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/security/policies", async (_req, res) => {
+    try {
+      const policies = await storage.getActiveGuardianPolicies();
+      res.json(policies);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Health check
+  app.get("/api/health", async (_req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
   return httpServer;
