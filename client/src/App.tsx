@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Switch, Route, Link, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -52,6 +52,12 @@ const FULL_NAV = [
 
 function SiteShell({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close menu when location changes
+  React.useEffect(() => {
+    setMenuOpen(false);
+  }, [location]);
 
   return (
     <div className="flex min-h-screen flex-col wm-grain bg-background text-foreground">
@@ -113,34 +119,40 @@ function SiteShell({ children }: { children: React.ReactNode }) {
                 Enter Sanctuary
               </Link>
 
-              <details className="lg:hidden relative">
-                <summary
-                  className="wm-focus-ring list-none rounded-full border bg-card px-3 py-2 text-sm shadow-sm hover:bg-muted/50"
+              <div className="lg:hidden relative">
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  className="wm-focus-ring rounded-full border bg-card px-3 py-2 text-sm shadow-sm hover:bg-muted/50"
                   data-testid="button-open-menu"
+                  aria-expanded={menuOpen}
+                  aria-haspopup="true"
                 >
-                  Menu
-                </summary>
-                <div className="absolute right-0 mt-2 w-[min(92vw,420px)] overflow-hidden rounded-2xl border bg-card shadow-lg">
-                  <div className="p-2">
-                    {FULL_NAV.map((item) => {
-                      const active = location === item.href;
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={
-                            "wm-focus-ring block rounded-xl px-3 py-2 text-sm hover:bg-muted/60" +
-                            (active ? " bg-muted/80" : "")
-                          }
-                          data-testid={`link-mobile-${item.href.replaceAll("/", "").replaceAll("-", "_") || "home"}`}
-                        >
-                          {item.label}
-                        </Link>
-                      );
-                    })}
+                  {menuOpen ? "Close" : "Menu"}
+                </button>
+                {menuOpen && (
+                  <div className="absolute right-0 mt-2 w-[min(92vw,420px)] overflow-hidden rounded-2xl border bg-card shadow-lg">
+                    <div className="p-2">
+                      {FULL_NAV.map((item) => {
+                        const active = location === item.href;
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setMenuOpen(false)}
+                            className={
+                              "wm-focus-ring block rounded-xl px-3 py-2 text-sm hover:bg-muted/60" +
+                              (active ? " bg-muted/80" : "")
+                            }
+                            data-testid={`link-mobile-${item.href.replaceAll("/", "").replaceAll("-", "_") || "home"}`}
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              </details>
+                )}
+              </div>
             </div>
           </div>
         </div>

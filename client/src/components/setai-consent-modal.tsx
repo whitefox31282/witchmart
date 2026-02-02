@@ -9,26 +9,26 @@ interface SetAIConsentModalProps {
 export function SetAIConsentModal({ onConsent, onDecline }: SetAIConsentModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" data-testid="modal-consent">
-      <div className="mx-4 max-w-lg rounded-2xl border-2 border-forest/40 bg-midnight p-6 shadow-2xl">
+      <div className="mx-4 max-w-lg rounded-2xl border-2 border-amber-700/50 bg-slate-800 p-6 shadow-2xl">
         <div className="flex items-center gap-3">
           <span className="text-2xl">🦅</span>
-          <h2 className="font-cinzel text-xl text-parchment">SetAI Sovereignty Gate</h2>
+          <h2 className="font-cinzel text-xl text-amber-500">SetAI Sovereignty Gate</h2>
         </div>
         
-        <div className="mt-4 space-y-4 text-sm text-parchment/90">
+        <div className="mt-4 space-y-4 text-sm text-orange-200">
           <p>
             Welcome to WitchMart. Before you enter, understand your rights:
           </p>
           
-          <ul className="ml-4 list-disc space-y-2">
-            <li><strong>Zero Surveillance:</strong> No Google Analytics, Meta pixels, or corporate trackers.</li>
-            <li><strong>Transient Data Only:</strong> Session data is deleted when you close your browser.</li>
-            <li><strong>You Own Your Data:</strong> 100% ownership. Revoke consent anytime with instant deletion.</li>
-            <li><strong>Anonymous IDs:</strong> Only random hashes are used - never personal identifiers.</li>
+          <ul className="ml-4 list-disc space-y-2 text-orange-100">
+            <li><strong className="text-amber-400">Zero Surveillance:</strong> No Google Analytics, Meta pixels, or corporate trackers.</li>
+            <li><strong className="text-amber-400">Transient Data Only:</strong> Session data is deleted when you close your browser.</li>
+            <li><strong className="text-amber-400">You Own Your Data:</strong> 100% ownership. Revoke consent anytime with instant deletion.</li>
+            <li><strong className="text-amber-400">Anonymous IDs:</strong> Only random hashes are used - never personal identifiers.</li>
           </ul>
           
-          <div className="rounded-xl border border-forest/30 bg-forest/10 p-4">
-            <p className="text-xs text-parchment/70">
+          <div className="rounded-xl border border-amber-700/40 bg-slate-700/50 p-4">
+            <p className="text-xs text-orange-200/80">
               By consenting, you agree to transient session data only for site functionality.
               No data is sold, shared, or retained beyond your session.
             </p>
@@ -41,7 +41,7 @@ export function SetAIConsentModal({ onConsent, onDecline }: SetAIConsentModalPro
               onDecline();
               window.location.href = "https://duckduckgo.com";
             }}
-            className="rounded-full border border-parchment/30 px-5 py-2.5 text-sm font-semibold text-parchment transition hover:bg-parchment/10"
+            className="rounded-full border border-orange-300/30 px-5 py-2.5 text-sm font-semibold text-orange-200 transition hover:bg-orange-200/10"
             data-testid="button-consent-decline"
           >
             Leave Site
@@ -52,7 +52,7 @@ export function SetAIConsentModal({ onConsent, onDecline }: SetAIConsentModalPro
               logTransparencyEvent("consent_granted", "User accepted sovereignty terms");
               onConsent();
             }}
-            className="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-parchment shadow-lg transition hover:bg-forest/80"
+            className="rounded-full bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-amber-500"
             data-testid="button-consent-accept"
           >
             I Consent - Enter Sanctuary
