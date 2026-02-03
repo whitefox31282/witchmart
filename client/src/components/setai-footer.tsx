@@ -51,7 +51,6 @@ export function SetAIFooter() {
         </div>
         
         <div className="mt-6 text-xs text-parchment/40">
-          <p>Ravens Evermore 🦅🖤</p>
           <p className="mt-1">WitchMart — Member-owned cooperative marketplace</p>
         </div>
       </div>

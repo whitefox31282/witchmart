@@ -88,7 +88,7 @@ export default function LandingPage() {
 
         <section className="landing-section fade-up">
           <h2 className="font-cinzel norse-heading">🌳 Ecosystem</h2>
-          <p className="ecosystem-list norse-ecosystem">Ravens Evermore · Ma'at · SetAI · Lady Liberty League</p>
+          <p className="ecosystem-list norse-ecosystem">Community cooperative • Member-owned • Transparency-first</p>
         </section>
 
         <section className="landing-section fade-up">

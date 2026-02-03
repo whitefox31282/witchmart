@@ -96,10 +96,10 @@ export default function Home() {
 
                 <div className="rounded-xl border bg-background/60 p-3">
                   <div className="text-xs font-semibold" data-testid="text-home-ecosystem-label">
-                    Ecosystem (placeholders)
+                    Cooperative Network
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground" data-testid="text-home-ecosystem">
-                    Ravens Evermore • Ma’at • SetAI • Lady Liberty League
+                    Member-owned • Community-governed • Transparency-first
                   </p>
                 </div>
               </div>
