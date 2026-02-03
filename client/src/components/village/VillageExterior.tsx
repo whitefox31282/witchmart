@@ -6,30 +6,94 @@ interface VillageExteriorProps {
 }
 
 const TENTS = [
-  { id: "about" as TentId, name: "About WitchMart" },
-  { id: "sanctuary" as TentId, name: "Sanctuary Nodes" },
-  { id: "makers" as TentId, name: "Makers & Guilds" },
-  { id: "pricing" as TentId, name: "Pricing & Transparency" },
-  { id: "setai" as TentId, name: "SetAI" },
-  { id: "mission" as TentId, name: "Mission + Support" },
-  { id: "join" as TentId, name: "Join the Cooperative" },
+  { id: "about" as TentId, name: "About WitchMart", runes: ["ᚨ", "ᛒ"] },
+  { id: "sanctuary" as TentId, name: "Sanctuary Nodes", runes: ["ᛊ", "ᚾ"] },
+  { id: "makers" as TentId, name: "Makers & Guilds", runes: ["ᛗ", "ᚷ"] },
+  { id: "pricing" as TentId, name: "Pricing & Transparency", runes: ["ᛈ", "ᛏ"] },
+  { id: "setai" as TentId, name: "SetAI", runes: ["ᛋ", "ᛁ"] },
+  { id: "mission" as TentId, name: "Mission + Support", runes: ["ᛗ", "ᛊ"] },
+  { id: "join" as TentId, name: "Join the Cooperative", runes: ["ᛃ", "ᚲ"] },
 ];
+
+interface TentProps {
+  tentName: string;
+  tentId: TentId;
+  runes: string[];
+  onClick: (tentId: TentId) => void;
+  isActive?: boolean;
+}
+
+function Tent({ tentName, tentId, runes, onClick, isActive = false }: TentProps) {
+  return (
+    <button
+      className={`tent-portal ${isActive ? "tent-active" : ""}`}
+      onClick={() => onClick(tentId)}
+      aria-label={`Enter ${tentName} tent`}
+      data-testid={`tent-${tentId}`}
+    >
+      <div className="tent-structure">
+        {/* Wooden support poles */}
+        <div className="tent-pole tent-pole-left" />
+        <div className="tent-pole tent-pole-right" />
+        <div className="tent-pole tent-pole-center" />
+        
+        {/* Rope lashings at top */}
+        <div className="tent-rope-lashing" />
+        
+        {/* Layered canvas folds for depth */}
+        <div className="tent-canvas-layer tent-canvas-back" />
+        <div className="tent-canvas-layer tent-canvas-mid" />
+        <div className="tent-canvas-layer tent-canvas-front" />
+        
+        {/* Tent entrance opening */}
+        <div className="tent-entrance" />
+        
+        {/* Glowing runes on each side */}
+        <div className="tent-runes tent-runes-left">
+          {runes.map((rune, i) => (
+            <span key={i} className="tent-rune">{rune}</span>
+          ))}
+        </div>
+        <div className="tent-runes tent-runes-right">
+          {runes.map((rune, i) => (
+            <span key={i} className="tent-rune">{rune}</span>
+          ))}
+        </div>
+        
+        {/* Torchlight glow effect */}
+        <div className="tent-glow" />
+        <div className="tent-interior-glow" />
+      </div>
+      
+      {/* Hide/leather sign with tent name */}
+      <div className="tent-hide-sign">
+        <div className="tent-sign-rope tent-sign-rope-left" />
+        <div className="tent-sign-rope tent-sign-rope-right" />
+        <div className="tent-sign-hide">
+          <span>{tentName}</span>
+        </div>
+      </div>
+    </button>
+  );
+}
 
 export default function VillageExterior({ onEnterTent }: VillageExteriorProps) {
   const stars = useMemo(() => 
-    Array.from({ length: 50 }, (_, i) => ({
+    Array.from({ length: 60 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
-      y: Math.random() * 35,
+      y: Math.random() * 40,
       delay: Math.random() * 4,
+      size: 1 + Math.random() * 2,
     })), 
   []);
 
   const smokeParticles = useMemo(() => 
-    Array.from({ length: 8 }, (_, i) => ({
+    Array.from({ length: 12 }, (_, i) => ({
       id: i,
-      x: 20 + Math.random() * 60,
+      x: 15 + Math.random() * 70,
       delay: Math.random() * 8,
+      size: 15 + Math.random() * 20,
     })),
   []);
 
@@ -46,10 +110,15 @@ export default function VillageExterior({ onEnterTent }: VillageExteriorProps) {
               left: `${star.x}%`,
               top: `${star.y}%`,
               animationDelay: `${star.delay}s`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
             }}
           />
         ))}
       </div>
+
+      {/* Aurora effect */}
+      <div className="village-aurora" />
 
       <div className="village-smoke">
         {smokeParticles.map((particle) => (
@@ -59,6 +128,8 @@ export default function VillageExterior({ onEnterTent }: VillageExteriorProps) {
             style={{
               left: `${particle.x}%`,
               animationDelay: `${particle.delay}s`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
             }}
           />
         ))}
@@ -73,23 +144,13 @@ export default function VillageExterior({ onEnterTent }: VillageExteriorProps) {
 
       <div className="tent-grid">
         {TENTS.map((tent) => (
-          <button
+          <Tent
             key={tent.id}
-            className="tent-portal"
-            onClick={() => onEnterTent(tent.id)}
-            aria-label={`Enter ${tent.name} tent`}
-            data-testid={`tent-${tent.id}`}
-          >
-            <div className="tent-structure">
-              <div className="tent-pole" />
-              <div className="tent-flag" />
-              <div className="tent-canvas" />
-              <div className="tent-glow" />
-            </div>
-            <div className="tent-sign">
-              <span>{tent.name}</span>
-            </div>
-          </button>
+            tentId={tent.id}
+            tentName={tent.name}
+            runes={tent.runes}
+            onClick={onEnterTent}
+          />
         ))}
       </div>
     </div>

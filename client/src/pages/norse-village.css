@@ -31,9 +31,10 @@
 .village-exterior {
   min-height: 100vh;
   background: linear-gradient(180deg, 
-    #1a1520 0%, 
-    #2d2035 30%, 
-    #3d2a40 60%, 
+    #0a0812 0%, 
+    #1a1520 25%, 
+    #2d2035 50%, 
+    #3d2a40 75%, 
     #2a1f30 100%
   );
   position: relative;
@@ -48,13 +49,32 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 40%;
+  height: 45%;
   background: linear-gradient(180deg, 
-    #0f0a15 0%, 
-    #1a1025 50%, 
+    #050308 0%, 
+    #0f0a15 40%, 
+    #1a1025 70%, 
     transparent 100%
   );
   pointer-events: none;
+}
+
+.village-aurora {
+  position: absolute;
+  top: 5%;
+  left: 0;
+  right: 0;
+  height: 25%;
+  background: 
+    radial-gradient(ellipse 80% 50% at 30% 20%, rgba(100, 200, 150, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 70% 30%, rgba(150, 100, 200, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  animation: auroraShift 20s ease-in-out infinite;
+}
+
+@keyframes auroraShift {
+  0%, 100% { opacity: 0.6; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(20px); }
 }
 
 .village-stars {
@@ -62,47 +82,45 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 35%;
+  height: 40%;
   pointer-events: none;
 }
 
 .village-star {
   position: absolute;
-  width: 2px;
-  height: 2px;
   background: #fff;
   border-radius: 50%;
   animation: twinkle 3s ease-in-out infinite;
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 
 .village-smoke {
   position: absolute;
-  bottom: 40%;
+  bottom: 35%;
+  left: 0;
+  right: 0;
   pointer-events: none;
-  opacity: 0.3;
+  opacity: 0.4;
 }
 
 .smoke-particle {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle, rgba(200, 180, 160, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(200, 180, 160, 0.5) 0%, transparent 70%);
   border-radius: 50%;
-  animation: smokeRise 8s ease-out infinite;
+  animation: smokeRise 10s ease-out infinite;
 }
 
 @keyframes smokeRise {
   0% {
-    transform: translateY(0) scale(1);
-    opacity: 0.4;
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 0.5;
   }
   100% {
-    transform: translateY(-100px) scale(2);
+    transform: translateY(-150px) scale(2.5) rotate(20deg);
     opacity: 0;
   }
 }
@@ -112,10 +130,11 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20%;
+  height: 25%;
   background: linear-gradient(180deg, 
     transparent 0%, 
-    #1a1510 30%, 
+    rgba(26, 21, 16, 0.5) 20%, 
+    #1a1510 50%, 
     #0f0a08 100%
   );
   pointer-events: none;
@@ -125,24 +144,26 @@
   position: relative;
   z-index: 10;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
 }
 
 .village-title h1 {
   font-family: 'Cinzel', serif;
-  font-size: clamp(2rem, 6vw, 4rem);
+  font-size: clamp(2.5rem, 8vw, 5rem);
   color: #d4af37;
   text-shadow: 
-    0 0 20px rgba(212, 175, 55, 0.5),
-    0 4px 8px rgba(0, 0, 0, 0.8);
-  letter-spacing: 0.1em;
+    0 0 30px rgba(212, 175, 55, 0.6),
+    0 0 60px rgba(212, 175, 55, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.15em;
 }
 
 .village-title p {
-  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
   color: #a89070;
-  margin-top: 8px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  margin-top: 12px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.05em;
 }
 
 /* Tent Grid */
@@ -150,9 +171,9 @@
   position: relative;
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 24px;
-  max-width: 1000px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
+  max-width: 1200px;
   width: 100%;
   padding: 20px;
 }
@@ -160,6 +181,7 @@
 @media (min-width: 768px) {
   .tent-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
   }
 }
 
@@ -169,7 +191,7 @@
   }
 }
 
-/* Tent Button */
+/* Tent Portal Button */
 .tent-portal {
   display: flex;
   flex-direction: column;
@@ -178,106 +200,374 @@
   border: none;
   cursor: pointer;
   padding: 16px;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
 }
 
 .tent-portal:hover,
 .tent-portal:focus {
-  transform: scale(1.05);
+  transform: scale(1.08) translateY(-8px);
   outline: none;
 }
 
 .tent-portal:focus-visible {
-  outline: 2px solid #d4af37;
-  outline-offset: 4px;
-  border-radius: 8px;
+  outline: 3px solid #d4af37;
+  outline-offset: 8px;
+  border-radius: 12px;
 }
 
+/* Tent Structure */
 .tent-structure {
   position: relative;
-  width: 120px;
-  height: 140px;
+  width: 160px;
+  height: 180px;
 }
 
-.tent-canvas {
+/* Wooden Poles */
+.tent-pole {
+  position: absolute;
+  background: linear-gradient(90deg, #1a1008 0%, #3a2a18 30%, #4a3a28 50%, #3a2a18 70%, #1a1008 100%);
+  border-radius: 3px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.tent-pole-center {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 60px;
+  z-index: 5;
+}
+
+.tent-pole-left {
+  bottom: 0;
+  left: 15%;
+  width: 6px;
+  height: 120px;
+  transform: rotate(-8deg);
+  transform-origin: bottom center;
+}
+
+.tent-pole-right {
+  bottom: 0;
+  right: 15%;
+  width: 6px;
+  height: 120px;
+  transform: rotate(8deg);
+  transform-origin: bottom center;
+}
+
+/* Rope Lashings */
+.tent-rope-lashing {
+  position: absolute;
+  top: 55px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 10px;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      #5a4a30 0px,
+      #5a4a30 2px,
+      #3a2a18 2px,
+      #3a2a18 4px
+    );
+  border-radius: 2px;
+  z-index: 6;
+}
+
+/* Layered Canvas Folds */
+.tent-canvas-layer {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 100px;
-  height: 100px;
-  background: linear-gradient(135deg, #4a3728 0%, #3a2a1e 50%, #2a1a12 100%);
   clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
 }
 
-.tent-portal:hover .tent-canvas {
-  background: linear-gradient(135deg, #5a4738 0%, #4a3a2e 50%, #3a2a22 100%);
+.tent-canvas-back {
+  width: 140px;
+  height: 120px;
+  background: linear-gradient(180deg, 
+    #2a1a10 0%, 
+    #3a2518 30%, 
+    #2a1a10 100%
+  );
+  z-index: 1;
+}
+
+.tent-canvas-mid {
+  width: 130px;
+  height: 115px;
+  background: linear-gradient(180deg, 
+    #4a3020 0%, 
+    #5a3a28 30%, 
+    #4a3020 60%,
+    #3a2518 100%
+  );
+  z-index: 2;
+}
+
+.tent-canvas-front {
+  width: 120px;
+  height: 110px;
+  background: linear-gradient(180deg, 
+    #6a4530 0%, 
+    #7a5038 20%, 
+    #6a4530 50%,
+    #5a3a28 80%,
+    #4a3020 100%
+  );
+  z-index: 3;
   box-shadow: 
     0 4px 20px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(255, 150, 50, 0.3);
+    inset 0 -20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.tent-pole {
+/* Canvas texture overlay */
+.tent-canvas-front::before {
+  content: "";
   position: absolute;
-  top: 0;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  clip-path: inherit;
+}
+
+.tent-portal:hover .tent-canvas-front {
+  background: linear-gradient(180deg, 
+    #7a5540 0%, 
+    #8a6048 20%, 
+    #7a5540 50%,
+    #6a4530 80%,
+    #5a3a28 100%
+  );
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(255, 150, 50, 0.3),
+    inset 0 -20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Tent Entrance */
+.tent-entrance {
+  position: absolute;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
+  width: 40px;
   height: 50px;
-  background: linear-gradient(90deg, #2a1a10 0%, #4a3a28 50%, #2a1a10 100%);
-  border-radius: 2px;
+  background: linear-gradient(180deg, 
+    #0a0505 0%, 
+    #1a0f08 50%,
+    #0a0505 100%
+  );
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  z-index: 4;
+  box-shadow: inset 0 0 20px rgba(255, 100, 30, 0.2);
 }
 
-.tent-flag {
+.tent-portal:hover .tent-entrance {
+  box-shadow: inset 0 0 30px rgba(255, 100, 30, 0.4);
+}
+
+/* Glowing Runes */
+.tent-runes {
   position: absolute;
-  top: 5px;
-  left: calc(50% + 3px);
-  width: 30px;
-  height: 20px;
-  background: linear-gradient(135deg, #8b2020 0%, #6b1515 100%);
-  clip-path: polygon(0 0, 100% 20%, 100% 80%, 0 100%);
-  animation: flagWave 3s ease-in-out infinite;
-  transform-origin: left center;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
 }
 
-@keyframes flagWave {
-  0%, 100% { transform: skewY(0deg); }
-  50% { transform: skewY(3deg); }
+.tent-runes-left {
+  left: 8px;
 }
 
+.tent-runes-right {
+  right: 8px;
+}
+
+.tent-rune {
+  font-size: 1.2rem;
+  color: #4a90c0;
+  text-shadow: 
+    0 0 8px rgba(74, 144, 192, 0.8),
+    0 0 16px rgba(74, 144, 192, 0.5),
+    0 0 24px rgba(74, 144, 192, 0.3);
+  animation: runeGlow 3s ease-in-out infinite;
+}
+
+.tent-runes-left .tent-rune:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.tent-runes-right .tent-rune:nth-child(1) {
+  animation-delay: 1s;
+}
+
+.tent-runes-right .tent-rune:nth-child(2) {
+  animation-delay: 1.5s;
+}
+
+@keyframes runeGlow {
+  0%, 100% { 
+    opacity: 0.6; 
+    text-shadow: 
+      0 0 8px rgba(74, 144, 192, 0.6),
+      0 0 16px rgba(74, 144, 192, 0.3);
+  }
+  50% { 
+    opacity: 1; 
+    text-shadow: 
+      0 0 12px rgba(74, 144, 192, 1),
+      0 0 24px rgba(74, 144, 192, 0.7),
+      0 0 36px rgba(74, 144, 192, 0.4);
+  }
+}
+
+.tent-portal:hover .tent-rune {
+  color: #6ab0e0;
+  text-shadow: 
+    0 0 12px rgba(106, 176, 224, 1),
+    0 0 24px rgba(106, 176, 224, 0.8),
+    0 0 36px rgba(106, 176, 224, 0.5);
+}
+
+/* Torchlight Glow Effects */
 .tent-glow {
   position: absolute;
-  bottom: 10px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 80px;
-  height: 40px;
+  width: 120px;
+  height: 60px;
   background: radial-gradient(ellipse, rgba(255, 150, 50, 0.4) 0%, transparent 70%);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.tent-interior-glow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 40px;
+  background: radial-gradient(ellipse, rgba(255, 80, 20, 0.6) 0%, transparent 70%);
+  opacity: 0.3;
+  z-index: 5;
+  animation: interiorFlicker 4s ease-in-out infinite;
+}
+
+@keyframes interiorFlicker {
+  0%, 100% { opacity: 0.2; transform: translateX(-50%) scale(1); }
+  25% { opacity: 0.4; transform: translateX(-50%) scale(1.1); }
+  50% { opacity: 0.3; transform: translateX(-50%) scale(0.95); }
+  75% { opacity: 0.5; transform: translateX(-50%) scale(1.05); }
 }
 
 .tent-portal:hover .tent-glow {
   opacity: 1;
 }
 
-.tent-sign {
-  margin-top: 16px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #3a2a1e 0%, #2a1a12 100%);
-  border: 2px solid #5a4a3e;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+.tent-portal:hover .tent-interior-glow {
+  opacity: 0.6;
 }
 
-.tent-sign span {
+/* Hide/Leather Sign */
+.tent-hide-sign {
+  position: relative;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tent-sign-rope {
+  position: absolute;
+  top: -12px;
+  width: 2px;
+  height: 16px;
+  background: linear-gradient(180deg, #5a4a30 0%, #3a2a18 100%);
+}
+
+.tent-sign-rope-left {
+  left: 20%;
+  transform: rotate(-15deg);
+}
+
+.tent-sign-rope-right {
+  right: 20%;
+  transform: rotate(15deg);
+}
+
+.tent-sign-hide {
+  padding: 10px 18px;
+  background: linear-gradient(180deg, 
+    #5a4530 0%, 
+    #4a3a28 30%, 
+    #3a2a1e 70%,
+    #2a1a12 100%
+  );
+  border: 2px solid #6a5a48;
+  border-radius: 3px;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* Uneven hide edges */
+.tent-sign-hide::before,
+.tent-sign-hide::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: inherit;
+}
+
+.tent-sign-hide::before {
+  left: -4px;
+  border-radius: 2px 0 0 2px;
+  clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 95%);
+}
+
+.tent-sign-hide::after {
+  right: -4px;
+  border-radius: 0 2px 2px 0;
+  clip-path: polygon(0 0, 100% 8%, 100% 92%, 0 100%);
+}
+
+.tent-sign-hide span {
   font-family: 'Cinzel', serif;
   font-size: 0.85rem;
   color: #d4af37;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  text-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(212, 175, 55, 0.3);
   white-space: nowrap;
+  letter-spacing: 0.05em;
+}
+
+.tent-portal:hover .tent-sign-hide {
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(212, 175, 55, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tent-portal:hover .tent-sign-hide span {
+  text-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.8),
+    0 0 12px rgba(212, 175, 55, 0.5);
 }
 
 /* Tent Interior Styles */
@@ -312,23 +602,23 @@
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background: linear-gradient(135deg, rgba(58, 42, 30, 0.9) 0%, rgba(42, 26, 18, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(58, 42, 30, 0.95) 0%, rgba(42, 26, 18, 0.95) 100%);
   border: 2px solid #5a4a3e;
   border-radius: 8px;
   color: #d4af37;
   font-family: 'Cinzel', serif;
   font-size: 0.9rem;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   transition: all 0.3s ease;
 }
 
 .back-to-village:hover {
-  background: linear-gradient(135deg, rgba(68, 52, 40, 0.95) 0%, rgba(52, 36, 28, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(68, 52, 40, 0.98) 0%, rgba(52, 36, 28, 0.98) 100%);
   border-color: #d4af37;
   box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(212, 175, 55, 0.2);
+    0 4px 16px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(212, 175, 55, 0.25);
 }
 
 .back-rune {
@@ -554,24 +844,43 @@
 @media (max-width: 640px) {
   .tent-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 20px;
   }
 
   .tent-structure {
+    width: 120px;
+    height: 140px;
+  }
+
+  .tent-canvas-back {
+    width: 110px;
+    height: 95px;
+  }
+
+  .tent-canvas-mid {
+    width: 100px;
+    height: 90px;
+  }
+
+  .tent-canvas-front {
     width: 90px;
-    height: 110px;
+    height: 85px;
   }
 
-  .tent-canvas {
-    width: 80px;
-    height: 80px;
+  .tent-entrance {
+    width: 30px;
+    height: 40px;
   }
 
-  .tent-sign {
-    padding: 6px 12px;
+  .tent-rune {
+    font-size: 1rem;
   }
 
-  .tent-sign span {
+  .tent-sign-hide {
+    padding: 8px 14px;
+  }
+
+  .tent-sign-hide span {
     font-size: 0.75rem;
   }
 
