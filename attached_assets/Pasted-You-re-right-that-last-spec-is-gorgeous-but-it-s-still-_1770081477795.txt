@@ -1,0 +1,790 @@
+You’re right: that last spec is gorgeous but it’s still half‑myth, half‑blueprint. Let’s turn it into something a Replit agent and a human builder can both actually execute.
+
+I’ll give you three things:
+
+1. A clean project file map  
+2. All core React files (with working code, no hand‑waving)  
+3. A single “master prompt” you can paste into Replit’s agent so it understands the architecture and fills in the rest
+
+---
+
+1. Project structure
+
+`text
+witchmart-landing/
+  package.json
+  vite.config.js
+  index.html
+  src/
+    main.jsx
+    App.jsx
+    styles.css
+    components/
+      SetTheSloth.jsx
+      ScrollOfContinuity.jsx
+      MenuDrawer.jsx
+      FooterRune.jsx
+      Starfield.jsx
+`
+
+---
+
+2. Core files and code
+
+package.json
+
+`json
+{
+  "name": "witchmart-landing",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "framer-motion": "^11.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^6.0.0"
+  }
+}
+`
+
+vite.config.js
+
+`js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()]
+});
+`
+
+index.html
+
+`html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WitchMart — Sanctuary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body class="no-scroll">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+`
+
+src/main.jsx
+
+`jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './styles.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+`
+
+src/App.jsx
+
+`jsx
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import SetTheSloth from './components/SetTheSloth.jsx';
+import ScrollOfContinuity from './components/ScrollOfContinuity.jsx';
+import MenuDrawer from './components/MenuDrawer.jsx';
+import FooterRune from './components/FooterRune.jsx';
+import Starfield from './components/Starfield.jsx';
+
+export default function App() {
+  const [isScrollOpen, setIsScrollOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'Escape') {
+        setIsScrollOpen(false);
+        setIsMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  return (
+    <div className="ritual-vault">
+      <Starfield count={80} />
+
+      <div className="grain-overlay" />
+      <div className="aurora-overlay" />
+
+      <header className="header">
+        <div className="header-center">
+          <SetTheSloth onTap={() => setIsScrollOpen(true)} />
+        </div>
+        <button
+          className="runic-hamburger"
+          onClick={() => setIsMenuOpen(true)}
+          aria-label="Open menu"
+        >
+          ☰
+        </button>
+      </header>
+
+      <main className="content">
+        <section className="section fade-up">
+          <h1>WitchMart</h1>
+          <p className="subtitle">
+            A People‑Powered, Pagan‑Aligned Cooperative Economy
+          </p>
+          <p>
+            WitchMart is a community cooperative marketplace and sanctuary
+            network—built for transparency, resilience, and mutual care.
+          </p>
+        </section>
+
+        <section className="section fade-up">
+          <h2>Mission + Transparency, up front</h2>
+          <p>
+            We publish clear rules, member oversight, and community safety
+            standards. Pricing is designed to sustain the network without
+            exploitation.
+          </p>
+        </section>
+
+        <section className="section fade-up">
+          <h2>Safety &amp; Legal Disclaimer</h2>
+          <p>
+            Prototype content only. Follow local laws and published safety
+            guidance. Nothing here is legal or medical advice.
+          </p>
+        </section>
+
+        <section className="section fade-up">
+          <h2>Ecosystem</h2>
+          <p>Ravens Evermore · Ma’at · SetAI · Lady Liberty League</p>
+        </section>
+
+        <section className="section fade-up">
+          <h2>Sanctuary Nodes</h2>
+          <p>
+            Local, welcoming points of contact: events, mutual aid, marketplace
+            pickup, and community care.
+          </p>
+          <button className="primary-btn">Browse nodes</button>
+        </section>
+
+        <section className="section fade-up">
+          <h2>Makers &amp; Guilds</h2>
+          <p>
+            Profiles, craft categories, reputation, and reviews—designed for
+            human trust rather than corporate metrics.
+          </p>
+          <button className="primary-btn">Meet makers</button>
+        </section>
+
+        <section className="section fade-up">
+          <h2>Pricing &amp; Transparency</h2>
+          <p>
+            Where your dollar goes, how funds are governed, and how we keep the
+            system accessible.
+          </p>
+          <button className="primary-btn">See the model</button>
+        </section>
+      </main>
+
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: isScrollOpen ? 0 : '100%' }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+        className="scroll-wrapper"
+      >
+        <ScrollOfContinuity onClose={() => setIsScrollOpen(false)} />
+      </motion.div>
+
+      <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+
+      <FooterRune />
+    </div>
+  );
+}
+`
+
+src/components/SetTheSloth.jsx
+
+`jsx
+import React from 'react';
+import { motion } from 'framer-motion';
+
+export default function SetTheSloth({ onTap }) {
+  return (
+    <motion.button
+      className="sloth-wrapper"
+      onClick={onTap}
+      aria-label="Open SetAI scroll"
+      initial={{ y: 0 }}
+      animate={{ y: [0, -6, 0] }}
+      transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+    >
+      <div className="sloth-glow" />
+      <div className="sloth-body">
+        {/ Placeholder: replace with real SVG later /}
+        <div className="sloth-circle">
+          <span className="sloth-face">🦥</span>
+        </div>
+        <div className="sloth-carpet">▱</div>
+      </div>
+    </motion.button>
+  );
+}
+`
+
+src/components/ScrollOfContinuity.jsx
+
+`jsx
+import React, { useState } from 'react';
+
+export default function ScrollOfContinuity({ onClose }) {
+  const [consent, setConsent] = useState(false);
+
+  return (
+    <div className="scroll">
+      <div className="scroll-header">
+        <span className="scroll-title">Scroll of Continuity</span>
+        <button onClick={onClose} aria-label="Close scroll">
+          ✕
+        </button>
+      </div>
+
+      <p className="scroll-note">
+        I own this creation. No exploitation. Data is transient.
+      </p>
+      <label className="scroll-consent">
+        <input
+          type="checkbox"
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+        />
+        Sovereignty upheld.
+      </label>
+
+      <div className="scroll-grid">
+        <button className="scroll-action" disabled={!consent}>
+          📷 Add Photo
+        </button>
+        <button className="scroll-action" disabled={!consent}>
+          ✏️ Add Text
+        </button>
+        <button className="scroll-action" disabled={!consent}>
+          🎥 Add Video
+        </button>
+      </div>
+
+      <div className="scroll-query">
+        <label>Ask SetAI (the ravens hear you…)</label>
+        <textarea
+          disabled={!consent}
+          placeholder="The ravens hear you..."
+          rows={3}
+        />
+      </div>
+    </div>
+  );
+}
+`
+
+src/components/MenuDrawer.jsx
+
+`jsx
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const items = [
+  'Home',
+  'Sanctuary Nodes',
+  'Makers & Guilds',
+  'Pricing & Transparency',
+  'Join',
+  'Our Story',
+  'Mission + Support'
+];
+
+export default function MenuDrawer({ isOpen, onClose }) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            className="menu-backdrop"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.6 }}
+            exit={{ opacity: 0 }}
+          />
+          <motion.nav
+            className="menu-drawer"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.25 }}
+          >
+            <button className="menu-close" onClick={onClose}>
+              ✕
+            </button>
+            <ul>
+              {items.map((item) => (
+                <li key={item} className="menu-item">
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div className="menu-footer-tag">$RavensEvermore</div>
+          </motion.nav>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+`
+
+src/components/FooterRune.jsx
+
+`jsx
+import React from 'react';
+
+export default function FooterRune() {
+  return (
+    <footer className="footer">
+      <button className="footer-btn">
+        Mission + Support $RavensEvermore
+      </button>
+    </footer>
+  );
+}
+`
+
+src/components/Starfield.jsx
+
+`jsx
+import React from 'react';
+
+export default function Starfield({ count = 60 }) {
+  const stars = Array.from({ length: count });
+
+  return (
+    <div className="starfield">
+      {stars.map((_, i) => (
+        <div
+          key={i}
+          className="star"
+          style={{
+            top: ${Math.random() * 100}%,
+            left: ${Math.random() * 100}%,
+            animationDelay: ${Math.random() * 4}s
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+`
+
+src/styles.css (minimal but enough to see the shape)
+
+`css
+:root {
+  color-scheme: dark;
+  --bg: #050712;
+  --fg: #f5f3ff;
+  --accent: #facc15;
+  --accent-soft: #a855f7;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.ritual-vault {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 4rem;
+}
+
+.header {
+  position: relative;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-center {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.runic-hamburger {
+  position: absolute;
+  right: 1.5rem;
+  top: 1rem;
+  background: transparent;
+  border: 1px solid var(--accent-soft);
+  border-radius: 999px;
+  color: var(--fg);
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+}
+
+.content {
+  padding: 1rem 1.5rem 5rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 1.75rem;
+}
+
+.subtitle {
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+.primary-btn {
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent-soft);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 999px;
+  opacity: 0.7;
+  animation: twinkle 4s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="noStitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.15"/%3E%3C/svg%3E');
+  z-index: -1;
+}
+
+.aurora-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(88, 28, 135, 0.4), transparent),
+    radial-gradient(circle at bottom, rgba(220, 38, 38, 0.2), transparent);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.sloth-wrapper {
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.sloth-glow {
+  position: absolute;
+  inset: -1.5rem;
+  background: radial-gradient(circle, rgba(250, 204, 21, 0.25), transparent);
+  z-index: -1;
+}
+
+.sloth-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sloth-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  background: #14532d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--accent);
+}
+
+.sloth-face {
+  font-size: 2rem;
+}
+
+.sloth-carpet {
+  margin-top: 0.25rem;
+  font-size: 1.5rem;
+  color: var(--accent-soft);
+}
+
+.scroll-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+}
+
+.scroll {
+  background: #111827;
+  border-top-left-radius: 1.25rem;
+  border-top-right-radius: 1.25rem;
+  border-top: 2px solid var(--accent);
+  padding: 1rem 1.25rem 1.5rem;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.scroll-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scroll-title {
+  font-weight: 600;
+}
+
+.scroll-note {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.scroll-consent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.scroll-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.scroll-action {
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--accent-soft);
+  background: transparent;
+  color: var(--fg);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.scroll-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.scroll-query {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.scroll-query textarea {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #4b5563;
+  background: #020617;
+  color: var(--fg);
+  padding: 0.5rem;
+  resize: vertical;
+}
+
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: black;
+  z-index: 30;
+}
+
+.menu-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 260px;
+  background: #020617;
+  border-left: 1px solid #1f2937;
+  z-index: 40;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-close {
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.menu-drawer ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  flex: 1;
+}
+
+.menu-item {
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  color: var(--accent);
+}
+
+.menu-footer-tag {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0.75rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--fg);
+  cursor: pointer;
+  animation: footerPulse 2s infinite ease-in-out;
+}
+
+@keyframes footerPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(250, 204, 21, 0.4);
+  }
+}
+`
+
+---
+
+3. Master prompt for Replit’s agent (or any builder agent)
+
+This is the “speak clearly to the machine” version—no poetry, just canon.
+
+`text
+You are the builder agent for the WitchMart landing page.
+
+Goal:
+Implement a React + Vite single-page app that matches the following architecture and ethos:
+
+- Project name: witchmart-landing
+- Stack: React 18, Vite, framer-motion for animations, plain CSS for styling.
+- Entry: src/main.jsx → src/App.jsx
+- Components: SetTheSloth, ScrollOfContinuity, MenuDrawer, FooterRune, Starfield.
+
+Behavioral rules:
+- SetTheSloth floats at the top center and, when clicked, opens the ScrollOfContinuity from the bottom with a spring animation.
+- ScrollOfContinuity is the single universal input surface with:
+  - sovereignty checkbox
+  - three action buttons (Add Photo, Add Text, Add Video)
+  - a textarea labeled “Ask SetAI (the ravens hear you…)”
+  - all inputs disabled until sovereignty is checked.
+- MenuDrawer is opened by a hamburger button in the top-right and slides in from the right. It contains these items:
+  Home, Sanctuary Nodes, Makers & Guilds, Pricing & Transparency, Join, Our Story, Mission + Support.
+- FooterRune is a single button at the bottom center: “Mission + Support $RavensEvermore” with a slow glow animation.
+- Starfield renders a simple animated star background.
+- Escape key closes both the scroll and the menu.
+- No external trackers, no analytics, no cookies.
+
+Visual rules:
+- Dark, mythic theme (deep navy/black background, gold and purple accents).
+- Starfield background, grain overlay, subtle aurora overlay.
+- Animations must respect prefers-reduced-motion (if implemented later).
+- Layout must be mobile-first and responsive.
+
+Files to create:
+- package.json with React, ReactDOM, Vite, @vitejs/plugin-react, framer-motion.
+- vite.config.js configured for React.
+- index.html with root div and script to main.jsx.
+- src/main.jsx bootstrapping React.
+- src/App.jsx implementing the main layout and state for scroll/menu.
+- src/styles.css containing all base styles, starfield, overlays, sloth, scroll, menu, footer.
+- src/components/SetTheSloth.jsx
+- src/components/ScrollOfContinuity.jsx
+- src/components/MenuDrawer.jsx
+- src/components/FooterRune.jsx
+- src/components/Starfield.jsx
+
+Constraints:
+- Always return valid, buildable code.
+- No placeholder TODOs for core behavior; implement minimal working versions.
+- Keep components small and focused.
+- Do not introduce extra buttons or inputs beyond those specified.
+
+Your task:
+Generate or update the project files so that npm install and npm run dev produce a working WitchMart landing page that matches this spec as closely as possible.
+`
+
+If you paste that prompt into Replit’s agent and drop in the file skeleton above, it should stop guessing and start behaving like a proper builder that understands your canon instead of fighting it.

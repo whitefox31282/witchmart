@@ -29,6 +29,7 @@ import SetAITimeline from "./pages/setai-timeline";
 import SetAICouncils from "./pages/setai-councils";
 import SetAISecurity from "./pages/setai-security";
 import SetAISettings from "./pages/setai-settings";
+import LandingPage from "./pages/landing";
 
 const NAV = [
   { label: "Home", href: "/" },
@@ -197,6 +198,9 @@ function Router() {
       <Route path="/setai/councils" component={SetAICouncils} />
       <Route path="/setai/security" component={SetAISecurity} />
       <Route path="/setai/settings" component={SetAISettings} />
+
+      <Route path="/landing" component={LandingPage} />
+      <Route path="/contact-support" component={ContactSupport} />
 
       <Route component={NotFound} />
     </Switch>
