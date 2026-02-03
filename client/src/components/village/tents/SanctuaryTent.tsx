@@ -174,6 +174,7 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
             zIndex: 200
           }}
           onClick={() => setShowForm(false)}
+          data-testid="modal-add-node"
         >
           <div 
             className="wooden-table"
@@ -187,6 +188,7 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
               <button
                 onClick={() => setShowForm(false)}
                 style={{ background: "none", border: "none", color: "#a89070", cursor: "pointer" }}
+                data-testid="button-close-modal"
               >
                 <X size={24} />
               </button>
