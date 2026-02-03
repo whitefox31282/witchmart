@@ -48,9 +48,16 @@ export function SetAIConsentModal({ onConsent, onDecline }: SetAIConsentModalPro
           </button>
           <button
             onClick={() => {
-              setConsent(true);
-              logTransparencyEvent("consent_granted", "User accepted sovereignty terms");
-              onConsent();
+              try {
+                setConsent(true);
+                logTransparencyEvent("consent_granted", "User accepted sovereignty terms");
+                onConsent();
+                // Force reload to ensure consent takes effect
+                window.location.reload();
+              } catch (e) {
+                console.error("Consent error:", e);
+                window.location.reload();
+              }
             }}
             className="rounded-full bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-amber-500"
             data-testid="button-consent-accept"
