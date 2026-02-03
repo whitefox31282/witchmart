@@ -490,4 +490,189 @@
   .menu-drawer {
     width: 100%;
   }
+  
+  .header-brand {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .header-sloth-image {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .sloth-corner {
+    bottom: 5rem;
+    right: 0.5rem;
+  }
+  
+  .sloth-corner .sloth-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .sloth-corner .sloth-carpet {
+    width: 50px;
+  }
+}
+
+/* Norse/Viking Theme */
+.norse-theme {
+  --norse-gold: #d4a017;
+  --norse-bronze: #cd7f32;
+  --norse-steel: #71797e;
+  --norse-blood: #8b0000;
+  --norse-ice: #a5c9ca;
+}
+
+.norse-aurora {
+  background: 
+    radial-gradient(circle at top, rgba(13, 27, 42, 0.9), transparent),
+    radial-gradient(circle at bottom right, rgba(139, 0, 0, 0.2), transparent),
+    radial-gradient(circle at top left, rgba(212, 160, 23, 0.15), transparent);
+}
+
+.norse-header {
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-sloth-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--norse-gold);
+  box-shadow: 0 0 20px rgba(212, 160, 23, 0.5);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.norse-title {
+  font-size: 2rem;
+  color: var(--norse-gold);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  margin: 0;
+}
+
+.norse-tagline {
+  font-size: 0.9rem;
+  color: var(--norse-ice);
+  opacity: 0.9;
+  margin: 0;
+}
+
+.norse-heading {
+  color: var(--norse-gold);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.norse-subtitle {
+  color: var(--norse-ice);
+  font-size: 1.2rem;
+}
+
+.norse-ecosystem {
+  color: var(--norse-bronze);
+}
+
+.norse-rune-border {
+  border: 2px solid var(--norse-gold);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.norse-rune-border::before,
+.norse-rune-border::after {
+  content: "ᚦ";
+  position: absolute;
+  font-size: 1.5rem;
+  color: var(--norse-gold);
+  opacity: 0.6;
+}
+
+.norse-rune-border::before {
+  top: -0.75rem;
+  left: 1rem;
+}
+
+.norse-rune-border::after {
+  bottom: -0.75rem;
+  right: 1rem;
+}
+
+.norse-btn {
+  border-color: var(--norse-gold);
+  background: rgba(212, 160, 23, 0.1);
+}
+
+.norse-btn:hover {
+  border-color: var(--norse-bronze);
+  background: rgba(212, 160, 23, 0.25);
+  box-shadow: 0 0 20px rgba(212, 160, 23, 0.5);
+}
+
+/* Set the Sloth in bottom right corner */
+.sloth-corner {
+  position: fixed;
+  bottom: 6rem;
+  right: 1rem;
+  z-index: 30;
+}
+
+.sloth-corner .sloth-wrapper {
+  transform: scale(0.8);
+}
+
+.sloth-corner .sloth-glow {
+  background: radial-gradient(circle, rgba(212, 160, 23, 0.4), transparent);
+}
+
+/* Scroll unlock feedback */
+.scroll-unlocked {
+  border-color: var(--norse-gold);
+  box-shadow: 0 0 30px rgba(212, 160, 23, 0.4);
+}
+
+.consent-active {
+  color: var(--norse-gold);
+  font-weight: 600;
+}
+
+.consent-active .consent-text {
+  animation: runeGlow 1.5s ease-in-out;
+}
+
+@keyframes runeGlow {
+  0% { text-shadow: none; }
+  50% { text-shadow: 0 0 20px rgba(212, 160, 23, 0.8); }
+  100% { text-shadow: 0 0 10px rgba(212, 160, 23, 0.4); }
+}
+
+.scroll-unlocked-msg {
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(212, 160, 23, 0.15);
+  border: 1px solid var(--norse-gold);
+  border-radius: 0.5rem;
+  color: var(--norse-gold);
+  text-align: center;
+  font-size: 0.9rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

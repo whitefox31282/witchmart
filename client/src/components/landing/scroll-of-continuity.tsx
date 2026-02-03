@@ -16,7 +16,6 @@ export default function ScrollOfContinuity({ onClose }: ScrollOfContinuityProps)
     setIsLoading(true);
     setResponse("");
     
-    // Visual feedback - backend integration planned for future
     setTimeout(() => {
       setResponse("The ravens have heard you. Your message echoes through the network... (SetAI backend integration coming soon)");
       setIsLoading(false);
@@ -24,7 +23,7 @@ export default function ScrollOfContinuity({ onClose }: ScrollOfContinuityProps)
   };
 
   return (
-    <div className="scroll" data-testid="scroll-of-continuity">
+    <div className={`scroll ${consent ? 'scroll-unlocked' : ''}`} data-testid="scroll-of-continuity">
       <div className="scroll-header">
         <span className="scroll-title font-cinzel">Scroll of Continuity</span>
         <button onClick={onClose} aria-label="Close scroll" data-testid="button-close-scroll">
@@ -35,15 +34,23 @@ export default function ScrollOfContinuity({ onClose }: ScrollOfContinuityProps)
       <p className="scroll-note">
         I own this creation. No exploitation. Data is transient.
       </p>
-      <label className="scroll-consent">
+      <label className={`scroll-consent ${consent ? 'consent-active' : ''}`}>
         <input
           type="checkbox"
           checked={consent}
           onChange={(e) => setConsent(e.target.checked)}
           data-testid="checkbox-sovereignty"
         />
-        Sovereignty upheld.
+        <span className="consent-text">
+          {consent ? "⚔️ Sovereignty Upheld — The Scroll Awakens ⚔️" : "Sovereignty upheld."}
+        </span>
       </label>
+
+      {consent && (
+        <div className="scroll-unlocked-msg font-cinzel">
+          The runes glow. You may proceed, warrior.
+        </div>
+      )}
 
       <div className="scroll-grid">
         <button className="scroll-action" disabled={!consent} data-testid="button-add-photo">
