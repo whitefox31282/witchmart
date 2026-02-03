@@ -334,6 +334,38 @@
   opacity: 0.5;
 }
 
+.scroll-submit {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--landing-accent);
+  background: rgba(250, 204, 21, 0.15);
+  color: var(--landing-fg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scroll-submit:hover:not(:disabled) {
+  background: rgba(250, 204, 21, 0.3);
+  box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+}
+
+.scroll-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.scroll-response {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid var(--landing-accent-soft);
+  color: var(--landing-fg);
+  font-style: italic;
+  line-height: 1.5;
+}
+
 .menu-backdrop {
   position: fixed;
   inset: 0;

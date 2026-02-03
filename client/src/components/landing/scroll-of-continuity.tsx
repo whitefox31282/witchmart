@@ -6,6 +6,22 @@ interface ScrollOfContinuityProps {
 
 export default function ScrollOfContinuity({ onClose }: ScrollOfContinuityProps) {
   const [consent, setConsent] = useState(false);
+  const [query, setQuery] = useState("");
+  const [response, setResponse] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!query.trim() || !consent) return;
+    
+    setIsLoading(true);
+    setResponse("");
+    
+    // Visual feedback - backend integration planned for future
+    setTimeout(() => {
+      setResponse("The ravens have heard you. Your message echoes through the network... (SetAI backend integration coming soon)");
+      setIsLoading(false);
+    }, 1500);
+  };
 
   return (
     <div className="scroll" data-testid="scroll-of-continuity">
@@ -47,8 +63,23 @@ export default function ScrollOfContinuity({ onClose }: ScrollOfContinuityProps)
           disabled={!consent}
           placeholder="The ravens hear you..."
           rows={3}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           data-testid="textarea-setai-query"
         />
+        <button 
+          className="scroll-submit font-cinzel" 
+          disabled={!consent || !query.trim() || isLoading}
+          onClick={handleSubmit}
+          data-testid="button-submit-query"
+        >
+          {isLoading ? "Ravens listening..." : "Send to the Ravens"}
+        </button>
+        {response && (
+          <div className="scroll-response" data-testid="text-setai-response">
+            {response}
+          </div>
+        )}
       </div>
     </div>
   );
