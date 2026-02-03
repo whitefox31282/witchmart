@@ -1,0 +1,277 @@
+You are the builder agent for WitchMart. You are working ONLY inside the Makers & Guilds tent. 
+Do not modify the homepage, the Norse village, the tent system, or any other tent.
+
+Your task:
+Implement the complete Makers & Guilds system with all tabs, sub-tabs, theme packs, guild listing cards, and the new Game Creators Guild. 
+Everything below is required. No improvisation.
+
+============================================================
+SECTION 1 — GUILD STRUCTURE (TOP LEVEL)
+============================================================
+
+The Makers & Guilds tent contains the following guild categories. 
+Each category is a TAB. 
+Each tab must open its own landing page.
+
+Guild Tabs (in this exact order):
+1. Game Creators Guild
+2. Artisans Guild
+3. Herbalists & Apothecaries Guild
+4. Diviners & Seers Guild
+5. Smiths & Forgers Guild
+6. Builders & Makers Guild
+7. Textile & Fiber Guild
+8. Ritual & Sacred Craft Guild
+9. Digital Makers Guild
+10. Educators & Skillmasters Guild
+
+Each tab must:
+- Be clickable
+- Load its own landing page
+- Display the guild name at the top
+- Show subcategories as clickable filters
+- Display Guild Listing Cards under each subcategory
+- Use the theme system described below
+
+============================================================
+SECTION 2 — GAME CREATORS GUILD (NEW)
+============================================================
+
+This guild appears BEFORE all others.
+
+Tabs inside this guild (each must open its own landing page):
+- Developers
+- Testers
+- Creators
+- Modders
+- Artists
+- Sound & Music
+- Tools & Engines
+
+Each landing page must:
+- Display the tab name
+- Use placeholder content for now
+- Support theme packs
+- Follow the existing tent interior layout
+
+============================================================
+SECTION 3 — GUILD SUBCATEGORIES (ALL GUILDS)
+============================================================
+
+Each guild has its own subcategories. 
+These must appear as clickable filters on the guild landing page.
+
+-----------------------------------------
+Artisans Guild
+-----------------------------------------
+- Leatherwork
+- Woodcraft
+- Metalwork
+- Pottery & Ceramics
+- Textiles & Weaving
+- Jewelry
+- Bone & Antler Craft
+- Rune Carving
+
+-----------------------------------------
+Herbalists & Apothecaries Guild
+-----------------------------------------
+- Herbal Remedies
+- Teas & Tinctures
+- Salves & Oils
+- Incense & Resins
+- Foraged Goods
+- Ritual Herbs
+
+-----------------------------------------
+Diviners & Seers Guild
+-----------------------------------------
+- Tarot & Oracle Readers
+- Rune Readers
+- Mediumship
+- Dream Interpretation
+- Energy Work
+- Astrology
+
+-----------------------------------------
+Smiths & Forgers Guild
+-----------------------------------------
+- Blacksmithing
+- Blade Forging
+- Toolmaking
+- Armor Craft
+- Metal Casting
+
+-----------------------------------------
+Builders & Makers Guild
+-----------------------------------------
+- Furniture
+- Shelters & Structures
+- Carved Goods
+- Household Tools
+- Custom Builds
+
+-----------------------------------------
+Textile & Fiber Guild
+-----------------------------------------
+- Sewing
+- Knitting & Crochet
+- Embroidery
+- Cloaks & Garments
+- Quilts
+- Ritual Clothing
+
+-----------------------------------------
+Ritual & Sacred Craft Guild
+-----------------------------------------
+- Altars
+- Wands & Staves
+- Chalices
+- Athames
+- Ritual Kits
+- Spell Jars
+- Sacred Art
+
+-----------------------------------------
+Digital Makers Guild
+-----------------------------------------
+- Digital Art
+- Logos & Branding
+- Websites
+- 3D Printing
+- Virtual Ritual Tools
+- Music & Soundscapes
+
+-----------------------------------------
+Educators & Skillmasters Guild
+-----------------------------------------
+- Craft Classes
+- Spiritual Classes
+- Survival Skills
+- Homesteading
+- Fishing (Paul Yeto’s classes)
+- Workshops & Courses
+
+============================================================
+SECTION 4 — GUILD LISTING CARD (MANDATORY)
+============================================================
+
+Every maker, guild, or creator listing must use the Guild Listing Card.
+
+Each card MUST include:
+- Display Name
+- Guild Category
+- Subcategory
+- Profile Image or Symbol (optional)
+- Description
+- Social & Platform Links:
+    - Discord
+    - YouTube
+    - TikTok
+    - Instagram
+    - Website
+    - Shop link (Etsy, Shopify, etc.)
+    - Email contact (optional)
+- “View Full Profile” button
+
+Social links must be clickable icons.
+
+============================================================
+SECTION 5 — THEME PACK SYSTEM (MANDATORY)
+============================================================
+
+Each guild listing includes a field:
+theme: "dnd" | "wow" | "pathfinder" | "elderscrolls" | "norse" | "egyptian" | "celtic" | "slavic" | "custom"
+
+When a user opens a guild tab or sub-tab:
+1. Detect the theme
+2. Load the correct theme pack
+3. Apply theme to:
+   - Background
+   - Borders
+   - Fonts
+   - Icons
+   - Color palette
+   - Decorative elements
+
+Do NOT use copyrighted assets. 
+Use original, theme-inspired designs.
+
+Theme examples:
+
+Dungeons & Dragons:
+- Aged parchment
+- Wax seals
+- Dragon-scale borders
+- Dice icons
+
+World of Warcraft:
+- Stone borders
+- Metallic trim
+- Fantasy UI frames (original)
+
+Pathfinder:
+- Scrollwork
+- Compass motifs
+- Adventure parchment
+
+Elder Scrolls:
+- Weathered stone
+- Nordic carvings
+- Cold metallic accents
+
+Norse:
+- Knotwork
+- Runes
+- Woodgrain textures
+
+Egyptian:
+- Papyrus
+- Gold/black palette
+- Hieroglyphic dividers
+
+Celtic:
+- Green knotwork
+- Spirals
+- Bronze accents
+
+Slavic:
+- Embroidery patterns
+- Woodcut borders
+- Folk symbols
+
+============================================================
+SECTION 6 — TAB & SUB-TAB BEHAVIOR
+============================================================
+
+Each guild tab:
+- Opens its own landing page
+- Loads subcategories as filters
+- Displays Guild Listing Cards
+
+Each sub-tab:
+- Loads its own themed content section
+- Filters listings by subcategory
+- Applies the theme pack
+
+============================================================
+SECTION 7 — SCOPE LIMITATION
+============================================================
+
+You are ONLY modifying:
+- Makers & Guilds tent
+- Tab system
+- Sub-tab system
+- Theme packs
+- Guild Listing Cards
+- Game Creators Guild placeholder pages
+
+You must NOT modify:
+- Homepage
+- Norse village
+- Tent system
+- Scroll of Continuity
+- Any other tent interiors
+- Backend logic
+
+Follow the blueprint precisely.
