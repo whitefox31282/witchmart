@@ -17,7 +17,7 @@ export function SetAIFooter() {
   };
 
   return (
-    <footer className="mt-auto border-t border-forest/20 bg-midnight py-8" data-testid="footer-setai">
+    <footer className="mt-auto border-t border-purple-700/20 bg-midnight py-8" data-testid="footer-setai">
       <div className="mx-auto max-w-6xl px-4 text-center">
         <div className="flex items-center justify-center gap-2">
           <span className="text-xl">🦥</span>

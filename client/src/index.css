@@ -214,19 +214,22 @@
 @layer utilities {
   /* Mythic color utilities for SetAI components */
   .bg-midnight { background-color: #0A1F44; }
-  .bg-forest { background-color: #2E4A2E; }
+  .bg-forest { background-color: #5D3A8C; }
   .bg-parchment { background-color: #F5E8C7; }
   .bg-iron { background-color: #4B4B4B; }
+  .bg-royal { background-color: #5D3A8C; }
   
   .text-midnight { color: #0A1F44; }
-  .text-forest { color: #2E4A2E; }
+  .text-forest { color: #7B4DB8; }
   .text-parchment { color: #F5E8C7; }
   .text-iron { color: #4B4B4B; }
+  .text-royal { color: #7B4DB8; }
   
   .border-midnight { border-color: #0A1F44; }
-  .border-forest { border-color: #2E4A2E; }
+  .border-forest { border-color: #5D3A8C; }
   .border-parchment { border-color: #F5E8C7; }
   .border-iron { border-color: #4B4B4B; }
+  .border-royal { border-color: #5D3A8C; }
   
   .font-cinzel { font-family: 'Cinzel', serif; }
   .font-inter { font-family: 'Inter', sans-serif; }

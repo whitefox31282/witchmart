@@ -69,8 +69,8 @@ WitchMart is a member-owned, Pagan-aligned cooperative marketplace and sanctuary
 - **Principles**: Transparency, Voluntary (no pressure), Community Ownership, Clarity
 
 ### Mythic Design System
-- **Colors**: Midnight (#0A1F44), Forest (#2E4A2E), Parchment (#F5E8C7), Iron (#4B4B4B)
-- **High-Contrast Text**: #e8dcc8 (light tan), #c5baa8 (medium tan), #d4af37 (gold) - WCAG-compliant
+- **Colors**: Midnight (#0A1F44), Royal Purple (#5D3A8C), Parchment (#F5E8C7), Iron (#4B4B4B)
+- **High-Contrast Text**: #e8dcc8 (light tan), #c5baa8 (medium tan), #d4af37 (gold), #7B4DB8 (royal purple) - WCAG-compliant
 - **Fonts**: Cinzel (runic headers), Merriweather (body)
 - **Imagery**: Set the Sloth (🦥) as guardian (replaced eagles), runes as guidance, Yggdrasil knotwork
 - **SetSlothBuddhaPose**: `client/src/components/SetSlothBuddhaPose.tsx` - Canonical Set the Sloth on flying carpet in Buddha pose

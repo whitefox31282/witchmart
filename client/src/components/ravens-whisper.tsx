@@ -50,7 +50,7 @@ export function RavensWhisper() {
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" data-testid="modal-ravens-whisper">
-          <div className="mx-4 w-full max-w-md rounded-2xl border-2 border-forest/40 bg-midnight p-6 shadow-2xl">
+          <div className="mx-4 w-full max-w-md rounded-2xl border-2 border-purple-700/40 bg-midnight p-6 shadow-2xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🦥</span>
@@ -69,7 +69,7 @@ export function RavensWhisper() {
               The ravens watch. Speak your truth.
             </p>
 
-            <div className="mt-4 rounded-xl border border-forest/20 bg-iron/30 p-3">
+            <div className="mt-4 rounded-xl border border-purple-700/20 bg-iron/30 p-3">
               <p className="text-xs text-parchment/60">
                 This is a safe space. Your message is transient and not stored permanently.
                 If you're in crisis, call 988 or text HOME to 741741.
@@ -80,7 +80,7 @@ export function RavensWhisper() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="What weighs on your spirit?"
-              className="mt-4 h-32 w-full resize-none rounded-xl border border-forest/30 bg-iron/20 p-3 text-sm text-parchment placeholder:text-parchment/40 focus:border-forest focus:outline-none"
+              className="mt-4 h-32 w-full resize-none rounded-xl border border-purple-700/30 bg-iron/20 p-3 text-sm text-parchment placeholder:text-parchment/40 focus:border-purple-500 focus:outline-none"
               data-testid="textarea-ravens-whisper"
             />
 
@@ -95,7 +95,7 @@ export function RavensWhisper() {
               <button
                 onClick={handleSend}
                 disabled={!message.trim()}
-                className="rounded-full bg-forest px-4 py-2 text-sm font-semibold text-parchment shadow transition hover:bg-forest/80 disabled:opacity-50"
+                className="rounded-full bg-purple-700 px-4 py-2 text-sm font-semibold text-parchment shadow transition hover:bg-purple-600 disabled:opacity-50"
                 data-testid="button-whisper-send"
               >
                 Send

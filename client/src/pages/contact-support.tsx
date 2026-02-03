@@ -144,7 +144,7 @@ export default function ContactSupport() {
               />
             </label>
 
-            <div className="rounded-xl border border-forest/20 bg-forest/5 p-4">
+            <div className="rounded-xl border border-purple-700/20 bg-purple-900/10 p-4">
               <label className="flex items-start gap-3">
                 <input type="checkbox" required className="mt-1" data-testid="checkbox-contact-consent" />
                 <span className="text-xs text-muted-foreground">
