@@ -7,7 +7,7 @@ const data = [
   { name: "Accessibility & grants", value: 12 },
 ];
 
-const COLORS = ["#3D5A40", "#D4AF37", "#5E4636", "#2F4B3A"];
+const COLORS = ["#5D3A8C", "#D4AF37", "#5E4636", "#7B4DB8"];
 
 export default function PricingTransparency() {
   return (
