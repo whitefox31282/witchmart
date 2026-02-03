@@ -81,7 +81,7 @@ export default function ContactSupport() {
     <div className="space-y-10">
       <header className="space-y-3">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">🦅</span>
+          <span className="text-3xl">🦥</span>
           <h1 className="wm-hero-title text-3xl font-semibold" data-testid="text-contact-title">
             Contact the Council
           </h1>
@@ -167,7 +167,7 @@ export default function ContactSupport() {
 
         <aside className="rounded-2xl border bg-card p-6 shadow-sm" role="complementary">
           <div className="flex items-center gap-2">
-            <span>🦅</span>
+            <span>🦥</span>
             <div className="text-sm font-semibold" data-testid="text-contact-support-title">
               SetAI Protection
             </div>

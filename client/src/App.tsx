@@ -31,6 +31,8 @@ import SetAISecurity from "./pages/setai-security";
 import SetAISettings from "./pages/setai-settings";
 import LandingPage from "./pages/landing";
 import NorseVillage from "./pages/norse-village";
+import GamingGuild from "./pages/gaming-guild";
+import GamingSafety from "./pages/gaming-safety";
 
 const NAV = [
   { label: "Home", href: "/" },
@@ -90,7 +92,7 @@ function SiteShell({ children }: { children: React.ReactNode }) {
                 className="grid size-9 place-items-center rounded-xl border bg-card shadow-sm"
                 aria-hidden="true"
               >
-                <span className="text-xl">🦅</span>
+                <span className="text-xl">🦥</span>
               </div>
               <div className="leading-tight">
                 <div className="wm-hero-title text-base font-semibold">WitchMart</div>
@@ -202,6 +204,9 @@ function Router() {
 
       <Route path="/landing" component={LandingPage} />
       <Route path="/contact-support" component={ContactSupport} />
+
+      <Route path="/gaming-guild" component={GamingGuild} />
+      <Route path="/gaming-safety" component={GamingSafety} />
 
       <Route component={NotFound} />
     </Switch>

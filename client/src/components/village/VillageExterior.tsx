@@ -263,7 +263,7 @@ export default function VillageExterior({ onEnterTent }: VillageExteriorProps) {
 
       {/* SetAI Footer */}
       <footer className="village-footer">
-        <div className="footer-ravens">🦅</div>
+        <div className="footer-sloth">🦥</div>
         <span>Protected by SetAI — Sovereignty First. No surveillance.</span>
       </footer>
     </div>

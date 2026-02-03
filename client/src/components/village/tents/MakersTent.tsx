@@ -1,8 +1,20 @@
+import { useState } from "react";
+import { Link } from "wouter";
 import BackToVillage from "../BackToVillage";
 
 interface MakersTentProps {
   onReturn: () => void;
 }
+
+const GUILDS = [
+  { name: "Pottery & Ceramics", icon: "🏺", desc: "Handcrafted vessels, ritual bowls, and sacred containers" },
+  { name: "Herbcraft", icon: "🌿", desc: "Medicinal herbs, tinctures, and botanical preparations" },
+  { name: "Leatherwork", icon: "🛡️", desc: "Journals, pouches, belts, and protective gear" },
+  { name: "Metalwork", icon: "⚔️", desc: "Jewelry, tools, ritual blades, and decorative pieces" },
+  { name: "Textiles", icon: "🧵", desc: "Weavings, altar cloths, cloaks, and ceremonial garments" },
+  { name: "Woodcraft", icon: "🪵", desc: "Wands, staffs, runes, and carved sacred objects" },
+  { name: "Gaming Guild", icon: "🎮", desc: "Digital realms, tabletop adventures, and community gaming", isLink: true, href: "/gaming-guild" },
+];
 
 export default function MakersTent({ onReturn }: MakersTentProps) {
   return (
@@ -15,6 +27,13 @@ export default function MakersTent({ onReturn }: MakersTentProps) {
           <p>Craft Workshop</p>
         </header>
 
+        {/* Tagline */}
+        <div className="scroll-display" style={{ marginBottom: 24, textAlign: "center" }}>
+          <p style={{ fontSize: "1.1rem", fontStyle: "italic", margin: 0 }}>
+            Where our elders come to teach — custom items, craft, knowledge, and tradition.
+          </p>
+        </div>
+
         <div className="hanging-banner">
           <span>Meet the Makers</span>
         </div>
@@ -26,23 +45,38 @@ export default function MakersTent({ onReturn }: MakersTentProps) {
         </div>
 
         <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}>
-          {[
-            { name: "Pottery & Ceramics", icon: "🏺", desc: "Handcrafted vessels, ritual bowls, and sacred containers" },
-            { name: "Herbcraft", icon: "🌿", desc: "Medicinal herbs, tinctures, and botanical preparations" },
-            { name: "Leatherwork", icon: "🛡️", desc: "Journals, pouches, belts, and protective gear" },
-            { name: "Metalwork", icon: "⚔️", desc: "Jewelry, tools, ritual blades, and decorative pieces" },
-            { name: "Textiles", icon: "🧵", desc: "Weavings, altar cloths, cloaks, and ceremonial garments" },
-            { name: "Woodcraft", icon: "🪵", desc: "Wands, staffs, runes, and carved sacred objects" },
-          ].map((guild, i) => (
-            <div key={i} className="runestone">
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ fontSize: "2rem" }}>{guild.icon}</span>
-                <div>
-                  <h3 style={{ marginBottom: 4 }}>{guild.name}</h3>
-                  <p style={{ fontSize: "0.9rem", margin: 0 }}>{guild.desc}</p>
+          {GUILDS.map((guild, i) => (
+            guild.isLink ? (
+              <Link key={i} href={guild.href!} style={{ textDecoration: "none" }}>
+                <div className="runestone guild-card" style={{ cursor: "pointer", transition: "transform 0.2s ease" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ fontSize: "2rem" }}>{guild.icon}</span>
+                    <div>
+                      <h3 style={{ marginBottom: 4, color: "#e8dcc8" }}>{guild.name}</h3>
+                      <p style={{ fontSize: "0.9rem", margin: 0, color: "#c5baa8" }}>{guild.desc}</p>
+                    </div>
+                  </div>
+                  <span style={{ 
+                    display: "block",
+                    marginTop: 12,
+                    fontSize: "0.8rem",
+                    color: "#d4af37"
+                  }}>
+                    Enter Guild →
+                  </span>
+                </div>
+              </Link>
+            ) : (
+              <div key={i} className="runestone">
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontSize: "2rem" }}>{guild.icon}</span>
+                  <div>
+                    <h3 style={{ marginBottom: 4, color: "#e8dcc8" }}>{guild.name}</h3>
+                    <p style={{ fontSize: "0.9rem", margin: 0, color: "#c5baa8" }}>{guild.desc}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )
           ))}
         </div>
 
@@ -60,6 +94,13 @@ export default function MakersTent({ onReturn }: MakersTentProps) {
           </p>
         </div>
       </div>
+
+      <style>{`
+        .guild-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.15);
+        }
+      `}</style>
     </div>
   );
 }

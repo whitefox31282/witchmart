@@ -222,7 +222,7 @@ export default function Join() {
 
         <aside className="rounded-2xl border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-2">
-            <span>🦅</span>
+            <span>🦥</span>
             <div className="text-sm font-semibold" data-testid="text-join-safety-title">
               SetAI Protection
             </div>

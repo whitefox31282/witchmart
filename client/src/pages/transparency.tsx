@@ -30,7 +30,7 @@ export default function Transparency() {
     <div className="space-y-10">
       <header className="space-y-3">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">🦅</span>
+          <span className="text-3xl">🦥</span>
           <h1 className="wm-hero-title text-3xl font-semibold" data-testid="text-transparency-title">
             Transparency Log
           </h1>

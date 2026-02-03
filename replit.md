@@ -70,8 +70,38 @@ WitchMart is a member-owned, Pagan-aligned cooperative marketplace and sanctuary
 
 ### Mythic Design System
 - **Colors**: Midnight (#0A1F44), Forest (#2E4A2E), Parchment (#F5E8C7), Iron (#4B4B4B)
+- **High-Contrast Text**: #e8dcc8 (light tan), #c5baa8 (medium tan), #d4af37 (gold) - WCAG-compliant
 - **Fonts**: Cinzel (runic headers), Merriweather (body)
-- **Imagery**: Ravens as watchers, runes as guidance, Yggdrasil knotwork
+- **Imagery**: Set the Sloth (🦥) as guardian (replaced eagles), runes as guidance, Yggdrasil knotwork
+- **SetSlothBuddhaPose**: `client/src/components/SetSlothBuddhaPose.tsx` - Canonical Set the Sloth on flying carpet in Buddha pose
+
+### Gaming Guild
+- `client/src/pages/gaming-guild.tsx` - Gaming Guild landing page with 8 game categories
+- `client/src/pages/gaming-safety.tsx` - SetAI Gaming Safety Agent with parental controls
+- **Game Categories**: Tabletop RPGs, MMORPGs, Strategy Games, Card Games, Survival & Craft, Retro Gaming, Indie Games, Board Games
+- **Safety Agent Features**: Parent toggle, consent modal, privacy documentation (TODO: backend monitoring logic)
+
+### Sanctuary Node Form Fields (13 canonical fields)
+1. Sanctuary Name
+2. Type (sanctuary, church, temple, grove, community center)
+3. Who You Are
+4. What You're About
+5. How You Got Started
+6. When You Were Born/Founded
+7. Who Licensed You
+8. Your Tradition
+9. Your Lineage
+10. Your Offerings
+11. Your Location
+12. Accessibility Notes
+13. Safety Notes
+14. Contact Method
+15. Additional Notes
+
+### Receipt Logging System
+- Public expense ledger in Pricing tent
+- Tracks: item purchased, reason, cost, submitter
+- TODO: Backend API endpoints for persistence
 
 ### Crisis Resources
 - 988 Suicide & Crisis Lifeline

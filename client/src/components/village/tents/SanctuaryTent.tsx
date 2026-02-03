@@ -9,27 +9,73 @@ interface SanctuaryTentProps {
 }
 
 interface NodeFormData {
+  whoYouAre: string;
+  whatYoureAbout: string;
+  howYouGotStarted: string;
+  whenYouWereBorn: string;
+  whoLicensedYou: string;
+  tradition: string;
+  lineage: string;
+  offerings: string;
+  location: string;
+  accessibilityNotes: string;
+  safetyNotes: string;
+  contactMethod: string;
+  additionalNotes: string;
   name: string;
   nodeType: string;
-  location: string;
-  city: string;
-  region: string;
-  tradition: string;
-  description: string;
-  services: string;
-  contactEmail: string;
 }
 
 const initialFormData: NodeFormData = {
+  whoYouAre: "",
+  whatYoureAbout: "",
+  howYouGotStarted: "",
+  whenYouWereBorn: "",
+  whoLicensedYou: "",
+  tradition: "",
+  lineage: "",
+  offerings: "",
+  location: "",
+  accessibilityNotes: "",
+  safetyNotes: "",
+  contactMethod: "",
+  additionalNotes: "",
   name: "",
   nodeType: "sanctuary",
-  location: "",
-  city: "",
-  region: "",
-  tradition: "",
-  description: "",
-  services: "",
-  contactEmail: "",
+};
+
+const formFields = [
+  { key: "name", label: "Sanctuary Name", placeholder: "Sacred Oak Grove", required: true, type: "input" },
+  { key: "nodeType", label: "Type", placeholder: "", required: false, type: "select", options: [
+    { value: "sanctuary", label: "Sanctuary" },
+    { value: "church", label: "Church" },
+    { value: "temple", label: "Temple" },
+    { value: "grove", label: "Grove" },
+    { value: "community_center", label: "Community Center" },
+  ]},
+  { key: "whoYouAre", label: "Who You Are", placeholder: "Tell us about yourself or your organization...", required: true, type: "textarea" },
+  { key: "whatYoureAbout", label: "What You're About", placeholder: "Your mission, values, and purpose...", required: true, type: "textarea" },
+  { key: "howYouGotStarted", label: "How You Got Started", placeholder: "The origin story of your sanctuary...", required: false, type: "textarea" },
+  { key: "whenYouWereBorn", label: "When You Were Born / Founded", placeholder: "Year or date of establishment...", required: false, type: "input" },
+  { key: "whoLicensedYou", label: "Who Licensed You", placeholder: "Ordaining body, licensing authority, or self-ordained...", required: false, type: "input" },
+  { key: "tradition", label: "Your Tradition", placeholder: "Wiccan, Druid, Heathen, Eclectic, etc...", required: false, type: "input" },
+  { key: "lineage", label: "Your Lineage", placeholder: "Spiritual lineage or teaching tradition...", required: false, type: "input" },
+  { key: "offerings", label: "Your Offerings", placeholder: "Services, classes, rituals, gatherings...", required: true, type: "textarea" },
+  { key: "location", label: "Your Location", placeholder: "City, State, Country or 'Online'", required: true, type: "input" },
+  { key: "accessibilityNotes", label: "Accessibility Notes", placeholder: "Wheelchair access, online options, sensory accommodations...", required: false, type: "textarea" },
+  { key: "safetyNotes", label: "Safety Notes", placeholder: "Background check policy, safe space commitments...", required: false, type: "textarea" },
+  { key: "contactMethod", label: "Contact Method", placeholder: "Email, website, or preferred contact...", required: true, type: "input" },
+  { key: "additionalNotes", label: "Additional Notes", placeholder: "Anything else the community should know...", required: false, type: "textarea" },
+];
+
+const inputStyle = {
+  width: "100%",
+  padding: 12,
+  background: "rgba(0,0,0,0.3)",
+  border: "1px solid #4a3a2e",
+  borderRadius: 6,
+  color: "#e8dcc8",
+  fontSize: "1rem",
 };
 
 export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
@@ -60,12 +106,19 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
           name: nodeData.name,
           nodeType: nodeData.nodeType,
           location: nodeData.location,
-          city: nodeData.city || undefined,
-          region: nodeData.region || undefined,
           tradition: nodeData.tradition || undefined,
-          description: nodeData.description,
-          services: nodeData.services ? nodeData.services.split(",").map(s => s.trim()) : [],
-          contactEmail: nodeData.contactEmail || undefined,
+          description: `${nodeData.whoYouAre}\n\n${nodeData.whatYoureAbout}`,
+          services: nodeData.offerings ? nodeData.offerings.split(",").map(s => s.trim()) : [],
+          contactEmail: nodeData.contactMethod || undefined,
+          metadata: {
+            howYouGotStarted: nodeData.howYouGotStarted,
+            whenYouWereBorn: nodeData.whenYouWereBorn,
+            whoLicensedYou: nodeData.whoLicensedYou,
+            lineage: nodeData.lineage,
+            accessibilityNotes: nodeData.accessibilityNotes,
+            safetyNotes: nodeData.safetyNotes,
+            additionalNotes: nodeData.additionalNotes,
+          },
         }),
       });
       if (!response.ok) {
@@ -91,16 +144,25 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError("");
-    if (!formData.name || !formData.description || !formData.location) {
-      setSubmitError("Please fill in name, location, and description.");
+    const requiredFields = formFields.filter(f => f.required);
+    const missing = requiredFields.filter(f => !formData[f.key as keyof NodeFormData]);
+    if (missing.length > 0) {
+      setSubmitError(`Please fill in: ${missing.map(f => f.label).join(", ")}`);
       return;
     }
     submitMutation.mutate(formData);
   };
 
+  const updateField = (key: string, value: string) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
+
   return (
-    <div className="tent-interior tent-map" data-testid="tent-sanctuary">
+    <div className="tent-interior tent-map tent-allfather-bg" data-testid="tent-sanctuary">
       <BackToVillage onReturn={onReturn} />
+      
+      {/* All-Father Travel Form Background Placeholder */}
+      <div className="allfather-overlay" />
       
       <div className="tent-content">
         <header className="tent-header">
@@ -120,22 +182,22 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
               data-testid="button-add-node"
             >
               <Plus size={16} />
-              <span>Add a Node</span>
+              <span>Add Your Node</span>
             </button>
           </div>
 
           {isLoading ? (
-            <p style={{ color: "#a89070" }}>Loading nodes...</p>
+            <p style={{ color: "#c5baa8" }}>Loading nodes...</p>
           ) : nodes.length === 0 ? (
-            <p style={{ color: "#a89070" }}>No sanctuary nodes yet. Be the first to add one!</p>
+            <p style={{ color: "#c5baa8" }}>No sanctuary nodes yet. Be the first to add one!</p>
           ) : (
             <div style={{ display: "grid", gap: 16 }}>
               {nodes.map((node) => (
                 <div key={node.id} className="runestone" data-testid={`node-${node.nodeId}`}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                     <div>
-                      <h3 style={{ marginBottom: 4 }}>{node.name}</h3>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#8b6914", fontSize: "0.9rem" }}>
+                      <h3 style={{ marginBottom: 4, color: "#e8dcc8" }}>{node.name}</h3>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#d4af37", fontSize: "0.9rem" }}>
                         <MapPin size={14} />
                         <span>{node.city || node.location}</span>
                         {node.region && <span>• {node.region}</span>}
@@ -152,7 +214,7 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
                     </span>
                   </div>
                   {node.description && (
-                    <p style={{ marginTop: 12 }}>{node.description}</p>
+                    <p style={{ marginTop: 12, color: "#c5baa8" }}>{node.description}</p>
                   )}
                 </div>
               ))}
@@ -166,28 +228,30 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.8)",
+            background: "rgba(0,0,0,0.85)",
             display: "flex",
-            alignItems: "center",
+            alignItems: "flex-start",
             justifyContent: "center",
             padding: 20,
-            zIndex: 200
+            paddingTop: 60,
+            zIndex: 200,
+            overflowY: "auto"
           }}
           onClick={() => setShowForm(false)}
           data-testid="modal-add-node"
         >
           <div 
             className="wooden-table"
-            style={{ maxWidth: 500, width: "100%", maxHeight: "80vh", overflow: "auto" }}
+            style={{ maxWidth: 600, width: "100%", marginBottom: 40 }}
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <h2 style={{ fontFamily: "'Cinzel', serif", color: "#d4af37", margin: 0 }}>
-                Add Your Sanctuary
+                Add Your Sanctuary Node
               </h2>
               <button
                 onClick={() => setShowForm(false)}
-                style={{ background: "none", border: "none", color: "#a89070", cursor: "pointer" }}
+                style={{ background: "none", border: "none", color: "#c5baa8", cursor: "pointer" }}
                 data-testid="button-close-modal"
               >
                 <X size={24} />
@@ -195,103 +259,56 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
             </div>
 
             {submitSuccess && (
-              <div style={{ background: "rgba(100, 150, 100, 0.3)", padding: 12, borderRadius: 8, marginBottom: 16, color: "#90c090" }}>
-                Your sanctuary has been added!
+              <div style={{ background: "rgba(100, 150, 100, 0.3)", padding: 12, borderRadius: 8, marginBottom: 16, color: "#a0d0a0" }}>
+                Your sanctuary has been added to the network!
               </div>
             )}
 
             {submitError && (
-              <div style={{ background: "rgba(150, 100, 100, 0.3)", padding: 12, borderRadius: 8, marginBottom: 16, color: "#c09090" }}>
+              <div style={{ background: "rgba(150, 100, 100, 0.3)", padding: 12, borderRadius: 8, marginBottom: 16, color: "#d0a0a0" }}>
                 {submitError}
               </div>
             )}
 
             <form onSubmit={handleSubmit}>
               <div style={{ display: "grid", gap: 16 }}>
-                <div>
-                  <label style={{ display: "block", color: "#d4af37", marginBottom: 6, fontSize: "0.9rem" }}>Name *</label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Sacred Oak Grove"
-                    style={{
-                      width: "100%",
-                      padding: 12,
-                      background: "rgba(0,0,0,0.3)",
-                      border: "1px solid #4a3a2e",
-                      borderRadius: 6,
-                      color: "#c5baa8",
-                      fontSize: "1rem"
-                    }}
-                    data-testid="input-node-name"
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: "block", color: "#d4af37", marginBottom: 6, fontSize: "0.9rem" }}>Type</label>
-                  <select
-                    value={formData.nodeType}
-                    onChange={(e) => setFormData(prev => ({ ...prev, nodeType: e.target.value }))}
-                    style={{
-                      width: "100%",
-                      padding: 12,
-                      background: "rgba(0,0,0,0.3)",
-                      border: "1px solid #4a3a2e",
-                      borderRadius: 6,
-                      color: "#c5baa8",
-                      fontSize: "1rem"
-                    }}
-                    data-testid="select-node-type"
-                  >
-                    <option value="sanctuary">Sanctuary</option>
-                    <option value="church">Church</option>
-                    <option value="temple">Temple</option>
-                    <option value="grove">Grove</option>
-                    <option value="community_center">Community Center</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: "block", color: "#d4af37", marginBottom: 6, fontSize: "0.9rem" }}>Location *</label>
-                  <input
-                    type="text"
-                    value={formData.location}
-                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                    placeholder="123 Forest Lane, Portland, OR"
-                    style={{
-                      width: "100%",
-                      padding: 12,
-                      background: "rgba(0,0,0,0.3)",
-                      border: "1px solid #4a3a2e",
-                      borderRadius: 6,
-                      color: "#c5baa8",
-                      fontSize: "1rem"
-                    }}
-                    data-testid="input-node-location"
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: "block", color: "#d4af37", marginBottom: 6, fontSize: "0.9rem" }}>Description *</label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Tell us about your sanctuary..."
-                    rows={3}
-                    style={{
-                      width: "100%",
-                      padding: 12,
-                      background: "rgba(0,0,0,0.3)",
-                      border: "1px solid #4a3a2e",
-                      borderRadius: 6,
-                      color: "#c5baa8",
-                      fontSize: "1rem",
-                      resize: "vertical"
-                    }}
-                    data-testid="textarea-node-description"
-                  />
-                </div>
+                {formFields.map((field) => (
+                  <div key={field.key}>
+                    <label style={{ display: "block", color: "#d4af37", marginBottom: 6, fontSize: "0.9rem" }}>
+                      {field.label} {field.required && "*"}
+                    </label>
+                    {field.type === "select" ? (
+                      <select
+                        value={formData[field.key as keyof NodeFormData]}
+                        onChange={(e) => updateField(field.key, e.target.value)}
+                        style={inputStyle}
+                        data-testid={`select-${field.key}`}
+                      >
+                        {field.options?.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    ) : field.type === "textarea" ? (
+                      <textarea
+                        value={formData[field.key as keyof NodeFormData]}
+                        onChange={(e) => updateField(field.key, e.target.value)}
+                        placeholder={field.placeholder}
+                        rows={3}
+                        style={{ ...inputStyle, resize: "vertical" }}
+                        data-testid={`textarea-${field.key}`}
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={formData[field.key as keyof NodeFormData]}
+                        onChange={(e) => updateField(field.key, e.target.value)}
+                        placeholder={field.placeholder}
+                        style={inputStyle}
+                        data-testid={`input-${field.key}`}
+                      />
+                    )}
+                  </div>
+                ))}
 
                 <button
                   type="submit"
@@ -305,17 +322,44 @@ export default function SanctuaryTent({ onReturn }: SanctuaryTentProps) {
                     fontFamily: "'Cinzel', serif",
                     fontSize: "1rem",
                     cursor: "pointer",
-                    opacity: submitMutation.isPending ? 0.6 : 1
+                    opacity: submitMutation.isPending ? 0.6 : 1,
+                    marginTop: 8
                   }}
                   data-testid="button-submit-node"
                 >
-                  {submitMutation.isPending ? "Adding..." : "Add to Network"}
+                  {submitMutation.isPending ? "Adding to Network..." : "Add to the Network"}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      <style>{`
+        .tent-allfather-bg {
+          position: relative;
+        }
+        .allfather-overlay {
+          position: fixed;
+          inset: 0;
+          background: 
+            radial-gradient(ellipse 80% 60% at 50% 30%, rgba(100, 80, 60, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse 60% 40% at 30% 70%, rgba(80, 60, 100, 0.1) 0%, transparent 50%);
+          pointer-events: none;
+          z-index: 0;
+        }
+        /* All-Father travel form placeholder - replace with actual asset when available */
+        .allfather-overlay::before {
+          content: "";
+          position: absolute;
+          top: 10%;
+          right: 5%;
+          width: 150px;
+          height: 200px;
+          background: radial-gradient(ellipse, rgba(150, 130, 100, 0.1) 0%, transparent 70%);
+          opacity: 0.5;
+        }
+      `}</style>
     </div>
   );
 }

@@ -11,7 +11,7 @@ export function SetAIConsentModal({ onConsent, onDecline }: SetAIConsentModalPro
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" data-testid="modal-consent">
       <div className="mx-4 max-w-lg rounded-2xl border-2 border-amber-700/50 bg-slate-800 p-6 shadow-2xl">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🦅</span>
+          <span className="text-2xl">🦥</span>
           <h2 className="font-cinzel text-xl text-amber-500">SetAI Sovereignty Gate</h2>
         </div>
         

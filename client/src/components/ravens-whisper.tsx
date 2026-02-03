@@ -43,7 +43,7 @@ export function RavensWhisper() {
         data-testid="button-ravens-whisper"
         aria-label="Open Raven's Whisper"
       >
-        <span className="text-xl">🦅</span>
+        <span className="text-xl">🦥</span>
         <span className="font-cinzel text-sm">Whisper</span>
       </button>
 
@@ -53,7 +53,7 @@ export function RavensWhisper() {
           <div className="mx-4 w-full max-w-md rounded-2xl border-2 border-forest/40 bg-midnight p-6 shadow-2xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🦅</span>
+                <span className="text-2xl">🦥</span>
                 <h2 className="font-cinzel text-xl text-parchment">Raven's Whisper</h2>
               </div>
               <button
