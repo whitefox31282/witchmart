@@ -210,9 +210,10 @@ function Router() {
 function AppContent() {
   const { ConsentModal, consentGiven } = useSetAIConsent();
   const [location] = useLocation();
-  const isLandingPage = location === "/landing";
+  
+  const isRitualVault = location === "/" || location === "/landing";
 
-  if (isLandingPage) {
+  if (isRitualVault) {
     return (
       <>
         {ConsentModal}

@@ -1,0 +1,320 @@
+You’re right to call time out here—when the build keeps ignoring canon, the only move is to freeze the whole thing in one place and write the Master Blueprint so there’s no more ambiguity.
+
+Here’s the full, updated picture of the current build as we’ve defined it—files, flows, behaviors, and artwork—so any future agent or human can see the whole temple at once.
+
+---
+
+1. Project overview
+
+Project name: witchmart-landing  
+Purpose: WitchMart’s landing “ritual space” — Set the Sloth as guardian, single scroll as universal input, menu as veil, footer as mission rune.  
+Stack:
+
+- Frontend: React 18 + Vite  
+- Animation: Framer Motion  
+- Styling: Plain CSS (mythic dark theme)  
+- Backend (planned): Supabase/PostgreSQL for Sanctuary Nodes, Makers, etc. (not wired yet in this blueprint—this is the landing layer)
+
+---
+
+2. File map (current canonical layout)
+
+`text
+witchmart-landing/
+  package.json
+  vite.config.js
+  index.html
+  src/
+    main.jsx
+    App.jsx
+    styles.css
+    components/
+      SetTheSloth.jsx
+      ScrollOfContinuity.jsx
+      MenuDrawer.jsx
+      FooterRune.jsx
+      Starfield.jsx
+`
+
+---
+
+3. Core files and responsibilities
+
+3.1 package.json
+
+- Declares React, ReactDOM, Vite, Framer Motion.
+- Scripts: dev, build, preview.
+
+3.2 vite.config.js
+
+- Vite config with React plugin.
+
+3.3 index.html
+
+- Root HTML shell.
+- <div id="root"></div> for React mount.
+- Loads src/main.jsx.
+
+3.4 src/main.jsx
+
+- Bootstraps React.
+- Renders <App /> into #root.
+- Imports global styles.css.
+
+3.5 src/App.jsx
+
+Role: Central conductor of the landing page.
+
+- State:
+  - isScrollOpen — controls Scroll of Continuity visibility.
+  - isMenuOpen — controls Menu Drawer visibility.
+- Global key handler:
+  - Escape closes scroll and menu.
+- Layout:
+  - Starfield background + grain + aurora overlays.
+  - Header:
+    - Center: <SetTheSloth onTap={() => setIsScrollOpen(true)} />
+    - Right: hamburger button → setIsMenuOpen(true)
+  - Content sections:
+    - WitchMart intro
+    - Mission + Transparency
+    - Safety & Legal
+    - Ecosystem
+    - Sanctuary Nodes (with “Browse nodes” button — currently visual only)
+    - Makers & Guilds (with “Meet makers” button — visual only)
+    - Pricing & Transparency (with “See the model” button — visual only)
+  - Scroll wrapper:
+    - Animated in/out from bottom using Framer Motion.
+    - Contains <ScrollOfContinuity />.
+  - Menu Drawer:
+    - <MenuDrawer isOpen={isMenuOpen} />.
+  - Footer:
+    - <FooterRune />.
+
+---
+
+4. Components and behavior
+
+4.1 SetTheSloth.jsx
+
+Role: Mythic greeter and trigger for the scroll.
+
+- Visual:
+  - Circular “sloth” avatar (currently emoji placeholder).
+  - Carpet glyph under the sloth.
+  - Radial glow behind.
+- Animation:
+  - Gentle vertical bob using Framer Motion (y: [0, -6, 0], looped).
+- Interaction:
+  - onClick → calls onTap prop → opens Scroll of Continuity.
+
+Artwork spec (for future SVG):
+
+- Sloth:  
+  - Green fur, half-lidded dreamy eyes, peaceful expression.  
+  - Golden headband/halo.  
+- Carpet:  
+  - Purple base, gold fringe, diamond rune pattern.  
+  - Slight independent sway from sloth.
+- Glow:  
+  - Soft gold radial halo behind sloth and carpet.
+
+---
+
+4.2 ScrollOfContinuity.jsx
+
+Role: Single universal input surface.
+
+- Header:
+  - Title: “Scroll of Continuity”.
+  - Close button (✕) → calls onClose.
+- Sovereignty gate:
+  - Text: “I own this creation. No exploitation. Data is transient.”
+  - Checkbox: “Sovereignty upheld.”
+  - All actions disabled until checked.
+- Actions:
+  - Buttons:
+    - “📷 Add Photo”
+    - “✏️ Add Text”
+    - “🎥 Add Video”
+  - Currently visual only (no upload wired yet).
+- Ask SetAI:
+  - Label: “Ask SetAI (the ravens hear you…)”
+  - Textarea (disabled until sovereignty checked).
+  - Placeholder: “The ravens hear you...”
+
+Planned data flow (future):
+
+- On submit:
+  - Package input into a JSON payload.
+  - Send to SetAI backend or Supabase function.
+  - Receive mythic response and render in a response area.
+
+---
+
+4.3 MenuDrawer.jsx
+
+Role: Veil/menu for navigation.
+
+- Controlled by isOpen prop.
+- Uses AnimatePresence + Framer Motion:
+  - Backdrop fades in/out.
+  - Drawer slides in/out from right.
+- Items:
+  - Home  
+  - Sanctuary Nodes  
+  - Makers & Guilds  
+  - Pricing & Transparency  
+  - Join  
+  - Our Story  
+  - Mission + Support  
+- Footer tag:
+  - $RavensEvermore at bottom.
+
+Planned data flow (future):
+
+- Each item will:
+  - Navigate to a route or scroll to a section.
+  - For Sanctuary Nodes / Makers, call backend APIs (Supabase) to fetch data.
+
+---
+
+4.4 FooterRune.jsx
+
+Role: Single mission/support anchor.
+
+- Button label:
+  - “Mission + Support $RavensEvermore”
+- Animation:
+  - Slow gold glow pulse via CSS keyframes.
+
+Planned behavior (future):
+
+- On click:
+  - Open modal with:
+    - Mission statement.
+    - $RavensEvermore support info.
+    - Clear disclaimer: voluntary, not financial advice.
+
+---
+
+4.5 Starfield.jsx
+
+Role: Cosmic vault background.
+
+- Renders count stars (default 60+).
+- Each star:
+  - Random top/left position.
+  - Twinkle animation with random delay.
+
+Atmosphere spec:
+
+- Dark navy/black base.
+- Twinkling stars.
+- Grain overlay (SVG noise).
+- Aurora overlay (midnight blue + faint red radial gradients).
+
+---
+
+5. Styles and visual system (styles.css)
+
+Global:
+
+- Dark theme (--bg, --fg, --accent, --accent-soft).
+- Body: no margin, system font, dark background.
+
+Key classes:
+
+- .ritual-vault — main container, min-height screen, relative, overflow hidden.
+- .header — top bar, centered sloth, right hamburger.
+- .runic-hamburger — pill-shaped button, purple border, white text.
+- .content — main text area, max-width 720px, centered.
+- .section — vertical spacing between content blocks.
+- .primary-btn — pill buttons for “Browse nodes”, etc.
+- .starfield + .star — animated star background.
+- .grain-overlay — noise texture overlay.
+- .aurora-overlay — radial gradient overlay.
+- .sloth-wrapper / .sloth-body / .sloth-circle / .sloth-carpet — sloth visuals.
+- .scroll-wrapper / .scroll / .scroll-header / .scroll-grid / .scroll-query — scroll UI.
+- .menu-backdrop / .menu-drawer / .menu-item — menu drawer.
+- .footer / .footer-btn — footer rune button with pulse animation.
+
+---
+
+6. Data flow (current vs planned)
+
+6.1 Current (implemented)
+
+- State only in frontend:
+  - isScrollOpen, isMenuOpen, consent (checkbox).
+- No network calls yet.
+- No backend integration.
+- All buttons are visual; they don’t send or receive data.
+
+6.2 Planned (next layer)
+
+Sanctuary Nodes:
+
+- Frontend:
+  - “Browse nodes” button → Sanctuary Nodes page or modal.
+- Backend (Supabase/PostgreSQL):
+  - Table: sanctuary_nodes with canonical schema.
+  - API:
+    - GET /sanctuary_nodes → list nodes.
+    - POST /sanctuary_nodes → add node.
+- Data flow:
+  - On load: fetch nodes → render list or empty state.
+  - On add: open form → validate → POST → refresh list.
+
+SetAI (Scroll):
+
+- Frontend:
+  - Scroll collects text/photo/video intent.
+- Backend:
+  - API route that:
+    - Accepts payload.
+    - Calls SetAI logic.
+    - Returns mythic response + support block.
+- Data flow:
+  - User types → submit → show “ravens hear you” response.
+
+---
+
+7. Artwork and mythic canon (for future assets)
+
+Set the Sloth:
+
+- Green, meditative sloth.
+- Golden halo/headband.
+- Seated on purple flying carpet with gold fringe and diamond rune pattern.
+- Small scroll under one arm.
+- Gentle bobbing animation, independent carpet sway, soft gold glow.
+
+Scroll of Continuity:
+
+- Parchment scroll with ornate gold caps.
+- Unfolds from bottom with spring physics.
+- Single surface for all input types.
+
+Atmosphere:
+
+- Starfield as cosmic vault.
+- Grain overlay like aged parchment.
+- Aurora-like gradients in midnight blue and faint red.
+- Everything slow, non-jarring, trauma-informed pacing.
+
+---
+
+8. Master “state of the build” summary
+
+- Landing page architecture is defined and coded.
+- Set the Sloth, Scroll, Menu, Footer, Starfield all exist as components.
+- Visual and interaction canon is clear.
+- Backend (Supabase, Sanctuary Nodes, SetAI responses) is specified but not yet wired.
+- No data is persisted yet; everything is front-end only.
+
+If you want, next we can:
+
+- turn this into a single JSON “project spec” file you can store in Codex/SetAI,  
+- or start the Supabase wiring blueprint (tables + API + how the landing will talk to it),  
+- or write a “Builder Canon” doc that says: “If you change anything, you must obey these rules.”
