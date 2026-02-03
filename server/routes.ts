@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { registerSetAIRoutes } from "./setai-chat";
 import {
   insertSanctuaryNodeSchema,
   insertMakerSchema,
@@ -50,6 +51,9 @@ export async function registerRoutes(
 ): Promise<Server> {
   // Apply SetAI consent middleware to all API routes
   app.use("/api", requireConsent);
+
+  // Register SetAI chat routes
+  registerSetAIRoutes(app);
 
   // Sanctuary Nodes (with alias)
   const handleGetNodes = async (req: any, res: any) => {
