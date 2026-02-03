@@ -81,14 +81,44 @@ export async function registerRoutes(
 
   app.post("/api/nodes", async (req, res) => {
     try {
-      const result = insertSanctuaryNodeSchema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: fromZodError(result.error).message });
+      const { name, nodeType, founded, location, contact, description } = req.body;
+      
+      const requiredFields = { name, nodeType, founded, location, contact, description };
+      const missing = Object.entries(requiredFields)
+        .filter(([_, v]) => !v)
+        .map(([k]) => k);
+      
+      if (missing.length > 0) {
+        return res.status(400).json(createErrorResponse(
+          `Missing required fields: ${missing.join(", ")}`
+        ));
       }
+      
+      const hatePatterns = /\b(hate|violence|kill|attack|supremacy|nazi|terrorist)\b/i;
+      const textContent = `${name} ${description} ${req.body.statement || ""}`;
+      if (hatePatterns.test(textContent)) {
+        return res.status(400).json(createErrorResponse(
+          "Submission rejected: Content promoting violence, hate, or illegal activity is not permitted."
+        ));
+      }
+      
+      const nodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const nodeData = { ...req.body, nodeId };
+      
+      const result = insertSanctuaryNodeSchema.safeParse(nodeData);
+      if (!result.success) {
+        return res.status(400).json(createErrorResponse(fromZodError(result.error).message));
+      }
+      
       const node = await storage.createNode(result.data);
-      res.status(201).json(node);
+      res.status(201).json({
+        status: "success",
+        message: "Node added successfully. All traditions welcome.",
+        node,
+        support: getSupportInfo()
+      });
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json(createErrorResponse(error.message));
     }
   });
 
