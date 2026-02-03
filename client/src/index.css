@@ -65,46 +65,46 @@
   --elevate-2: rgba(0, 0, 0, 0.08);
 
   --background: 60 33% 95%;
-  --foreground: 270 20% 20%;
+  --foreground: 16 70% 25%;
 
   --card: 60 33% 97%;
-  --card-foreground: 270 22% 20%;
+  --card-foreground: 16 70% 25%;
   --popover: 60 33% 97%;
-  --popover-foreground: 270 22% 20%;
+  --popover-foreground: 16 70% 25%;
 
-  --primary: 270 40% 39%;
+  --primary: 16 85% 45%;
   --primary-foreground: 60 33% 96%;
 
   --secondary: 28 27% 29%;
   --secondary-foreground: 60 33% 96%;
 
   --muted: 52 20% 90%;
-  --muted-foreground: 270 15% 40%;
+  --muted-foreground: 16 60% 35%;
 
   --accent: 46 65% 53%;
-  --accent-foreground: 270 22% 20%;
+  --accent-foreground: 16 70% 25%;
 
   --destructive: 0 72% 45%;
   --destructive-foreground: 60 33% 96%;
 
-  --border: 270 14% 78%;
-  --card-border: 270 14% 80%;
-  --input: 270 14% 76%;
+  --border: 16 30% 78%;
+  --card-border: 16 30% 80%;
+  --input: 16 30% 76%;
   --ring: 46 65% 53%;
 
-  --chart-1: 270 40% 39%;
+  --chart-1: 16 85% 45%;
   --chart-2: 46 65% 53%;
   --chart-3: 28 27% 29%;
-  --chart-4: 270 15% 40%;
-  --chart-5: 270 14% 78%;
+  --chart-4: 16 60% 35%;
+  --chart-5: 16 30% 78%;
 
   --sidebar: 60 33% 96%;
-  --sidebar-foreground: 270 22% 20%;
-  --sidebar-border: 270 14% 80%;
-  --sidebar-primary: 270 40% 39%;
+  --sidebar-foreground: 16 70% 25%;
+  --sidebar-border: 16 30% 80%;
+  --sidebar-primary: 16 85% 45%;
   --sidebar-primary-foreground: 60 33% 96%;
   --sidebar-accent: 52 20% 90%;
-  --sidebar-accent-foreground: 270 22% 20%;
+  --sidebar-accent-foreground: 16 70% 25%;
   --sidebar-ring: 46 65% 53%;
 
   --font-sans: "Merriweather", ui-serif, Georgia, serif;
@@ -113,14 +113,14 @@
 
   --radius: 0.85rem;
 
-  --shadow-2xs: 0px 2px 0px 0px hsl(270 30% 20% / 0.04);
-  --shadow-xs: 0px 2px 0px 0px hsl(270 30% 20% / 0.06);
-  --shadow-sm: 0px 2px 0px 0px hsl(270 30% 20% / 0.06), 0px 1px 2px -1px hsl(270 30% 20% / 0.08);
-  --shadow: 0px 2px 0px 0px hsl(270 30% 20% / 0.06), 0px 1px 2px -1px hsl(270 30% 20% / 0.08);
-  --shadow-md: 0px 2px 0px 0px hsl(270 30% 20% / 0.06), 0px 4px 10px -2px hsl(270 30% 20% / 0.10);
-  --shadow-lg: 0px 2px 0px 0px hsl(270 30% 20% / 0.06), 0px 10px 24px -8px hsl(270 30% 20% / 0.14);
-  --shadow-xl: 0px 2px 0px 0px hsl(270 30% 20% / 0.06), 0px 18px 44px -14px hsl(270 30% 20% / 0.18);
-  --shadow-2xl: 0px 2px 0px 0px hsl(270 30% 20% / 0.06);
+  --shadow-2xs: 0px 2px 0px 0px hsl(16 30% 20% / 0.04);
+  --shadow-xs: 0px 2px 0px 0px hsl(16 30% 20% / 0.06);
+  --shadow-sm: 0px 2px 0px 0px hsl(16 30% 20% / 0.06), 0px 1px 2px -1px hsl(16 30% 20% / 0.08);
+  --shadow: 0px 2px 0px 0px hsl(16 30% 20% / 0.06), 0px 1px 2px -1px hsl(16 30% 20% / 0.08);
+  --shadow-md: 0px 2px 0px 0px hsl(16 30% 20% / 0.06), 0px 4px 10px -2px hsl(16 30% 20% / 0.10);
+  --shadow-lg: 0px 2px 0px 0px hsl(16 30% 20% / 0.06), 0px 10px 24px -8px hsl(16 30% 20% / 0.14);
+  --shadow-xl: 0px 2px 0px 0px hsl(16 30% 20% / 0.06), 0px 18px 44px -14px hsl(16 30% 20% / 0.18);
+  --shadow-2xl: 0px 2px 0px 0px hsl(16 30% 20% / 0.06);
 
   --tracking-normal: 0em;
   --spacing: 0.25rem;
@@ -154,48 +154,48 @@
   --elevate-1: rgba(255, 255, 255, 0.05);
   --elevate-2: rgba(255, 255, 255, 0.10);
 
-  --background: 270 18% 8%;
+  --background: 16 18% 8%;
   --foreground: 60 33% 95%;
 
-  --card: 270 18% 10%;
+  --card: 16 18% 10%;
   --card-foreground: 60 33% 95%;
-  --popover: 270 18% 10%;
+  --popover: 16 18% 10%;
   --popover-foreground: 60 33% 95%;
 
   --primary: 46 65% 53%;
-  --primary-foreground: 270 18% 10%;
+  --primary-foreground: 16 18% 10%;
 
-  --secondary: 270 40% 39%;
+  --secondary: 16 85% 45%;
   --secondary-foreground: 60 33% 95%;
 
-  --muted: 270 14% 16%;
+  --muted: 16 14% 16%;
   --muted-foreground: 60 16% 70%;
 
   --accent: 46 65% 53%;
-  --accent-foreground: 270 18% 10%;
+  --accent-foreground: 16 18% 10%;
 
   --destructive: 0 72% 45%;
   --destructive-foreground: 60 33% 95%;
 
-  --border: 270 10% 22%;
-  --card-border: 270 10% 24%;
-  --input: 270 10% 28%;
+  --border: 16 10% 22%;
+  --card-border: 16 10% 24%;
+  --input: 16 10% 28%;
   --ring: 46 65% 53%;
 
   --chart-1: 46 65% 53%;
-  --chart-2: 270 40% 39%;
+  --chart-2: 16 85% 45%;
   --chart-3: 28 27% 29%;
   --chart-4: 60 16% 70%;
-  --chart-5: 270 10% 22%;
+  --chart-5: 16 10% 22%;
 
-  --shadow-2xs: 0px 2px 0px 0px hsl(270 30% 2% / 0.16);
-  --shadow-xs: 0px 2px 0px 0px hsl(270 30% 2% / 0.18);
-  --shadow-sm: 0px 2px 0px 0px hsl(270 30% 2% / 0.18), 0px 1px 2px -1px hsl(270 30% 2% / 0.22);
-  --shadow: 0px 2px 0px 0px hsl(270 30% 2% / 0.18), 0px 1px 2px -1px hsl(270 30% 2% / 0.22);
-  --shadow-md: 0px 2px 0px 0px hsl(270 30% 2% / 0.18), 0px 10px 26px -10px hsl(270 30% 2% / 0.42);
-  --shadow-lg: 0px 2px 0px 0px hsl(270 30% 2% / 0.18), 0px 20px 60px -28px hsl(270 30% 2% / 0.60);
-  --shadow-xl: 0px 2px 0px 0px hsl(270 30% 2% / 0.18), 0px 26px 80px -38px hsl(270 30% 2% / 0.70);
-  --shadow-2xl: 0px 2px 0px 0px hsl(270 30% 2% / 0.18);
+  --shadow-2xs: 0px 2px 0px 0px hsl(16 30% 2% / 0.16);
+  --shadow-xs: 0px 2px 0px 0px hsl(16 30% 2% / 0.18);
+  --shadow-sm: 0px 2px 0px 0px hsl(16 30% 2% / 0.18), 0px 1px 2px -1px hsl(16 30% 2% / 0.22);
+  --shadow: 0px 2px 0px 0px hsl(16 30% 2% / 0.18), 0px 1px 2px -1px hsl(16 30% 2% / 0.22);
+  --shadow-md: 0px 2px 0px 0px hsl(16 30% 2% / 0.18), 0px 10px 26px -10px hsl(16 30% 2% / 0.42);
+  --shadow-lg: 0px 2px 0px 0px hsl(16 30% 2% / 0.18), 0px 20px 60px -28px hsl(16 30% 2% / 0.60);
+  --shadow-xl: 0px 2px 0px 0px hsl(16 30% 2% / 0.18), 0px 26px 80px -38px hsl(16 30% 2% / 0.70);
+  --shadow-2xl: 0px 2px 0px 0px hsl(16 30% 2% / 0.18);
 }
 
 @layer base {
@@ -214,22 +214,22 @@
 @layer utilities {
   /* Mythic color utilities for SetAI components */
   .bg-midnight { background-color: #0A1F44; }
-  .bg-forest { background-color: #5D3A8C; }
+  .bg-forest { background-color: #D84315; }
   .bg-parchment { background-color: #F5E8C7; }
   .bg-iron { background-color: #4B4B4B; }
-  .bg-royal { background-color: #5D3A8C; }
+  .bg-volcanic { background-color: #D84315; }
   
   .text-midnight { color: #0A1F44; }
-  .text-forest { color: #7B4DB8; }
+  .text-forest { color: #E65100; }
   .text-parchment { color: #F5E8C7; }
   .text-iron { color: #4B4B4B; }
-  .text-royal { color: #7B4DB8; }
+  .text-volcanic { color: #E65100; }
   
   .border-midnight { border-color: #0A1F44; }
-  .border-forest { border-color: #5D3A8C; }
+  .border-forest { border-color: #D84315; }
   .border-parchment { border-color: #F5E8C7; }
   .border-iron { border-color: #4B4B4B; }
-  .border-royal { border-color: #5D3A8C; }
+  .border-volcanic { border-color: #D84315; }
   
   .font-cinzel { font-family: 'Cinzel', serif; }
   .font-inter { font-family: 'Inter', sans-serif; }

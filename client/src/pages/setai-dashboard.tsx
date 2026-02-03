@@ -43,7 +43,7 @@ export default function SetAIDashboard() {
       description: "Mode switching and persona selection",
       icon: Users,
       href: "/setai/councils",
-      color: "text-purple-600 dark:text-purple-400",
+      color: "text-orange-600 dark:text-orange-400",
     },
     {
       title: "Security",

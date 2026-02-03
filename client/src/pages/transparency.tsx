@@ -46,7 +46,7 @@ export default function Transparency() {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold" data-testid="text-session-title">Session Status</h2>
           <div className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            consent ? "bg-purple-900/20 text-purple-400" : "bg-amber-100 text-amber-700"
+            consent ? "bg-orange-900/20 text-orange-400" : "bg-amber-100 text-amber-700"
           }`} data-testid="badge-consent-status">
             {consent ? "Consent Active" : "No Consent"}
           </div>
@@ -73,7 +73,7 @@ export default function Transparency() {
           SetAI Principles
         </h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="rounded-xl border border-purple-700/20 bg-purple-900/10 p-4">
+          <div className="rounded-xl border border-orange-700/20 bg-orange-900/10 p-4">
             <div className="flex items-center gap-2">
               <span>🚫</span>
               <span className="font-semibold">Zero Surveillance</span>
@@ -82,7 +82,7 @@ export default function Transparency() {
               No Google Analytics, Meta pixels, or third-party trackers. Ever.
             </p>
           </div>
-          <div className="rounded-xl border border-purple-700/20 bg-purple-900/10 p-4">
+          <div className="rounded-xl border border-orange-700/20 bg-orange-900/10 p-4">
             <div className="flex items-center gap-2">
               <span>🔒</span>
               <span className="font-semibold">Data Sovereignty</span>
@@ -91,7 +91,7 @@ export default function Transparency() {
               You own 100% of your data. Only anonymous session IDs are used.
             </p>
           </div>
-          <div className="rounded-xl border border-purple-700/20 bg-purple-900/10 p-4">
+          <div className="rounded-xl border border-orange-700/20 bg-orange-900/10 p-4">
             <div className="flex items-center gap-2">
               <span>⏱️</span>
               <span className="font-semibold">Transient Storage</span>
@@ -100,7 +100,7 @@ export default function Transparency() {
               Session data is deleted when you close your browser or revoke consent.
             </p>
           </div>
-          <div className="rounded-xl border border-purple-700/20 bg-purple-900/10 p-4">
+          <div className="rounded-xl border border-orange-700/20 bg-orange-900/10 p-4">
             <div className="flex items-center gap-2">
               <span>🛡️</span>
               <span className="font-semibold">Harm Prevention</span>

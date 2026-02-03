@@ -33,7 +33,7 @@ const modeColors: Record<string, string> = {
   Engineer: "text-blue-600 dark:text-blue-400",
   Archivist: "text-amber-600 dark:text-amber-400",
   Guardian: "text-red-600 dark:text-red-400",
-  Showrunner: "text-purple-600 dark:text-purple-400",
+  Showrunner: "text-orange-600 dark:text-orange-400",
   Civic: "text-slate-600 dark:text-slate-400",
   Ritualist: "text-emerald-600 dark:text-emerald-400",
   Companion: "text-pink-600 dark:text-pink-400",
@@ -94,7 +94,7 @@ export default function SetAICouncils() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-8">
-        <Users className="h-10 w-10 text-purple-600" />
+        <Users className="h-10 w-10 text-orange-600" />
         <div>
           <h1 className="text-3xl font-cinzel font-bold text-midnight dark:text-parchment">
             Councils
@@ -186,7 +186,7 @@ export default function SetAICouncils() {
                           Verbosity: {mode.verbosity}
                         </Badge>
                         {mode.mythic_allowed && (
-                          <Badge variant="outline" className="text-xs text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800">
+                          <Badge variant="outline" className="text-xs text-orange-600 dark:text-orange-400 border-purple-200 dark:border-orange-800">
                             Mythic allowed
                           </Badge>
                         )}

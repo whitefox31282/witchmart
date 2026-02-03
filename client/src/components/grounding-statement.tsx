@@ -7,7 +7,7 @@ interface GroundingStatementProps {
 export function GroundingStatement({ compact = false }: GroundingStatementProps) {
   if (compact) {
     return (
-      <div className="rounded-xl border border-purple-700/30 bg-purple-900/10 p-4" data-testid="grounding-compact">
+      <div className="rounded-xl border border-orange-700/30 bg-orange-900/10 p-4" data-testid="grounding-compact">
         <p className="text-xs text-parchment/80">
           Breathe. You are in control. You own this space.
           <br />
@@ -20,7 +20,7 @@ export function GroundingStatement({ compact = false }: GroundingStatementProps)
   }
 
   return (
-    <div className="rounded-2xl border border-purple-700/30 bg-purple-900/10 p-5" data-testid="grounding-full">
+    <div className="rounded-2xl border border-orange-700/30 bg-orange-900/10 p-5" data-testid="grounding-full">
       <div className="flex items-start gap-3">
         <span className="text-2xl">🌿</span>
         <div>
@@ -33,7 +33,7 @@ export function GroundingStatement({ compact = false }: GroundingStatementProps)
           <ul className="mt-3 space-y-2">
             {CRISIS_RESOURCES.map((resource) => (
               <li key={resource.name} className="flex items-center gap-2 text-xs">
-                <span className="text-purple-400">•</span>
+                <span className="text-orange-400">•</span>
                 <a
                   href={resource.url}
                   target="_blank"

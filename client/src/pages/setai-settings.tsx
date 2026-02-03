@@ -129,7 +129,7 @@ export default function SetAISettings() {
                             <Badge variant="outline" className="text-xs">
                               Verbosity: {config.verbosity}
                             </Badge>
-                            <Badge variant="outline" className={`text-xs ${config.mythic_allowed ? "text-purple-600" : "text-gray-600"}`}>
+                            <Badge variant="outline" className={`text-xs ${config.mythic_allowed ? "text-orange-600" : "text-gray-600"}`}>
                               Mythic: {config.mythic_allowed ? "Yes" : "No"}
                             </Badge>
                           </div>
@@ -194,14 +194,14 @@ export default function SetAISettings() {
                 <AccordionItem value="spiritual">
                   <AccordionTrigger className="font-cinzel">
                     <div className="flex items-center gap-2">
-                      <Eye className="h-4 w-4 text-purple-600" />
+                      <Eye className="h-4 w-4 text-orange-600" />
                       Spiritual Context
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className={founderCanon.founder.spiritual_context?.mythic_allowed ? "text-purple-600" : ""}>
+                        <Badge variant="outline" className={founderCanon.founder.spiritual_context?.mythic_allowed ? "text-orange-600" : ""}>
                           Mythic: {founderCanon.founder.spiritual_context?.mythic_allowed ? "Allowed" : "Restricted"}
                         </Badge>
                       </div>
@@ -209,7 +209,7 @@ export default function SetAISettings() {
                         <ul className="space-y-2">
                           {founderCanon.founder.spiritual_context.rules.map((rule: string, index: number) => (
                             <li key={index} className="flex items-start gap-2 font-merriweather text-sm">
-                              <span className="text-purple-600 font-bold mt-0.5">•</span>
+                              <span className="text-orange-600 font-bold mt-0.5">•</span>
                               {rule}
                             </li>
                           ))}
