@@ -37,10 +37,17 @@ export function createSuccessResponse<T>(data: T, options?: { message?: string; 
 }
 
 export function createEmptyListResponse(entityType: string): WitchMartResponse<[]> {
+  const messages: Record<string, string> = {
+    "sanctuary nodes": "No sanctuary nodes have been added yet.",
+    "makers and guilds": "No makers or guilds have been added yet.",
+    "products and services": "No products or services have been added yet.",
+    "blog posts": "No blog posts have been published yet."
+  };
+  
   return {
     status: "success",
     data: [],
-    message: `No ${entityType} found yet. This part of the network is still being built. If you'd like to help build this section, you can support the project below.`,
+    message: messages[entityType] || `No ${entityType} found yet. This part of the network is still being built.`,
     support: SUPPORT_INFO
   };
 }
