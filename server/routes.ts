@@ -497,7 +497,11 @@ export async function registerRoutes(
 
   app.post("/api/codex/events", async (req, res) => {
     try {
-      const result = insertCodexEventSchema.safeParse(req.body);
+      const data = { ...req.body };
+      if (typeof data.timestamp === "string") {
+        data.timestamp = new Date(data.timestamp);
+      }
+      const result = insertCodexEventSchema.safeParse(data);
       if (!result.success) {
         return res.status(400).json({ error: fromZodError(result.error).message });
       }
