@@ -209,6 +209,17 @@ function Router() {
 
 function AppContent() {
   const { ConsentModal, consentGiven } = useSetAIConsent();
+  const [location] = useLocation();
+  const isLandingPage = location === "/landing";
+
+  if (isLandingPage) {
+    return (
+      <>
+        {ConsentModal}
+        <LandingPage />
+      </>
+    );
+  }
 
   return (
     <>
