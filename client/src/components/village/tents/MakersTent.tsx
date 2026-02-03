@@ -1,20 +1,10 @@
-import { useState } from "react";
 import { Link } from "wouter";
 import BackToVillage from "../BackToVillage";
+import { GUILDS } from "@/lib/guild-data";
 
 interface MakersTentProps {
   onReturn: () => void;
 }
-
-const GUILDS = [
-  { name: "Pottery & Ceramics", icon: "🏺", desc: "Handcrafted vessels, ritual bowls, and sacred containers" },
-  { name: "Herbcraft", icon: "🌿", desc: "Medicinal herbs, tinctures, and botanical preparations" },
-  { name: "Leatherwork", icon: "🛡️", desc: "Journals, pouches, belts, and protective gear" },
-  { name: "Metalwork", icon: "⚔️", desc: "Jewelry, tools, ritual blades, and decorative pieces" },
-  { name: "Textiles", icon: "🧵", desc: "Weavings, altar cloths, cloaks, and ceremonial garments" },
-  { name: "Woodcraft", icon: "🪵", desc: "Wands, staffs, runes, and carved sacred objects" },
-  { name: "Gaming Guild", icon: "🎮", desc: "Digital realms, tabletop adventures, and community gaming", isLink: true, href: "/gaming-guild" },
-];
 
 export default function MakersTent({ onReturn }: MakersTentProps) {
   return (
@@ -27,7 +17,6 @@ export default function MakersTent({ onReturn }: MakersTentProps) {
           <p>Craft Workshop</p>
         </header>
 
-        {/* Tagline */}
         <div className="scroll-display" style={{ marginBottom: 24, textAlign: "center" }}>
           <p style={{ fontSize: "1.1rem", fontStyle: "italic", margin: 0 }}>
             Where our elders come to teach — custom items, craft, knowledge, and tradition.
@@ -35,52 +24,112 @@ export default function MakersTent({ onReturn }: MakersTentProps) {
         </div>
 
         <div className="hanging-banner">
-          <span>Meet the Makers</span>
+          <span>Guild Halls</span>
         </div>
 
         <div className="scroll-display" style={{ marginBottom: 24 }}>
           <p>
             Profiles, craft categories, reputation, and reviews—designed for human trust rather than corporate metrics.
+            Click on any guild to explore its members and subcategories.
           </p>
         </div>
 
-        <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}>
-          {GUILDS.map((guild, i) => (
-            guild.isLink ? (
-              <Link key={i} href={guild.href!} style={{ textDecoration: "none" }}>
-                <div className="runestone guild-card" style={{ cursor: "pointer", transition: "transform 0.2s ease" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <span style={{ fontSize: "2rem" }}>{guild.icon}</span>
-                    <div>
-                      <h3 style={{ marginBottom: 4, color: "#e8dcc8" }}>{guild.name}</h3>
-                      <p style={{ fontSize: "0.9rem", margin: 0, color: "#c5baa8" }}>{guild.desc}</p>
+        <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+          {GUILDS.map((guild) => (
+            <Link 
+              key={guild.id} 
+              href={guild.id === "game-creators" ? "/guild/game-creators" : `/guild/${guild.id}`} 
+              style={{ textDecoration: "none" }}
+              data-testid={`guild-tab-${guild.id}`}
+            >
+              <div 
+                className="runestone guild-card" 
+                style={{ 
+                  cursor: "pointer", 
+                  transition: "all 0.2s ease",
+                  minHeight: "120px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                  <span style={{ fontSize: "2.2rem" }}>{guild.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ marginBottom: 6, color: "#e8dcc8", fontSize: "1.1rem" }}>{guild.name}</h3>
+                    <p style={{ fontSize: "0.85rem", margin: 0, color: "#c5baa8", lineHeight: 1.5 }}>
+                      {guild.description}
+                    </p>
+                    <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 4 }}>
+                      {guild.subcategories.slice(0, 3).map((sub) => (
+                        <span 
+                          key={sub.id}
+                          style={{
+                            fontSize: "0.7rem",
+                            padding: "2px 6px",
+                            background: "rgba(212, 175, 55, 0.15)",
+                            borderRadius: "3px",
+                            color: "#d4af37",
+                          }}
+                        >
+                          {sub.name}
+                        </span>
+                      ))}
+                      {guild.subcategories.length > 3 && (
+                        <span 
+                          style={{
+                            fontSize: "0.7rem",
+                            padding: "2px 6px",
+                            background: "rgba(212, 175, 55, 0.1)",
+                            borderRadius: "3px",
+                            color: "#a89070",
+                          }}
+                        >
+                          +{guild.subcategories.length - 3} more
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <span style={{ 
-                    display: "block",
-                    marginTop: 12,
-                    fontSize: "0.8rem",
-                    color: "#d4af37"
-                  }}>
-                    Enter Guild →
-                  </span>
                 </div>
-              </Link>
-            ) : (
-              <div key={i} className="runestone">
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <span style={{ fontSize: "2rem" }}>{guild.icon}</span>
-                  <div>
-                    <h3 style={{ marginBottom: 4, color: "#e8dcc8" }}>{guild.name}</h3>
-                    <p style={{ fontSize: "0.9rem", margin: 0, color: "#c5baa8" }}>{guild.desc}</p>
-                  </div>
-                </div>
+                <span style={{ 
+                  display: "block",
+                  marginTop: 12,
+                  fontSize: "0.8rem",
+                  color: "#d4af37"
+                }}>
+                  Enter Guild →
+                </span>
               </div>
-            )
+            </Link>
           ))}
         </div>
 
         <div className="wooden-table" style={{ marginTop: 32 }}>
+          <h2 style={{ fontFamily: "'Cinzel', serif", color: "#d4af37", marginBottom: 16 }}>
+            Theme Packs
+          </h2>
+          <p style={{ color: "#c5baa8", lineHeight: 1.7 }}>
+            Each guild supports custom visual themes inspired by different traditions and gaming universes.
+            Available themes include: Dungeons & Dragons, World of Warcraft, Pathfinder, Elder Scrolls, 
+            Norse, Egyptian, Celtic, Slavic, and Custom.
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
+            {["🎲 D&D", "⚔️ WoW", "🧭 Pathfinder", "🏔️ Elder Scrolls", "ᚱ Norse", "𓂀 Egyptian", "☘️ Celtic", "🌻 Slavic"].map((theme) => (
+              <span 
+                key={theme}
+                style={{
+                  padding: "6px 12px",
+                  background: "rgba(212, 175, 55, 0.1)",
+                  border: "1px solid rgba(212, 175, 55, 0.3)",
+                  borderRadius: "4px",
+                  fontSize: "0.85rem",
+                  color: "#e8dcc8",
+                }}
+              >
+                {theme}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="wooden-table" style={{ marginTop: 24 }}>
           <h2 style={{ fontFamily: "'Cinzel', serif", color: "#d4af37", marginBottom: 16 }}>
             Guild Formation
           </h2>

@@ -33,6 +33,8 @@ import LandingPage from "./pages/landing";
 import NorseVillage from "./pages/norse-village";
 import GamingGuild from "./pages/gaming-guild";
 import GamingSafety from "./pages/gaming-safety";
+import GuildLanding from "./pages/guild-landing";
+import GameCreatorsGuild from "./pages/game-creators-guild";
 
 const NAV = [
   { label: "Home", href: "/" },
@@ -207,6 +209,10 @@ function Router() {
 
       <Route path="/gaming-guild" component={GamingGuild} />
       <Route path="/gaming-safety" component={GamingSafety} />
+
+      <Route path="/guild/game-creators" component={GameCreatorsGuild} />
+      <Route path="/guild/game-creators/:tabId" component={GameCreatorsGuild} />
+      <Route path="/guild/:guildId" component={GuildLanding} />
 
       <Route component={NotFound} />
     </Switch>
