@@ -515,7 +515,11 @@ export async function registerRoutes(
   app.patch("/api/codex/events/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const event = await storage.updateCodexEvent(id, req.body);
+      const data = { ...req.body };
+      if (typeof data.timestamp === "string") {
+        data.timestamp = new Date(data.timestamp);
+      }
+      const event = await storage.updateCodexEvent(id, data);
       if (!event) {
         return res.status(404).json({ error: "Event not found" });
       }
