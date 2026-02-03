@@ -51,8 +51,8 @@ export async function registerRoutes(
   // Apply SetAI consent middleware to all API routes
   app.use("/api", requireConsent);
 
-  // Sanctuary Nodes
-  app.get("/api/nodes", async (req, res) => {
+  // Sanctuary Nodes (with alias)
+  const handleGetNodes = async (req: any, res: any) => {
     try {
       const { q } = req.query;
       if (q && typeof q === "string") {
@@ -64,7 +64,10 @@ export async function registerRoutes(
     } catch (error: any) {
       res.status(500).json(createErrorResponse(error.message));
     }
-  });
+  };
+  
+  app.get("/api/nodes", handleGetNodes);
+  app.get("/api/sanctuary_nodes", handleGetNodes);
 
   app.get("/api/nodes/:id", async (req, res) => {
     try {
