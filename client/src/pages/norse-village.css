@@ -1,8 +1,11 @@
+/* SetAI Sovereignty: No trackers, no data collection, sovereignty first */
+/* Trauma-Informed: 2s fades, reduced-motion support */
+
 .norse-village {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: #0a0a12;
+  background: #050510;
 }
 
 .village-grain {
@@ -10,7 +13,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 1000;
-  opacity: 0.06;
+  opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
@@ -22,129 +25,439 @@
   overflow-x: hidden;
 }
 
-.reduced-motion * {
-  animation: none !important;
-  transition-duration: 0s !important;
+/* Reduced motion support - SetAI trauma-informed design */
+@media (prefers-reduced-motion: reduce) {
+  .norse-village *,
+  .village-exterior * {
+    animation: none !important;
+    transition-duration: 0.01s !important;
+  }
 }
 
-/* Village Exterior Styles */
+.reduced-motion * {
+  animation: none !important;
+  transition-duration: 0.01s !important;
+}
+
+/* ============================================
+   VILLAGE EXTERIOR - MAIN BACKGROUND
+   ============================================ */
+
 .village-exterior {
   min-height: 100vh;
-  background: linear-gradient(180deg, 
-    #0a0812 0%, 
-    #1a1520 25%, 
-    #2d2035 50%, 
-    #3d2a40 75%, 
-    #2a1f30 100%
-  );
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px 100px;
+  padding: 40px 20px 120px;
+  overflow: hidden;
 }
 
+/* Sky gradient */
 .village-sky {
-  position: absolute;
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, 
+    #020208 0%, 
+    #0a0820 15%,
+    #101535 30%,
+    #1a2045 50%, 
+    #252a50 70%,
+    #2a3055 85%,
+    #1a2035 100%
+  );
+  z-index: 0;
+}
+
+/* ============================================
+   STARFIELD - 80+ twinkling stars
+   ============================================ */
+
+.starfield {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 45%;
+  height: 60%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.star {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(0.8);
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.3);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* ============================================
+   AURORA BOREALIS - Green/Red/Purple swirling
+   ============================================ */
+
+.aurora-borealis {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.aurora-wave {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  left: -50%;
+}
+
+.aurora-wave-1 {
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(50, 200, 100, 0.15) 20%,
+    rgba(100, 220, 150, 0.2) 40%,
+    rgba(80, 180, 120, 0.15) 60%,
+    transparent 80%
+  );
+  animation: auroraFlow1 20s ease-in-out infinite;
+  top: 5%;
+}
+
+.aurora-wave-2 {
+  background: linear-gradient(90deg, 
+    transparent 10%,
+    rgba(150, 100, 200, 0.12) 30%,
+    rgba(180, 120, 220, 0.18) 50%,
+    rgba(140, 80, 180, 0.1) 70%,
+    transparent 90%
+  );
+  animation: auroraFlow2 25s ease-in-out infinite;
+  top: 10%;
+}
+
+.aurora-wave-3 {
+  background: linear-gradient(90deg, 
+    transparent 5%,
+    rgba(200, 80, 100, 0.08) 25%,
+    rgba(220, 100, 120, 0.12) 45%,
+    rgba(180, 70, 90, 0.08) 65%,
+    transparent 85%
+  );
+  animation: auroraFlow3 30s ease-in-out infinite;
+  top: 2%;
+}
+
+@keyframes auroraFlow1 {
+  0%, 100% { transform: translateX(-10%) skewX(-5deg); opacity: 0.7; }
+  50% { transform: translateX(10%) skewX(5deg); opacity: 1; }
+}
+
+@keyframes auroraFlow2 {
+  0%, 100% { transform: translateX(5%) skewX(3deg); opacity: 0.6; }
+  50% { transform: translateX(-15%) skewX(-3deg); opacity: 0.9; }
+}
+
+@keyframes auroraFlow3 {
+  0%, 100% { transform: translateX(-5%) skewX(-2deg); opacity: 0.5; }
+  50% { transform: translateX(8%) skewX(2deg); opacity: 0.8; }
+}
+
+/* ============================================
+   LOKI STAR - Glowing green orb (top-left)
+   ============================================ */
+
+.loki-star {
+  position: fixed;
+  top: 8%;
+  left: 12%;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, #50ff80 0%, #30c060 40%, transparent 70%);
+  border-radius: 50%;
+  z-index: 3;
+  animation: lokiPulse 4s ease-in-out infinite;
+  box-shadow: 
+    0 0 20px rgba(80, 255, 128, 0.6),
+    0 0 40px rgba(80, 255, 128, 0.4),
+    0 0 60px rgba(80, 255, 128, 0.2);
+}
+
+@keyframes lokiPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 
+      0 0 20px rgba(80, 255, 128, 0.6),
+      0 0 40px rgba(80, 255, 128, 0.4),
+      0 0 60px rgba(80, 255, 128, 0.2);
+  }
+  50% { 
+    transform: scale(1.3); 
+    box-shadow: 
+      0 0 30px rgba(80, 255, 128, 0.8),
+      0 0 60px rgba(80, 255, 128, 0.5),
+      0 0 90px rgba(80, 255, 128, 0.3);
+  }
+}
+
+/* ============================================
+   MOUNTAINS - Jagged snow-capped peaks
+   ============================================ */
+
+.mountains {
+  position: fixed;
+  bottom: 25%;
+  left: 0;
+  right: 0;
+  height: 35%;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.mountain {
+  position: absolute;
+  bottom: 0;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+}
+
+.mountain-1 {
+  left: 5%;
+  width: 35%;
+  height: 100%;
   background: linear-gradient(180deg, 
-    #050308 0%, 
-    #0f0a15 40%, 
-    #1a1025 70%, 
+    #e8e8f0 0%, 
+    #c0c0d0 10%,
+    #3a3a50 30%, 
+    #252535 100%
+  );
+}
+
+.mountain-2 {
+  left: 30%;
+  width: 45%;
+  height: 120%;
+  background: linear-gradient(180deg, 
+    #f0f0ff 0%, 
+    #d0d0e0 8%,
+    #404055 25%, 
+    #2a2a3a 100%
+  );
+}
+
+.mountain-3 {
+  right: 5%;
+  width: 40%;
+  height: 90%;
+  background: linear-gradient(180deg, 
+    #e0e0f0 0%, 
+    #b0b0c0 12%,
+    #353545 35%, 
+    #202030 100%
+  );
+}
+
+.mountain-glow {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 40%;
+  background: radial-gradient(ellipse 100% 60% at 50% 100%, 
+    rgba(255, 120, 50, 0.15) 0%, 
+    rgba(255, 80, 30, 0.08) 40%,
+    transparent 70%
+  );
+}
+
+/* ============================================
+   RIVER - Winding icy river with fish emblem
+   ============================================ */
+
+.river {
+  position: fixed;
+  bottom: 22%;
+  left: 0;
+  right: 0;
+  height: 8%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.river-surface {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, 
+    rgba(60, 100, 140, 0.6) 0%,
+    rgba(80, 130, 180, 0.5) 50%,
+    rgba(50, 90, 130, 0.6) 100%
+  );
+  clip-path: polygon(0% 40%, 15% 20%, 35% 50%, 55% 30%, 75% 60%, 90% 35%, 100% 55%, 100% 100%, 0% 100%);
+}
+
+.river-reflection {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(150, 200, 255, 0.2) 20%,
+    rgba(200, 230, 255, 0.3) 50%,
+    rgba(150, 200, 255, 0.2) 80%,
     transparent 100%
   );
-  pointer-events: none;
+  animation: riverShimmer 8s ease-in-out infinite;
+  clip-path: polygon(0% 40%, 15% 20%, 35% 50%, 55% 30%, 75% 60%, 90% 35%, 100% 55%, 100% 100%, 0% 100%);
 }
 
-.village-aurora {
+@keyframes riverShimmer {
+  0%, 100% { opacity: 0.5; transform: translateX(-5%); }
+  50% { opacity: 0.8; transform: translateX(5%); }
+}
+
+/* Fish emblem - static placeholder for future link */
+.fish-emblem {
   position: absolute;
-  top: 5%;
+  bottom: 20%;
+  right: 25%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Static placeholder - no interaction yet */
+}
+
+.fish-rune {
+  font-size: 1.8rem;
+  color: #80c0ff;
+  text-shadow: 
+    0 0 10px rgba(128, 192, 255, 0.8),
+    0 0 20px rgba(128, 192, 255, 0.5),
+    0 0 30px rgba(128, 192, 255, 0.3);
+  animation: fishGlow 5s ease-in-out infinite;
+}
+
+@keyframes fishGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ============================================
+   SNOW GROUND - White textured foreground
+   ============================================ */
+
+.snow-ground {
+  position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
-  height: 25%;
-  background: 
-    radial-gradient(ellipse 80% 50% at 30% 20%, rgba(100, 200, 150, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 70% 30%, rgba(150, 100, 200, 0.06) 0%, transparent 50%);
-  pointer-events: none;
-  animation: auroraShift 20s ease-in-out infinite;
-}
-
-@keyframes auroraShift {
-  0%, 100% { opacity: 0.6; transform: translateX(0); }
-  50% { opacity: 1; transform: translateX(20px); }
-}
-
-.village-stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
+  height: 30%;
+  z-index: 6;
   pointer-events: none;
 }
 
-.village-star {
+.snow-surface {
   position: absolute;
-  background: #fff;
+  inset: 0;
+  background: linear-gradient(180deg, 
+    transparent 0%,
+    rgba(200, 210, 230, 0.3) 20%,
+    rgba(220, 230, 250, 0.5) 40%,
+    rgba(240, 245, 255, 0.7) 70%,
+    rgba(250, 252, 255, 0.9) 100%
+  );
+}
+
+.snow-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.snow-particle {
+  position: absolute;
+  top: -10px;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
-  animation: twinkle 3s ease-in-out infinite;
+  animation: snowFall 10s linear infinite;
 }
 
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
-
-.village-smoke {
-  position: absolute;
-  bottom: 35%;
-  left: 0;
-  right: 0;
-  pointer-events: none;
-  opacity: 0.4;
-}
-
-.smoke-particle {
-  position: absolute;
-  background: radial-gradient(circle, rgba(200, 180, 160, 0.5) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: smokeRise 10s ease-out infinite;
-}
-
-@keyframes smokeRise {
-  0% {
-    transform: translateY(0) scale(1) rotate(0deg);
-    opacity: 0.5;
+@keyframes snowFall {
+  0% { 
+    transform: translateY(-20px) rotate(0deg); 
+    opacity: 0;
   }
-  100% {
-    transform: translateY(-150px) scale(2.5) rotate(20deg);
+  10% { opacity: 0.8; }
+  90% { opacity: 0.6; }
+  100% { 
+    transform: translateY(100vh) rotate(360deg); 
     opacity: 0;
   }
 }
 
-.village-ground {
-  position: absolute;
-  bottom: 0;
+/* ============================================
+   YGGDRASIL PATHS - Branching paths between tents
+   ============================================ */
+
+.yggdrasil-paths {
+  position: fixed;
+  bottom: 15%;
   left: 0;
   right: 0;
-  height: 25%;
-  background: linear-gradient(180deg, 
-    transparent 0%, 
-    rgba(26, 21, 16, 0.5) 20%, 
-    #1a1510 50%, 
-    #0f0a08 100%
-  );
+  height: 20%;
+  z-index: 7;
   pointer-events: none;
+  opacity: 0.3;
 }
+
+.paths-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.branch-path {
+  fill: none;
+  stroke: rgba(139, 90, 43, 0.4);
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* ============================================
+   GRAIN OVERLAY - Parchment feel
+   ============================================ */
+
+.village-grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ============================================
+   VILLAGE TITLE
+   ============================================ */
 
 .village-title {
   position: relative;
-  z-index: 10;
+  z-index: 100;
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
+  margin-top: 20px;
 }
 
 .village-title h1 {
@@ -152,10 +465,16 @@
   font-size: clamp(2.5rem, 8vw, 5rem);
   color: #d4af37;
   text-shadow: 
-    0 0 30px rgba(212, 175, 55, 0.6),
-    0 0 60px rgba(212, 175, 55, 0.3),
+    0 0 30px rgba(212, 175, 55, 0.7),
+    0 0 60px rgba(212, 175, 55, 0.4),
     0 4px 12px rgba(0, 0, 0, 0.9);
   letter-spacing: 0.15em;
+  animation: titleGlow 6s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% { text-shadow: 0 0 30px rgba(212, 175, 55, 0.6), 0 4px 12px rgba(0, 0, 0, 0.9); }
+  50% { text-shadow: 0 0 50px rgba(212, 175, 55, 0.9), 0 0 80px rgba(212, 175, 55, 0.5), 0 4px 12px rgba(0, 0, 0, 0.9); }
 }
 
 .village-title p {
@@ -163,35 +482,44 @@
   color: #a89070;
   margin-top: 12px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
-/* Tent Grid */
-.tent-grid {
+/* ============================================
+   TENT CIRCLE - Circular arrangement
+   ============================================ */
+
+.tent-circle {
   position: relative;
-  z-index: 10;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px;
+  z-index: 100;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
   max-width: 1200px;
   width: 100%;
   padding: 20px;
 }
 
 @media (min-width: 768px) {
-  .tent-grid {
+  .tent-circle {
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 40px;
   }
 }
 
 @media (min-width: 1024px) {
-  .tent-grid {
+  .tent-circle {
     grid-template-columns: repeat(4, 1fr);
+    gap: 48px;
   }
 }
 
-/* Tent Portal Button */
+/* ============================================
+   TENT PORTAL - Interactive tent button
+   ============================================ */
+
 .tent-portal {
   display: flex;
   flex-direction: column;
@@ -200,84 +528,115 @@
   border: none;
   cursor: pointer;
   padding: 16px;
-  transition: transform 0.4s ease;
+  transition: transform 0.4s ease, filter 0.4s ease;
+  outline: none;
 }
 
 .tent-portal:hover,
 .tent-portal:focus {
-  transform: scale(1.08) translateY(-8px);
-  outline: none;
+  transform: scale(1.1) translateY(-12px);
 }
 
 .tent-portal:focus-visible {
   outline: 3px solid #d4af37;
-  outline-offset: 8px;
-  border-radius: 12px;
+  outline-offset: 12px;
+  border-radius: 16px;
 }
 
-/* Tent Structure */
+.tent-active {
+  transform: scale(1.15) translateY(-16px);
+}
+
+/* ============================================
+   TENT STRUCTURE - Canvas with poles and layers
+   ============================================ */
+
 .tent-structure {
   position: relative;
   width: 160px;
   height: 180px;
 }
 
-/* Wooden Poles */
+/* Wooden poles */
 .tent-pole {
   position: absolute;
-  background: linear-gradient(90deg, #1a1008 0%, #3a2a18 30%, #4a3a28 50%, #3a2a18 70%, #1a1008 100%);
+  background: linear-gradient(90deg, 
+    #1a0f08 0%, 
+    #3a2518 25%, 
+    #4a3528 50%, 
+    #3a2518 75%, 
+    #1a0f08 100%
+  );
   border-radius: 3px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
 }
 
 .tent-pole-center {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 8px;
-  height: 60px;
-  z-index: 5;
+  width: 10px;
+  height: 65px;
+  z-index: 15;
 }
 
 .tent-pole-left {
   bottom: 0;
-  left: 15%;
-  width: 6px;
-  height: 120px;
-  transform: rotate(-8deg);
+  left: 12%;
+  width: 7px;
+  height: 130px;
+  transform: rotate(-10deg);
   transform-origin: bottom center;
 }
 
 .tent-pole-right {
   bottom: 0;
-  right: 15%;
-  width: 6px;
-  height: 120px;
-  transform: rotate(8deg);
+  right: 12%;
+  width: 7px;
+  height: 130px;
+  transform: rotate(10deg);
   transform-origin: bottom center;
 }
 
-/* Rope Lashings */
+/* Rope lashings */
 .tent-rope-lashing {
   position: absolute;
-  top: 55px;
+  top: 58px;
   left: 50%;
   transform: translateX(-50%);
-  width: 20px;
-  height: 10px;
-  background: 
-    repeating-linear-gradient(
-      45deg,
-      #5a4a30 0px,
-      #5a4a30 2px,
-      #3a2a18 2px,
-      #3a2a18 4px
-    );
-  border-radius: 2px;
-  z-index: 6;
+  width: 24px;
+  height: 12px;
+  background: repeating-linear-gradient(
+    45deg,
+    #5a4a30 0px,
+    #5a4a30 2px,
+    #3a2a18 2px,
+    #3a2a18 4px
+  );
+  border-radius: 3px;
+  z-index: 16;
 }
 
-/* Layered Canvas Folds */
+.tent-rope-left,
+.tent-rope-right {
+  position: absolute;
+  top: 64px;
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, #5a4a30 0%, #3a2a18 100%);
+}
+
+.tent-rope-left {
+  left: 30%;
+  transform: rotate(-20deg);
+}
+
+.tent-rope-right {
+  right: 30%;
+  transform: rotate(20deg);
+}
+
+/* Layered canvas folds (4 layers for depth) */
 .tent-canvas-layer {
   position: absolute;
   bottom: 0;
@@ -287,198 +646,208 @@
   transition: all 0.4s ease;
 }
 
-.tent-canvas-back {
-  width: 140px;
-  height: 120px;
-  background: linear-gradient(180deg, 
-    #2a1a10 0%, 
-    #3a2518 30%, 
-    #2a1a10 100%
-  );
+.tent-canvas-layer-4 {
+  width: 150px;
+  height: 125px;
+  background: linear-gradient(180deg, #1a0f08 0%, #2a1a10 50%, #1a0f08 100%);
   z-index: 1;
 }
 
-.tent-canvas-mid {
-  width: 130px;
-  height: 115px;
+.tent-canvas-layer-3 {
+  width: 140px;
+  height: 120px;
   background: linear-gradient(180deg, 
-    #4a3020 0%, 
-    #5a3a28 30%, 
-    #4a3020 60%,
-    #3a2518 100%
+    #3a2518 0%, 
+    #4a3020 30%, 
+    #3a2518 70%,
+    #2a1a10 100%
   );
   z-index: 2;
 }
 
-.tent-canvas-front {
+.tent-canvas-layer-2 {
+  width: 130px;
+  height: 115px;
+  background: linear-gradient(180deg, 
+    #5a3828 0%, 
+    #6a4535 25%, 
+    #5a3828 55%,
+    #4a2a1a 100%
+  );
+  z-index: 3;
+}
+
+.tent-canvas-layer-1 {
   width: 120px;
   height: 110px;
   background: linear-gradient(180deg, 
-    #6a4530 0%, 
-    #7a5038 20%, 
-    #6a4530 50%,
-    #5a3a28 80%,
-    #4a3020 100%
+    #7a5040 0%, 
+    #8a6050 20%, 
+    #7a5040 50%,
+    #6a4535 75%,
+    #5a3828 100%
   );
-  z-index: 3;
+  z-index: 4;
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    inset 0 -20px 40px rgba(0, 0, 0, 0.3);
+    0 6px 24px rgba(0, 0, 0, 0.6),
+    inset 0 -30px 50px rgba(0, 0, 0, 0.4);
 }
 
-/* Canvas texture overlay */
-.tent-canvas-front::before {
+/* Canvas texture */
+.tent-canvas-layer-1::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.1;
   clip-path: inherit;
 }
 
-.tent-portal:hover .tent-canvas-front {
+.tent-portal:hover .tent-canvas-layer-1 {
   background: linear-gradient(180deg, 
-    #7a5540 0%, 
-    #8a6048 20%, 
-    #7a5540 50%,
-    #6a4530 80%,
-    #5a3a28 100%
+    #8a6050 0%, 
+    #9a7060 20%, 
+    #8a6050 50%,
+    #7a5040 75%,
+    #6a4535 100%
   );
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(255, 150, 50, 0.3),
-    inset 0 -20px 40px rgba(0, 0, 0, 0.3);
+    0 6px 24px rgba(0, 0, 0, 0.6),
+    0 0 50px rgba(255, 120, 40, 0.4),
+    inset 0 -30px 50px rgba(0, 0, 0, 0.4);
 }
 
-/* Tent Entrance */
+/* Tent entrance */
 .tent-entrance {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 40px;
-  height: 50px;
+  width: 44px;
+  height: 55px;
   background: linear-gradient(180deg, 
     #0a0505 0%, 
-    #1a0f08 50%,
+    #150a08 40%,
     #0a0505 100%
   );
   clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-  z-index: 4;
-  box-shadow: inset 0 0 20px rgba(255, 100, 30, 0.2);
-}
-
-.tent-portal:hover .tent-entrance {
-  box-shadow: inset 0 0 30px rgba(255, 100, 30, 0.4);
-}
-
-/* Glowing Runes */
-.tent-runes {
-  position: absolute;
-  bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   z-index: 10;
 }
 
-.tent-runes-left {
-  left: 8px;
-}
-
-.tent-runes-right {
-  right: 8px;
-}
-
-.tent-rune {
-  font-size: 1.2rem;
-  color: #4a90c0;
-  text-shadow: 
-    0 0 8px rgba(74, 144, 192, 0.8),
-    0 0 16px rgba(74, 144, 192, 0.5),
-    0 0 24px rgba(74, 144, 192, 0.3);
-  animation: runeGlow 3s ease-in-out infinite;
-}
-
-.tent-runes-left .tent-rune:nth-child(2) {
-  animation-delay: 0.5s;
-}
-
-.tent-runes-right .tent-rune:nth-child(1) {
-  animation-delay: 1s;
-}
-
-.tent-runes-right .tent-rune:nth-child(2) {
-  animation-delay: 1.5s;
-}
-
-@keyframes runeGlow {
-  0%, 100% { 
-    opacity: 0.6; 
-    text-shadow: 
-      0 0 8px rgba(74, 144, 192, 0.6),
-      0 0 16px rgba(74, 144, 192, 0.3);
-  }
-  50% { 
-    opacity: 1; 
-    text-shadow: 
-      0 0 12px rgba(74, 144, 192, 1),
-      0 0 24px rgba(74, 144, 192, 0.7),
-      0 0 36px rgba(74, 144, 192, 0.4);
-  }
-}
-
-.tent-portal:hover .tent-rune {
-  color: #6ab0e0;
-  text-shadow: 
-    0 0 12px rgba(106, 176, 224, 1),
-    0 0 24px rgba(106, 176, 224, 0.8),
-    0 0 36px rgba(106, 176, 224, 0.5);
-}
-
-/* Torchlight Glow Effects */
-.tent-glow {
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 60px;
-  background: radial-gradient(ellipse, rgba(255, 150, 50, 0.4) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: 0;
-}
-
-.tent-interior-glow {
+.tent-interior-firelight {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 60px;
-  height: 40px;
-  background: radial-gradient(ellipse, rgba(255, 80, 20, 0.6) 0%, transparent 70%);
-  opacity: 0.3;
-  z-index: 5;
-  animation: interiorFlicker 4s ease-in-out infinite;
+  height: 35px;
+  background: radial-gradient(ellipse, 
+    rgba(255, 100, 30, 0.5) 0%, 
+    rgba(255, 60, 20, 0.3) 40%,
+    transparent 70%
+  );
+  animation: firelightFlicker 3s ease-in-out infinite;
+  z-index: 11;
 }
 
-@keyframes interiorFlicker {
-  0%, 100% { opacity: 0.2; transform: translateX(-50%) scale(1); }
-  25% { opacity: 0.4; transform: translateX(-50%) scale(1.1); }
-  50% { opacity: 0.3; transform: translateX(-50%) scale(0.95); }
-  75% { opacity: 0.5; transform: translateX(-50%) scale(1.05); }
+@keyframes firelightFlicker {
+  0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
+  25% { opacity: 0.6; transform: translateX(-50%) scale(1.1); }
+  50% { opacity: 0.5; transform: translateX(-50%) scale(0.95); }
+  75% { opacity: 0.7; transform: translateX(-50%) scale(1.05); }
 }
 
-.tent-portal:hover .tent-glow {
+.tent-portal:hover .tent-interior-firelight {
+  opacity: 0.8;
+  animation: firelightFlickerHover 2s ease-in-out infinite;
+}
+
+@keyframes firelightFlickerHover {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1.1); }
+  50% { opacity: 0.9; transform: translateX(-50%) scale(1.2); }
+}
+
+/* ============================================
+   GLOWING BLUE RUNES - On entrance sides
+   ============================================ */
+
+.tent-runes {
+  position: absolute;
+  bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 12;
+}
+
+.tent-runes-left {
+  left: 10px;
+}
+
+.tent-runes-right {
+  right: 10px;
+}
+
+.tent-rune {
+  font-size: 1.1rem;
+  color: #5090c0;
+  text-shadow: 
+    0 0 8px rgba(80, 144, 192, 0.9),
+    0 0 16px rgba(80, 144, 192, 0.6),
+    0 0 24px rgba(80, 144, 192, 0.4);
+  animation: runeGlow 3s ease-in-out infinite;
+}
+
+@keyframes runeGlow {
+  0%, 100% { 
+    opacity: 0.5; 
+    text-shadow: 
+      0 0 6px rgba(80, 144, 192, 0.7),
+      0 0 12px rgba(80, 144, 192, 0.4);
+  }
+  50% { 
+    opacity: 1; 
+    text-shadow: 
+      0 0 12px rgba(80, 144, 192, 1),
+      0 0 24px rgba(80, 144, 192, 0.8),
+      0 0 36px rgba(80, 144, 192, 0.5);
+  }
+}
+
+.tent-portal:hover .tent-rune {
+  color: #70b0e0;
+  text-shadow: 
+    0 0 14px rgba(112, 176, 224, 1),
+    0 0 28px rgba(112, 176, 224, 0.8),
+    0 0 42px rgba(112, 176, 224, 0.5);
+}
+
+/* Torchlight glow on hover */
+.tent-torch-glow {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 70px;
+  background: radial-gradient(ellipse, 
+    rgba(255, 140, 50, 0.5) 0%, 
+    rgba(255, 100, 30, 0.3) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.tent-portal:hover .tent-torch-glow {
   opacity: 1;
 }
 
-.tent-portal:hover .tent-interior-glow {
-  opacity: 0.6;
-}
+/* ============================================
+   HIDE SIGN - Deer/elk hide with tent name
+   ============================================ */
 
-/* Hide/Leather Sign */
 .tent-hide-sign {
   position: relative;
   margin-top: 20px;
@@ -487,90 +856,139 @@
   align-items: center;
 }
 
-.tent-sign-rope {
+.tent-sign-rope-left,
+.tent-sign-rope-right {
   position: absolute;
-  top: -12px;
+  top: -14px;
   width: 2px;
-  height: 16px;
+  height: 18px;
   background: linear-gradient(180deg, #5a4a30 0%, #3a2a18 100%);
 }
 
 .tent-sign-rope-left {
-  left: 20%;
-  transform: rotate(-15deg);
+  left: 18%;
+  transform: rotate(-18deg);
 }
 
 .tent-sign-rope-right {
-  right: 20%;
-  transform: rotate(15deg);
+  right: 18%;
+  transform: rotate(18deg);
 }
 
 .tent-sign-hide {
-  padding: 10px 18px;
+  padding: 12px 20px;
   background: linear-gradient(180deg, 
-    #5a4530 0%, 
-    #4a3a28 30%, 
-    #3a2a1e 70%,
-    #2a1a12 100%
+    #6a5540 0%, 
+    #5a4530 25%,
+    #4a3a28 60%,
+    #3a2a1e 100%
   );
-  border: 2px solid #6a5a48;
-  border-radius: 3px;
+  border: 2px solid #7a6a58;
+  border-radius: 4px;
   box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+    0 4px 16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
   position: relative;
 }
 
-/* Uneven hide edges */
+/* Ragged edges for hide */
 .tent-sign-hide::before,
 .tent-sign-hide::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 4px;
+  top: 2px;
+  bottom: 2px;
+  width: 5px;
   background: inherit;
+  border: inherit;
+  border-left: none;
+  border-right: none;
 }
 
 .tent-sign-hide::before {
-  left: -4px;
-  border-radius: 2px 0 0 2px;
-  clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 95%);
+  left: -5px;
+  border-radius: 3px 0 0 3px;
+  clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 92%);
 }
 
 .tent-sign-hide::after {
-  right: -4px;
-  border-radius: 0 2px 2px 0;
-  clip-path: polygon(0 0, 100% 8%, 100% 92%, 0 100%);
+  right: -5px;
+  border-radius: 0 3px 3px 0;
+  clip-path: polygon(0 0, 100% 6%, 100% 94%, 0 100%);
 }
 
-.tent-sign-hide span {
+.tent-sign-text {
   font-family: 'Cinzel', serif;
   font-size: 0.85rem;
   color: #d4af37;
   text-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.8),
-    0 0 8px rgba(212, 175, 55, 0.3);
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(212, 175, 55, 0.4);
   white-space: nowrap;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .tent-portal:hover .tent-sign-hide {
   box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.6),
-    0 0 20px rgba(212, 175, 55, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+    0 4px 16px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(212, 175, 55, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
 }
 
-.tent-portal:hover .tent-sign-hide span {
+.tent-portal:hover .tent-sign-text {
   text-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.8),
-    0 0 12px rgba(212, 175, 55, 0.5);
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 0 16px rgba(212, 175, 55, 0.6);
 }
 
-/* Tent Interior Styles */
+/* ============================================
+   VILLAGE FOOTER - SetAI sovereignty
+   ============================================ */
+
+.village-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(180deg, 
+    transparent 0%,
+    rgba(10, 10, 20, 0.8) 40%,
+    rgba(10, 10, 20, 0.95) 100%
+  );
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: #a89070;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.footer-ravens {
+  font-size: 1.2rem;
+  animation: ravenGlow 4s ease-in-out infinite;
+}
+
+@keyframes ravenGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.4)); 
+    transform: scale(1);
+  }
+  50% { 
+    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.7)); 
+    transform: scale(1.1);
+  }
+}
+
+/* ============================================
+   TENT INTERIOR STYLES (unchanged)
+   ============================================ */
+
 .tent-interior {
   min-height: 100vh;
   padding: 40px 20px 100px;
@@ -625,13 +1043,9 @@
   font-size: 1.2rem;
 }
 
-/* Tent Theme: Longhouse (About) */
+/* Tent Themes */
 .tent-longhouse {
-  background: linear-gradient(180deg, 
-    #1a1510 0%, 
-    #2a2018 50%, 
-    #1a1510 100%
-  );
+  background: linear-gradient(180deg, #1a1510 0%, #2a2018 50%, #1a1510 100%);
 }
 
 .tent-longhouse::before {
@@ -641,40 +1055,20 @@
     radial-gradient(ellipse 80% 40% at 80% 80%, rgba(255, 150, 50, 0.1) 0%, transparent 50%);
 }
 
-/* Tent Theme: Map Tent (Sanctuary) */
 .tent-map {
-  background: linear-gradient(180deg, 
-    #1a1a15 0%, 
-    #252520 50%, 
-    #1a1a15 100%
-  );
+  background: linear-gradient(180deg, #1a1a15 0%, #252520 50%, #1a1a15 100%);
 }
 
-/* Tent Theme: Workshop (Makers) */
 .tent-workshop {
-  background: linear-gradient(180deg, 
-    #1a1510 0%, 
-    #252018 50%, 
-    #1a1510 100%
-  );
+  background: linear-gradient(180deg, #1a1510 0%, #252018 50%, #1a1510 100%);
 }
 
-/* Tent Theme: Counting House (Pricing) */
 .tent-counting {
-  background: linear-gradient(180deg, 
-    #15151a 0%, 
-    #202025 50%, 
-    #15151a 100%
-  );
+  background: linear-gradient(180deg, #15151a 0%, #202025 50%, #15151a 100%);
 }
 
-/* Tent Theme: Mystic (SetAI) */
 .tent-mystic {
-  background: linear-gradient(180deg, 
-    #0f0a15 0%, 
-    #1a1025 50%, 
-    #0f0a15 100%
-  );
+  background: linear-gradient(180deg, #0f0a15 0%, #1a1025 50%, #0f0a15 100%);
 }
 
 .tent-mystic::before {
@@ -684,30 +1078,19 @@
     radial-gradient(ellipse 40% 30% at 70% 70%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
 }
 
-/* Tent Theme: Sacred (Mission) */
 .tent-sacred {
-  background: linear-gradient(180deg, 
-    #151018 0%, 
-    #201520 50%, 
-    #151018 100%
-  );
+  background: linear-gradient(180deg, #151018 0%, #201520 50%, #151018 100%);
 }
 
-/* Tent Theme: Gathering (Join) */
 .tent-gathering {
-  background: linear-gradient(180deg, 
-    #1a1510 0%, 
-    #2a2018 50%, 
-    #1a1510 100%
-  );
+  background: linear-gradient(180deg, #1a1510 0%, #2a2018 50%, #1a1510 100%);
 }
 
 .tent-gathering::before {
-  background: 
-    radial-gradient(ellipse 60% 40% at 50% 80%, rgba(255, 100, 30, 0.15) 0%, transparent 50%);
+  background: radial-gradient(ellipse 60% 40% at 50% 80%, rgba(255, 100, 30, 0.15) 0%, transparent 50%);
 }
 
-/* Shared Tent Elements */
+/* Shared elements */
 .tent-header {
   text-align: center;
   margin-bottom: 40px;
@@ -733,9 +1116,7 @@
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .runestone h3 {
@@ -756,9 +1137,7 @@
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 
-    0 8px 24px rgba(0, 0, 0, 0.5),
-    inset 0 2px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.05);
 }
 
 .hanging-banner {
@@ -783,9 +1162,7 @@
   border-radius: 8px;
   padding: 24px;
   color: #3d2e0f;
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 0 20px rgba(139, 105, 20, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(139, 105, 20, 0.1);
 }
 
 .timeline-board {
@@ -840,9 +1217,9 @@
   color: #6a5a4a;
 }
 
-/* Mobile Optimizations */
+/* Mobile */
 @media (max-width: 640px) {
-  .tent-grid {
+  .tent-circle {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
@@ -852,44 +1229,20 @@
     height: 140px;
   }
 
-  .tent-canvas-back {
-    width: 110px;
-    height: 95px;
-  }
+  .tent-canvas-layer-4 { width: 115px; height: 100px; }
+  .tent-canvas-layer-3 { width: 105px; height: 95px; }
+  .tent-canvas-layer-2 { width: 95px; height: 90px; }
+  .tent-canvas-layer-1 { width: 85px; height: 85px; }
 
-  .tent-canvas-mid {
-    width: 100px;
-    height: 90px;
-  }
+  .tent-entrance { width: 34px; height: 45px; }
 
-  .tent-canvas-front {
-    width: 90px;
-    height: 85px;
-  }
+  .tent-rune { font-size: 0.9rem; }
 
-  .tent-entrance {
-    width: 30px;
-    height: 40px;
-  }
+  .tent-sign-hide { padding: 10px 14px; }
+  .tent-sign-text { font-size: 0.75rem; }
 
-  .tent-rune {
-    font-size: 1rem;
-  }
-
-  .tent-sign-hide {
-    padding: 8px 14px;
-  }
-
-  .tent-sign-hide span {
-    font-size: 0.75rem;
-  }
-
-  .back-to-village {
-    padding: 10px 16px;
-    font-size: 0.8rem;
-  }
-
-  .tent-header {
-    padding-top: 80px;
-  }
+  .back-to-village { padding: 10px 16px; font-size: 0.8rem; }
+  .tent-header { padding-top: 80px; }
+  
+  .village-footer { font-size: 0.75rem; padding: 12px; }
 }
