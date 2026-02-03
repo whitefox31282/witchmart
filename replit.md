@@ -75,7 +75,45 @@ WitchMart is a member-owned, Pagan-aligned cooperative marketplace and sanctuary
 - **Imagery**: Set the Sloth (🦥) as guardian (replaced eagles), runes as guidance, Yggdrasil knotwork
 - **SetSlothBuddhaPose**: `client/src/components/SetSlothBuddhaPose.tsx` - Canonical Set the Sloth on flying carpet in Buddha pose
 
-### Gaming Guild
+### Makers & Guilds System
+- `client/src/lib/guild-data.ts` - Guild data structure with all 10 guilds and subcategories
+- `client/src/lib/guild-themes.ts` - Theme pack system with 9 visual themes
+- `client/src/components/guilds/GuildListingCard.tsx` - Standardized guild member card component
+- `client/src/pages/guild-landing.tsx` - Generic guild landing page with subcategory filters
+- `client/src/pages/game-creators-guild.tsx` - Game Creators Guild with 7 sub-tabs
+- `client/src/components/village/tents/MakersTent.tsx` - Updated to display all 10 guild tabs
+
+### Guild Categories (10 Guilds)
+1. **Game Creators Guild** - Developers, Testers, Creators, Modders, Artists, Sound & Music, Tools & Engines
+2. **Artisans Guild** - Leatherwork, Woodcraft, Metalwork, Pottery & Ceramics, Textiles & Weaving, Jewelry, Bone & Antler Craft, Rune Carving
+3. **Herbalists & Apothecaries Guild** - Herbal Remedies, Teas & Tinctures, Salves & Oils, Incense & Resins, Foraged Goods, Ritual Herbs
+4. **Diviners & Seers Guild** - Tarot & Oracle, Rune Readers, Mediumship, Dream Interpretation, Energy Work, Astrology
+5. **Smiths & Forgers Guild** - Blacksmithing, Blade Forging, Toolmaking, Armor Craft, Metal Casting
+6. **Builders & Makers Guild** - Furniture, Shelters & Structures, Carved Goods, Household Tools, Custom Builds
+7. **Textile & Fiber Guild** - Sewing, Knitting & Crochet, Embroidery, Cloaks & Garments, Quilts, Ritual Clothing
+8. **Ritual & Sacred Craft Guild** - Altars, Wands & Staves, Chalices, Athames, Ritual Kits, Spell Jars, Sacred Art
+9. **Digital Makers Guild** - Digital Art, Logos & Branding, Websites, 3D Printing, Virtual Ritual Tools, Music & Soundscapes
+10. **Educators & Skillmasters Guild** - Craft Classes, Spiritual Classes, Survival Skills, Homesteading, Fishing, Workshops & Courses
+
+### Theme Pack System (9 Themes)
+- **dnd** - Dungeons & Dragons: Aged parchment, wax seals, dragon-scale borders, dice icons
+- **wow** - World of Warcraft: Stone borders, metallic trim, fantasy UI frames
+- **pathfinder** - Pathfinder: Scrollwork, compass motifs, adventure parchment
+- **elderscrolls** - Elder Scrolls: Weathered stone, Nordic carvings, cold metallic accents
+- **norse** - Norse: Knotwork, runes, woodgrain textures
+- **egyptian** - Egyptian: Papyrus, gold/black palette, hieroglyphic dividers
+- **celtic** - Celtic: Green knotwork, spirals, bronze accents
+- **slavic** - Slavic: Embroidery patterns, woodcut borders, folk symbols
+- **custom** - Custom: Default WitchMart styling
+
+### Guild Listing Card Fields
+- Display Name, Guild Category, Subcategory
+- Profile Image or Symbol (optional)
+- Description
+- Social Links: Discord, YouTube, TikTok, Instagram, Website, Shop, Email
+- View Full Profile button
+
+### Gaming Guild (Legacy)
 - `client/src/pages/gaming-guild.tsx` - Gaming Guild landing page with 8 game categories
 - `client/src/pages/gaming-safety.tsx` - SetAI Gaming Safety Agent with parental controls
 - **Game Categories**: Tabletop RPGs, MMORPGs, Strategy Games, Card Games, Survival & Craft, Retro Gaming, Indie Games, Board Games
