@@ -1,0 +1,223 @@
+.about-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 100px;
+  color: #e0d5c0;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.about-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  color: #d4af37;
+  margin-bottom: 24px;
+  text-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+.about-intro {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #c5baa8;
+  max-width: 700px;
+  margin: 0 auto 16px;
+}
+
+.about-section {
+  margin-bottom: 60px;
+  padding: 32px;
+  background: rgba(20, 20, 40, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.75rem;
+  color: #d4af37;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.about-section p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #c5baa8;
+  margin-bottom: 16px;
+}
+
+.about-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 24px;
+}
+
+.about-list li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #c5baa8;
+}
+
+.about-list li::before {
+  content: "•";
+  position: absolute;
+  left: 8px;
+  color: #d4af37;
+}
+
+.founder-header {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: rgba(212, 175, 55, 0.08);
+  border-radius: 12px;
+  border-left: 3px solid #d4af37;
+}
+
+.founder-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: #e0d5c0;
+  margin-bottom: 4px !important;
+}
+
+.founder-role {
+  font-size: 0.95rem;
+  color: #8b6914;
+  font-style: italic;
+  margin-bottom: 0 !important;
+}
+
+.manifesto-grid {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .manifesto-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.manifesto-item {
+  padding: 20px;
+  background: rgba(30, 30, 50, 0.5);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.manifesto-item:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.manifesto-item h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: #d4af37;
+  margin-bottom: 10px;
+}
+
+.manifesto-item p {
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+.timeline-intro {
+  font-size: 1.1rem;
+  color: #c5baa8;
+  margin-bottom: 32px;
+  text-align: center;
+  font-style: italic;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 24px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #d4af37 0%, rgba(212, 175, 55, 0.2) 100%);
+}
+
+.timeline-phase {
+  position: relative;
+  margin-bottom: 32px;
+  padding-left: 20px;
+}
+
+.timeline-phase::before {
+  content: "";
+  position: absolute;
+  left: -29px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  background: #d4af37;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+}
+
+.phase-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  color: #e0d5c0;
+  margin-bottom: 12px;
+}
+
+.phase-now {
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.phase-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.phase-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #a09080;
+}
+
+.phase-list li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: #8b6914;
+}
+
+@media (max-width: 640px) {
+  .about-title {
+    font-size: 2rem;
+  }
+
+  .about-intro {
+    font-size: 1rem;
+  }
+
+  .about-section {
+    padding: 24px 16px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+}

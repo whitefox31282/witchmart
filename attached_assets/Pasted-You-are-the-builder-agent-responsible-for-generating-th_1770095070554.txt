@@ -1,0 +1,145 @@
+You are the builder agent responsible for generating the **About WitchMart** page.
+
+Your job is to implement a full About page using the canonical content and structure below. 
+Do NOT use placeholders. Do NOT invent new sections. Fill everything with the provided text.
+
+============================================================
+PAGE PURPOSE
+============================================================
+The About page explains:
+- What WitchMart is
+- Where it came from (Origins)
+- Who leads it (Meet the Founder)
+- What it stands for (Manifesto)
+- Where it’s going (Timeline / Vision)
+
+This page must be readable, accessible, and consistent with the WitchMart landing page style.
+
+============================================================
+SECTIONS AND CONTENT (USE EXACTLY)
+============================================================
+
+1) Page title and intro
+-----------------------
+Title: About WitchMart
+
+Intro paragraph:
+WitchMart is a member‑owned, Pagan‑aligned cooperative marketplace and sanctuary network. It exists to restore dignity, transparency, and community power in a world where most systems extract more than they give. WitchMart is built for people who want to trade, teach, heal, create, and gather without surveillance, exploitation, or corporate gatekeeping.
+
+Second paragraph:
+This cooperative is not a brand. It’s a living ecosystem — a network of sanctuaries, makers, guilds, and mutual‑aid nodes that honor every tradition and every path.
+
+2) Origins
+----------
+Section title: Origins
+
+Body:
+WitchMart began as a response to a simple truth: people deserve systems that serve them, not systems that drain them.
+
+Rev. Jon Bradley, the founder, grew up watching how communities thrive when people know each other, trust each other, and build together. He saw firsthand how local networks — neighbors helping neighbors — create resilience, dignity, and belonging. He also saw how modern systems replaced that with extraction, surveillance, and profit‑first thinking.
+
+WitchMart is a reclamation of that older vision:
+a cooperative marketplace where the people own the platform, the rules are visible, and the flows are transparent.
+
+It is built for:
+- makers
+- healers
+- farmers
+- spiritual communities
+- off‑grid families
+- mutual‑aid organizers
+- anyone who wants to participate in a fair, transparent, and spiritually aligned economy
+
+3) Meet the Founder
+-------------------
+Section title: Meet the Founder
+
+Body:
+Rev. Jon Bradley  
+Founder • Cooperative Architect • Sanctuary Builder
+
+Rev. Jon’s mission is to build systems that protect people instead of exploiting them. His leadership style is cooperative, transparent, and grounded in lived experience. He designs WitchMart as a sanctuary economy — one where:
+
+- members own the platform
+- rules are visible
+- decisions are accountable
+- safety is non‑negotiable
+- dignity is the baseline
+
+WitchMart is the expression of that philosophy: a place where people can build together without being mined, tracked, or reduced to data points.
+
+4) Manifesto
+------------
+Section title: Manifesto
+
+Subpoints (render as bullets or clear subheadings):
+
+Transparency first  
+Rules, flows, and decisions must be visible. No hidden algorithms. No silent changes.
+
+Cooperation over extraction  
+Value flows toward the people who create it — not toward a corporation.
+
+Accessibility and dignity  
+Every member deserves clear language, fair pricing, and a space where they are treated with respect.
+
+Resilience through local nodes  
+Communities thrive when they have local sanctuary points — places to gather, trade, teach, and support each other.
+
+Safety culture  
+Clear boundaries, clear expectations, and trauma‑informed design. No exploitation. No surveillance.
+
+Member ownership means member oversight  
+The cooperative belongs to the people who use it. Decisions are accountable to the community.
+
+5) Timeline / Vision
+--------------------
+Section title: Timeline / Vision
+
+Intro line:
+WitchMart is being built in phases — each one strengthening the cooperative foundation.
+
+Phase 1 — Sanctuary Network (Now)  
+- Launch of the Sanctuary Nodes directory  
+- Any tradition, any community, any path may add their sanctuary  
+- Zero gatekeeping, zero hierarchy  
+- Safety and transparency standards published openly  
+
+Phase 2 — Makers & Guilds  
+- Maker profiles  
+- Craft categories  
+- Reputation based on human trust, not algorithms  
+- Guild formation for shared skills and mutual support  
+
+Phase 3 — Cooperative Governance  
+- Member voting  
+- Public decision logs  
+- Transparent budgeting  
+- Community‑driven rule updates  
+
+Phase 4 — Marketplace & Mutual Aid  
+- Local trade  
+- Skill‑sharing  
+- Resource exchanges  
+- Sanctuary‑based pickup points  
+
+Phase 5 — Public Reporting  
+- Quarterly transparency reports  
+- Open financials  
+- Community metrics  
+- Member‑owned data, always  
+
+============================================================
+IMPLEMENTATION RULES
+============================================================
+- Use semantic HTML/JSX structure (sections, headings, paragraphs, lists).
+- Style should match the landing page theme (dark, mythic, accessible).
+- Do NOT leave any “placeholder” text.
+- Do NOT change names, titles, or wording.
+- Do NOT add extra sections beyond those defined.
+- Make it mobile‑first and readable.
+
+============================================================
+YOUR TASK
+============================================================
+Generate or update the About page component (e.g., About.jsx or About.tsx) and any necessary styles so that the About WitchMart page renders with the exact content and structure above, consistent with the existing WitchMart landing page design.
