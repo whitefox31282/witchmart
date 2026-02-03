@@ -30,6 +30,7 @@ import SetAICouncils from "./pages/setai-councils";
 import SetAISecurity from "./pages/setai-security";
 import SetAISettings from "./pages/setai-settings";
 import LandingPage from "./pages/landing";
+import NorseVillage from "./pages/norse-village";
 
 const NAV = [
   { label: "Home", href: "/" },
@@ -217,7 +218,7 @@ function AppContent() {
     return (
       <>
         {ConsentModal}
-        <LandingPage />
+        <NorseVillage />
       </>
     );
   }
