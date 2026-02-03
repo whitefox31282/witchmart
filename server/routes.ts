@@ -17,6 +17,7 @@ import {
 import fs from "fs";
 import path from "path";
 import { fromZodError } from "zod-validation-error";
+import { createListResponse, createSuccessResponse, createErrorResponse, getSupportInfo, getSafetyDisclaimer } from "./witchmart-response";
 
 // SetAI Consent Middleware - Rejects POST/PUT/PATCH without consent
 function requireConsent(req: any, res: any, next: any) {
@@ -56,12 +57,12 @@ export async function registerRoutes(
       const { q } = req.query;
       if (q && typeof q === "string") {
         const nodes = await storage.searchNodes(q);
-        return res.json(nodes);
+        return res.json(createListResponse(nodes, "sanctuary nodes", { includeSupport: true }));
       }
       const nodes = await storage.getAllNodes();
-      res.json(nodes);
+      res.json(createListResponse(nodes, "sanctuary nodes", { includeSupport: true }));
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json(createErrorResponse(error.message));
     }
   });
 
@@ -123,12 +124,12 @@ export async function registerRoutes(
       const { q } = req.query;
       if (q && typeof q === "string") {
         const makers = await storage.searchMakers(q);
-        return res.json(makers);
+        return res.json(createListResponse(makers, "makers and guilds", { includeSupport: true }));
       }
       const makers = await storage.getAllMakers();
-      res.json(makers);
+      res.json(createListResponse(makers, "makers and guilds", { includeSupport: true }));
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json(createErrorResponse(error.message));
     }
   });
 
@@ -190,12 +191,12 @@ export async function registerRoutes(
       const { q } = req.query;
       if (q && typeof q === "string") {
         const products = await storage.searchProducts(q);
-        return res.json(products);
+        return res.json(createListResponse(products, "products and services", { includeSupport: true }));
       }
       const products = await storage.getAllProducts();
-      res.json(products);
+      res.json(createListResponse(products, "products and services", { includeSupport: true }));
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json(createErrorResponse(error.message));
     }
   });
 
@@ -297,13 +298,34 @@ export async function registerRoutes(
     }
   });
 
+  // WitchMart Support Info
+  app.get("/api/support", (req, res) => {
+    res.json({
+      status: "success",
+      data: {
+        support: getSupportInfo(),
+        disclaimer: getSafetyDisclaimer(),
+        cooperative: {
+          name: "WitchMart",
+          type: "Member-owned cooperative",
+          principles: [
+            "Transparency: State exactly what contributions support",
+            "Voluntary: No pressure, no urgency, no guilt",
+            "Community Ownership: Contributions help build shared infrastructure",
+            "Clarity: Never more than necessary"
+          ]
+        }
+      }
+    });
+  });
+
   // Blog Posts
   app.get("/api/blog", async (req, res) => {
     try {
       const posts = await storage.getPublishedBlogPosts();
-      res.json(posts);
+      res.json(createListResponse(posts, "blog posts", { includeSupport: true }));
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json(createErrorResponse(error.message));
     }
   });
 

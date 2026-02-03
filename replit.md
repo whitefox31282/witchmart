@@ -58,7 +58,15 @@ WitchMart is a member-owned, Pagan-aligned cooperative marketplace and sanctuary
 - `/api/councils/mode/:userId` - Get/set user mode preference
 - `/api/security/events` - List security events
 - `/api/security/policies` - Get active policies
+- `/api/support` - Financial support info with cooperative principles
 - `/api/health` - Health check endpoint
+
+### WitchMart Backend Intelligence Rules
+- **server/witchmart-response.ts** - Standardized response utility
+- **Missing Data**: Returns honest message "No entries found yet. This part of the network is still being built."
+- **Support Info**: All list endpoints include `$RavensEvermore` support tag with transparency
+- **Safety Disclaimer**: "WitchMart does not provide legal, medical, or financial advice."
+- **Principles**: Transparency, Voluntary (no pressure), Community Ownership, Clarity
 
 ### Mythic Design System
 - **Colors**: Midnight (#0A1F44), Forest (#2E4A2E), Parchment (#F5E8C7), Iron (#4B4B4B)
