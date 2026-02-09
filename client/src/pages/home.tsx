@@ -13,8 +13,8 @@ function Pill({ children }: { children: React.ReactNode }) {
 export default function Home() {
   return (
     <div className="space-y-12">
-      <section className="wm-hero-bg overflow-hidden rounded-3xl border bg-card shadow-lg">
-        <div className="relative h-[600px] sm:h-[800px]">
+      <section className="overflow-hidden rounded-3xl border shadow-lg">
+        <div className="relative h-[600px] sm:h-[800px] wm-hero-bg">
           <img
             src="/assets/village/background.png"
             alt="Village background"
