@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useSetAIConsent } from "@/components/setai-consent-modal";
 import { RavensWhisper } from "@/components/ravens-whisper";
 import { SetAIFooter } from "@/components/setai-footer";
+import { SnowballScroll } from "@/components/snowball-scroll";
 import { DarkModeToggle } from "@/components/dark-mode-toggle";
 import NotFound from "@/pages/not-found";
 
@@ -35,6 +36,11 @@ import GamingGuild from "./pages/gaming-guild";
 import GamingSafety from "./pages/gaming-safety";
 import GuildLanding from "./pages/guild-landing";
 import GameCreatorsGuild from "./pages/game-creators-guild";
+import HecatesHighway from "./pages/hecates-highway";
+import EducationalTent from "./pages/tents/EducationalTent";
+import HealersTent from "./pages/tents/HealersTent";
+import StorytellersTent from "./pages/tents/StorytellersTent";
+import TradersTent from "./pages/tents/TradersTent";
 
 const NAV = [
   { label: "Home", href: "/" },
@@ -51,6 +57,7 @@ const FULL_NAV = [
   { label: "About WitchMart", href: "/about" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Sanctuary Nodes", href: "/sanctuary-nodes" },
+  { label: "Hecate's Highway", href: "/hecates-highway" },
   { label: "Makers & Guilds", href: "/makers-guilds" },
   { label: "Products & Services", href: "/products-services" },
   { label: "Pricing & Transparency", href: "/pricing-transparency" },
@@ -187,6 +194,7 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/how-it-works" component={HowItWorks} />
       <Route path="/sanctuary-nodes" component={SanctuaryNodes} />
+      <Route path="/hecates-highway" component={HecatesHighway} />
       <Route path="/makers-guilds" component={MakersGuilds} />
       <Route path="/products-services" component={ProductsServices} />
       <Route path="/pricing-transparency" component={PricingTransparency} />
@@ -209,6 +217,12 @@ function Router() {
 
       <Route path="/gaming-guild" component={GamingGuild} />
       <Route path="/gaming-safety" component={GamingSafety} />
+
+      <Route path="/tents/educational" component={EducationalTent} />
+      <Route path="/tents/healers" component={HealersTent} />
+      <Route path="/tents/story" component={StorytellersTent} />
+      <Route path="/tents/traders" component={TradersTent} />
+      <Route path="/tents/hecates-highway" component={HecatesHighway} />
 
       <Route path="/guild/game-creators" component={GameCreatorsGuild} />
       <Route path="/guild/game-creators/:tabId" component={GameCreatorsGuild} />
@@ -240,6 +254,7 @@ function AppContent() {
       <SiteShell>
         <Router />
       </SiteShell>
+      <SnowballScroll />
       {consentGiven && <RavensWhisper />}
     </>
   );

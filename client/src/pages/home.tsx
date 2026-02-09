@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { ArrowRight, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import { HOTSPOTS } from "../lib/hotspots";
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,30 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <section className="wm-hero-bg overflow-hidden rounded-3xl border bg-card shadow-lg">
+        <div className="relative">
+          <img
+            src="/assets/village/background.png"
+            alt="Village background"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {HOTSPOTS.map(({ id, label, route, x, y, width, height }) => (
+            <Link
+              key={id}
+              href={route}
+              aria-label={label}
+              tabIndex={0}
+              onKeyDown={(e) => e.key === "Enter" && (window.location.href = route)}
+              style={{
+                position: "absolute",
+                left: x * 100 + "%",
+                top: y * 100 + "%",
+                width: width * 100 + "%",
+                height: height * 100 + "%",
+              }}
+            />
+          ))}
+        </div>
+
         <div className="px-6 py-12 sm:px-10 sm:py-16">
           <div className="flex flex-wrap items-center gap-2">
             <Pill>
