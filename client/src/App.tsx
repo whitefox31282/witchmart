@@ -237,7 +237,7 @@ function AppContent() {
   const { ConsentModal, consentGiven } = useSetAIConsent();
   const [location] = useLocation();
   
-  const isRitualVault = location === "/" || location === "/landing";
+  const isRitualVault = location === "/landing";
 
   if (isRitualVault) {
     return (
