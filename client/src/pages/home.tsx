@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <section className="wm-hero-bg overflow-hidden rounded-3xl border bg-card shadow-lg">
-        <div className="relative">
+        <div className="relative h-[600px] sm:h-[800px]">
           <img
             src="/assets/village/background.png"
             alt="Village background"
