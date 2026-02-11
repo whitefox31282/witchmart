@@ -1,210 +1,234 @@
-# WitchMart
+# 🜂 WitchMart — Cooperative Marketplace & Sanctuary Network
+
+> **Status:** 🚀 Active development • **License:** AGPL-3.0 • **Stack:** React 18 · Express 5 · PostgreSQL · TypeScript • **Last update:** 2026-02-10
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [SetAI Sovereignty Layer](#setai-sovereignty-layer)
+  - [Core Principles](#core-principles)
+  - [Key Components](#key-components)
+  - [Dedicated Pages](#dedicated-pages)
+  - [Configuration Files](#configuration-files)
+  - [Data Models](#data-models)
+  - [API Surface](#api-surface)
+- [Mythic Design System](#mythic-design-system)
+- [Makers & Guilds](#makers--guilds)
+  - [Guild Categories](#guild-categories)
+  - [Theme Pack System](#theme-pack-system)
+  - [Guild Listing Card Fields](#guild-listing-card-fields)
+- [Additional Features](#additional-features)
+  - [Gaming Guild (Legacy)](#gaming-guild-legacy)
+  - [Sanctuary Node Canonical Fields](#sanctuary-node-canonical-fields)
+  - [Receipt Logging System](#receipt-logging-system)
+  - [Crisis Resources](#crisis-resources)
+- [System Architecture](#system-architecture)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+  - [Database & Storage](#database--storage)
+  - [Project Structure](#project-structure)
+  - [Build & Development Flow](#build--development-flow)
+- [External Dependencies](#external-dependencies)
+- [Quick Start](#quick-start)
+
+---
 
 ## Overview
 
-WitchMart is a member-owned, Pagan-aligned cooperative marketplace and sanctuary network. The platform allows users to find local sanctuary nodes, connect with makers and guilds, explore products and services, and join the community. It features a full-stack architecture with a React frontend and Express backend, using PostgreSQL for data persistence.
+**WitchMart** is a member-owned, Pagan-aligned cooperative marketplace and sanctuary network that helps people:
 
-**Protected by SetAI** - A sovereignty-first, zero-exploitation, trauma-informed platform with no corporate trackers or data mining.
+1. **Find** local sanctuary nodes and safe spaces.  
+2. **Connect** with guilds, makers, and service providers.  
+3. **Explore** products, rituals, classes, and community events.  
+4. **Contribute** to a transparent, sovereignty-first ecosystem.
+
+Full-stack TypeScript powers the platform: a React frontend, an Express backend, and PostgreSQL for durable data. Analytics are opt-in and user-controlled.
+
+---
 
 ## SetAI Sovereignty Layer
 
 ### Core Principles
-- **Zero Surveillance**: No Google Analytics, Meta pixels, or third-party trackers
-- **Data Sovereignty**: Users own 100% of their data; only anonymous session IDs are used
-- **Transient Storage**: All session data is stored in browser sessionStorage only
-- **Instant Revocation**: Users can clear all data with one click
-- **Harm Prevention**: Content is scanned for potential harm with double-confirmation warnings
 
-### SetAI Components
-- `client/src/lib/setai-gate.ts` - Core consent, harm detection, and revocation logic
-- `client/src/components/setai-consent-modal.tsx` - Consent flow and harm warning modals
-- `client/src/components/ravens-whisper.tsx` - Floating chat placeholder with mythic framing
-- `client/src/components/grounding-statement.tsx` - Trauma-informed grounding with crisis resources
-- `client/src/components/setai-footer.tsx` - Footer with transparency link and revoke button
-- `client/src/pages/transparency.tsx` - Transparency log page
+| # | Principle | Description |
+|---|-----------|-------------|
+| 1 | Zero Surveillance | No GA, Meta pixels, or third-party trackers. |
+| 2 | Data Sovereignty | Users own 100 % of their data; only anonymous, ephemeral session IDs are used. |
+| 3 | Transient Storage | Session data lives in `sessionStorage` only; nothing in long-term cookies/localStorage. |
+| 4 | Instant Revocation | One-click wipe clears session data, cache, and preferences. |
+| 5 | Harm Prevention | Client-side harm scan gates user-generated content with double-confirm on potential risk. |
 
-### SetAI Web App Pages (NEW)
-- `client/src/pages/setai-dashboard.tsx` - Main SetAI dashboard with quick links and status
-- `client/src/pages/setai-codex.tsx` - Events, documents, and projects archive with CRUD
-- `client/src/pages/setai-timeline.tsx` - Chronological event visualization
-- `client/src/pages/setai-councils.tsx` - Mode switching and persona selection (7 modes)
-- `client/src/pages/setai-security.tsx` - Pipeline status and security event monitoring
-- `client/src/pages/setai-settings.tsx` - Canon viewer and configuration display
+### Key Components
 
-### SetAI Configuration Files
-- `config/canon.json` - System canon with immutables, truth layers, and mode configurations
-- `config/founder_canon.json` - Founder-defined rules and non-negotiables
-- `config/guardian_policies.json` - Security policies for network, output, codex, and mode scopes
-- `config/security_pipeline.json` - 4-stage security pipeline configuration
+| Path | Purpose |
+|------|---------|
+| `client/src/lib/setai-gate.ts` | Consent logic, harm detection, revocation utils |
+| `client/src/components/setai-consent-modal.tsx` | Consent & harm-warning modal |
+| `client/src/components/ravens-whisper.tsx` | Mythic floating chat shell |
+| `client/src/components/grounding-statement.tsx` | Crisis-resource banner |
+| `client/src/components/setai-footer.tsx` | Footer with transparency link & revoke button |
+| `client/src/pages/transparency.tsx` | Real-time audit log & policies |
 
-### SetAI Data Models
-- `codex_events` - Chronological events with trust levels and evidence linking
-- `codex_documents` - Archived documents with metadata
-- `codex_projects` - Tracked projects with status
-- `council_personas` - Available AI personas/modes
-- `mode_preferences` - User mode preferences
-- `security_events` - Security pipeline event logs
-- `guardian_policies` - Active guardian policies
+### Dedicated Pages
 
-### SetAI API Endpoints
-- `/api/canon` - Get system canon configuration
-- `/api/founder_canon` - Get founder canon rules
-- `/api/guardian_policies` - Get guardian policies
-- `/api/security_pipeline` - Get security pipeline config
-- `/api/codex/events` - CRUD for codex events
-- `/api/codex/documents` - CRUD for codex documents
-- `/api/codex/projects` - CRUD for codex projects
-- `/api/councils/personas` - List available personas
-- `/api/councils/mode/:userId` - Get/set user mode preference
-- `/api/security/events` - List security events
-- `/api/security/policies` - Get active policies
-- `/api/support` - Financial support info with cooperative principles
-- `/api/health` - Health check endpoint
+`/setai-dashboard`, `/setai-codex`, `/setai-timeline`, `/setai-councils`, `/setai-security`, `/setai-settings`
 
-### WitchMart Backend Intelligence Rules
-- **server/witchmart-response.ts** - Standardized response utility
-- **Missing Data**: Returns honest message "No entries found yet. This part of the network is still being built."
-- **Support Info**: All list endpoints include `$RavensEvermore` support tag with transparency
-- **Safety Disclaimer**: "WitchMart does not provide legal, medical, or financial advice."
-- **Principles**: Transparency, Voluntary (no pressure), Community Ownership, Clarity
+### Configuration Files
 
-### Mythic Design System
-- **Colors**: Midnight (#0A1F44), Royal Purple (#5D3A8C), Parchment (#F5E8C7), Iron (#4B4B4B)
-- **High-Contrast Text**: #e8dcc8 (light tan), #c5baa8 (medium tan), #d4af37 (gold), #7B4DB8 (royal purple) - WCAG-compliant
-- **Fonts**: Cinzel (runic headers), Merriweather (body)
-- **Imagery**: Set the Sloth (🦥) as guardian (replaced eagles), runes as guidance, Yggdrasil knotwork
-- **SetSlothBuddhaPose**: `client/src/components/SetSlothBuddhaPose.tsx` - Canonical Set the Sloth on flying carpet in Buddha pose
+    config/
+    ├─ canon.json
+    ├─ founder_canon.json
+    ├─ guardian_policies.json
+    └─ security_pipeline.json
 
-### Makers & Guilds System
-- `client/src/lib/guild-data.ts` - Guild data structure with all 10 guilds and subcategories
-- `client/src/lib/guild-themes.ts` - Theme pack system with 9 visual themes
-- `client/src/components/guilds/GuildListingCard.tsx` - Standardized guild member card component
-- `client/src/pages/guild-landing.tsx` - Generic guild landing page with subcategory filters
-- `client/src/pages/game-creators-guild.tsx` - Game Creators Guild with 7 sub-tabs
-- `client/src/components/village/tents/MakersTent.tsx` - Updated to display all 10 guild tabs
+### Data Models
 
-### Guild Categories (10 Guilds)
-1. **Game Creators Guild** - Developers, Testers, Creators, Modders, Artists, Sound & Music, Tools & Engines
-2. **Artisans Guild** - Leatherwork, Woodcraft, Metalwork, Pottery & Ceramics, Textiles & Weaving, Jewelry, Bone & Antler Craft, Rune Carving
-3. **Herbalists & Apothecaries Guild** - Herbal Remedies, Teas & Tinctures, Salves & Oils, Incense & Resins, Foraged Goods, Ritual Herbs
-4. **Diviners & Seers Guild** - Tarot & Oracle, Rune Readers, Mediumship, Dream Interpretation, Energy Work, Astrology
-5. **Smiths & Forgers Guild** - Blacksmithing, Blade Forging, Toolmaking, Armor Craft, Metal Casting
-6. **Builders & Makers Guild** - Furniture, Shelters & Structures, Carved Goods, Household Tools, Custom Builds
-7. **Textile & Fiber Guild** - Sewing, Knitting & Crochet, Embroidery, Cloaks & Garments, Quilts, Ritual Clothing
-8. **Ritual & Sacred Craft Guild** - Altars, Wands & Staves, Chalices, Athames, Ritual Kits, Spell Jars, Sacred Art
-9. **Digital Makers Guild** - Digital Art, Logos & Branding, Websites, 3D Printing, Virtual Ritual Tools, Music & Soundscapes
-10. **Educators & Skillmasters Guild** - Craft Classes, Spiritual Classes, Survival Skills, Homesteading, Fishing, Workshops & Courses
+`codex_events`, `codex_documents`, `codex_projects`, `council_personas`, `mode_preferences`, `security_events`, `guardian_policies`
 
-### Theme Pack System (9 Themes)
-- **dnd** - Dungeons & Dragons: Aged parchment, wax seals, dragon-scale borders, dice icons
-- **wow** - World of Warcraft: Stone borders, metallic trim, fantasy UI frames
-- **pathfinder** - Pathfinder: Scrollwork, compass motifs, adventure parchment
-- **elderscrolls** - Elder Scrolls: Weathered stone, Nordic carvings, cold metallic accents
-- **norse** - Norse: Knotwork, runes, woodgrain textures
-- **egyptian** - Egyptian: Papyrus, gold/black palette, hieroglyphic dividers
-- **celtic** - Celtic: Green knotwork, spirals, bronze accents
-- **slavic** - Slavic: Embroidery patterns, woodcut borders, folk symbols
-- **custom** - Custom: Default WitchMart styling
+### API Surface
+
+All endpoints live under `/api/*` and return envelope objects via `server/witchmart-response.ts`.
+
+---
+
+## Mythic Design System
+
+| Element | Value |
+|---------|-------|
+| Palette | Midnight `#0A1F44`, Royal Purple `#5D3A8C`, Parchment `#F5E8C7`, Iron `#4B4B4B` |
+| Accessible Text | `#e8dcc8`, `#c5baa8`, `#d4af37`, `#7B4DB8` (WCAG-AA) |
+| Fonts | *Cinzel* (headers), *Merriweather* (body) |
+| Imagery | Yggdrasil knotwork, runes, **Set the Sloth 🦥** in Buddha pose |
+| Component | `SetSlothBuddhaPose.tsx` guardian graphic |
+
+---
+
+## Makers & Guilds
+
+### Guild Categories
+
+1. Game Creators  
+2. Artisans  
+3. Herbalists & Apothecaries  
+4. Diviners & Seers  
+5. Smiths & Forgers  
+6. Builders & Makers  
+7. Textile & Fiber  
+8. Ritual & Sacred Craft  
+9. Digital Makers  
+10. Educators & Skillmasters  
+
+### Theme Pack System
+
+`dnd`, `wow`, `pathfinder`, `elderscrolls`, `norse`, `egyptian`, `celtic`, `slavic`, `custom`
+
+Each pack overrides borders, textures, and accents for guild UI.
 
 ### Guild Listing Card Fields
-- Display Name, Guild Category, Subcategory
-- Profile Image or Symbol (optional)
-- Description
-- Social Links: Discord, YouTube, TikTok, Instagram, Website, Shop, Email
-- View Full Profile button
+
+| Field | Notes |
+|-------|-------|
+| Display Name | Required |
+| Guild Category / Subcategory | Required |
+| Profile Image / Symbol | Optional |
+| Description | Markdown supported |
+| Links | Discord, YouTube, TikTok, Instagram, Website, Shop, Email |
+| CTA | “View Full Profile” button |
+
+---
+
+## Additional Features
 
 ### Gaming Guild (Legacy)
-- `client/src/pages/gaming-guild.tsx` - Gaming Guild landing page with 8 game categories
-- `client/src/pages/gaming-safety.tsx` - SetAI Gaming Safety Agent with parental controls
-- **Game Categories**: Tabletop RPGs, MMORPGs, Strategy Games, Card Games, Survival & Craft, Retro Gaming, Indie Games, Board Games
-- **Safety Agent Features**: Parent toggle, consent modal, privacy documentation (TODO: backend monitoring logic)
 
-### Sanctuary Node Form Fields (13 canonical fields)
-1. Sanctuary Name
-2. Type (sanctuary, church, temple, grove, community center)
-3. Who You Are
-4. What You're About
-5. How You Got Started
-6. When You Were Born/Founded
-7. Who Licensed You
-8. Your Tradition
-9. Your Lineage
-10. Your Offerings
-11. Your Location
-12. Accessibility Notes
-13. Safety Notes
-14. Contact Method
-15. Additional Notes
+Landing page `/gaming-guild` with eight game columns plus **Gaming Safety Agent** (`/gaming-safety`) using the SetAI consent flow.
+
+### Sanctuary Node Canonical Fields
+
+Fifteen fields (Name → Additional Notes) defined in `docs/sanctuary-fields.md`.
 
 ### Receipt Logging System
-- Public expense ledger in Pricing tent
-- Tracks: item purchased, reason, cost, submitter
-- TODO: Backend API endpoints for persistence
+
+Public expense ledger tracking item, reason, cost, submitter. **TODO:** server endpoints + DB table.
 
 ### Crisis Resources
-- 988 Suicide & Crisis Lifeline
-- Trans Lifeline: 877-565-8860
-- Trevor Project: 866-488-7386
-- Crisis Text Line: Text HOME to 741741
 
-## User Preferences
+Quick links: 988 Lifeline · Trans Lifeline · Trevor Project · Crisis Text Line.
 
-Preferred communication style: Simple, everyday language.
+---
 
 ## System Architecture
 
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript
-- **Routing**: Wouter (lightweight React router)
-- **State Management**: TanStack React Query for server state
-- **Styling**: Tailwind CSS with shadcn/ui component library (New York style)
-- **Build Tool**: Vite with custom plugins for Replit integration
-- **UI Components**: Radix UI primitives with custom styling, Lucide icons
+### Frontend
 
-### Backend Architecture
-- **Framework**: Express 5 on Node.js
-- **API Design**: RESTful JSON API under `/api/*` routes
-- **Validation**: Zod schemas with drizzle-zod integration
-- **Error Handling**: Centralized error responses with zod-validation-error
+- React 18 + TypeScript, functional components  
+- Routing via Wouter  
+- State with TanStack React Query  
+- Tailwind CSS + shadcn/ui (New York style)  
+- Build with Vite (meta-image plugin)  
+- Radix UI primitives & Lucide icons  
 
-### Data Storage
-- **Database**: PostgreSQL with Drizzle ORM
-- **Schema Location**: `shared/schema.ts` (shared between frontend and backend)
-- **Migrations**: Drizzle Kit with `db:push` command
-- **Tables**: sanctuary_nodes, makers, products_services, member_signups, contact_submissions, blog_posts, codex_events, codex_documents, codex_projects, council_personas, mode_preferences, security_events, guardian_policies
+### Backend
+
+- Express 5 (Node 20), REST JSON under `/api`  
+- Zod + drizzle-zod validation  
+- Uniform envelopes via `witchmart-response.ts`  
+
+### Database & Storage
+
+- PostgreSQL via Drizzle ORM  
+- Schema: `shared/schema.ts` (single source of truth)  
+- Migrations: Drizzle Kit (`npm run db:push`)  
+- Sessions: `connect-pg-simple` (prod) / in-memory (dev)  
 
 ### Project Structure
-- `client/` - React frontend application
-- `server/` - Express backend with routes, storage layer, and static file serving
-- `shared/` - Shared TypeScript types and database schema
-- `migrations/` - Database migration files
 
-### Build and Development
-- Development runs Vite dev server with HMR proxied through Express
-- Production builds client to `dist/public` and bundles server with esbuild
-- Server serves static files from built client in production
+    client/    React app
+    server/    Express API & static serving
+    shared/    Types & DB schema
+    migrations/ SQL migrations
+    config/    SetAI & guardian configs
+    docs/      Specs & ADRs
+
+### Build & Development Flow
+
+1. `npm run dev` – dev server with HMR proxied through Express  
+2. `npm run build` – Vite → `dist/public`, esbuild → `dist/index.cjs`  
+3. `npm start` – production Express serving static bundle  
+
+---
 
 ## External Dependencies
 
-### Database
-- PostgreSQL (required, connection via DATABASE_URL environment variable)
-- Drizzle ORM for type-safe database queries
-- connect-pg-simple for session storage
+| Area | Package | Purpose |
+|------|---------|---------|
+| DB | `pg`, `drizzle-orm`, `connect-pg-simple` | PostgreSQL access & sessions |
+| Data Fetching | `@tanstack/react-query` | Server state |
+| Charts | `recharts` | Transparency graphs |
+| UI | `shadcn/ui`, `@radix-ui/*`, `lucide-react` | Accessible components |
+| Forms | `react-hook-form`, `@hookform/resolvers/zod` | Forms & validation |
+| Carousels | `embla-carousel-react` | Gallery sliders |
+| Utils | `clsx`, `tailwind-merge`, `class-variance-authority` | CSS helpers |
+| Tooling | `vite`, `typescript`, `esbuild` | Build pipeline |
 
-### Frontend Libraries
-- @tanstack/react-query for data fetching
-- recharts for data visualization (pricing transparency charts)
-- embla-carousel-react for carousels
-- react-day-picker for calendar components
-- react-hook-form with zod resolver for form handling
+---
 
-### UI Framework
-- shadcn/ui components (full component library installed)
-- Radix UI primitives for accessible components
-- class-variance-authority for component variants
-- tailwind-merge and clsx for class utilities
+## Quick Start
 
-### Development Tools
-- Vite with React plugin and Tailwind CSS plugin
-- TypeScript with strict mode
-- Custom Vite plugins for Replit integration (dev banner, cartographer, meta images)
+    # 1. Clone & install
+    pnpm i   # or npm install / yarn
+
+    # 2. Create env file
+    cp .env.example .env
+    #   – set DATABASE_URL for Postgres
+
+    # 3. Run dev mode
+    pnpm run dev   # http://localhost:5173
+
+    # 4. Build & serve
+    pnpm run build && pnpm start
+    # Express on http://localhost:5000
+
+Need a full deployment checklist? See **VERIFICATION_CHECKLIST.md**.
