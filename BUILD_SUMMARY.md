@@ -1,364 +1,613 @@
-# WitchMart Repository Rebuild - Complete Summary
+ // build.ts
+// ═══════════════════════════════════════════════════════════════════════════════
+// WitchMart – Production-Grade Dual-Pipeline Build System
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// USAGE
+//   npx tsx build.ts                → full production build (frontend + backend)
+//   npx tsx build.ts --dev          → dev mode: Vite HMR + backend watch rebuild
+//   npx tsx build.ts --analyze      → production build + bundle size report
+//   npx tsx build.ts --backend-only → build server only
+//   npx tsx build.ts --frontend-only→ build frontend only
+//   npx tsx build.ts --verify       → build + post-build health checks
+//   npx tsx build.ts --clean        → wipe dist/ before building
+//   npx tsx build.ts --zip          → build + create Azure deployment ZIP
+//
+//   Flags compose: npx tsx build.ts --clean --verify --zip
+// ═══════════════════════════════════════════════════════════════════════════════
 
-**Date:** February 8, 2026  
-**Status:** ✅ COMPLETE - Production-Ready
+import { build as esbuild, type BuildOptions, type Plugin } from "esbuild";
+import { readFile, writeFile, mkdir, rm, stat, readdir, access } from "node:fs/promises";
+import { existsSync, createWriteStream, statSync, readdirSync } from "node:fs";
+import { execSync, spawn as nodeSpawn, ChildProcess } from "node:child_process";
+import { join, resolve, relative, extname } from "node:path";
+import { createInterface } from "node:readline";
+import { fileURLToPath } from "node:url";
+import { createGzip } from "node:zlib";
+import { pipeline } from "node:stream/promises";
+import { Writable } from "node:stream";
 
----
+// ─── Derive __dirname for ESM ───────────────────────────────────────────────
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = join(__filename, "..");
 
-## Deliverables Overview
+// ═══════════════════════════════════════════════════════════════════════════════
+// 1. TYPES
+// ═══════════════════════════════════════════════════════════════════════════════
 
-The WitchMart repository has been systematically rebuilt to ensure production-grade quality, with all requirements implemented and integrated.
-
-### A) Repository Normalization & Build ✅
-
-**Scripts Verified:**
-- `npm install` - ✅ Works with all dependencies
-- `npm run build` - ✅ Builds frontend (Vite) + backend (esbuild) successfully  
-- `npm run dev` - ✅ Development server with Vite hot reload
-- `npm start` - ✅ Production start: `node dist/index.cjs`
-- Output: `dist/index.cjs` (server) + `dist/public/` (static frontend)
-
-**TypeScript & Imports:**
-- No broken imports
-- All path aliases working (@/, @shared, @assets)
-- Clean build with no errors (2 warnings about import.meta in CommonJS - expected and non-blocking)
-
-**Environment:**
-- `.env.example` created with full documentation
-- Non-secret placeholders, privacy constraints documented
-- Feature flags for all major systems
-
----
-
-## B) Backend Express Implementation ✅
-
-### Core Infrastructure
-```
-- JSON body parsing with size limits
-- CORS-ready configuration
-- Standard error handling
-- Static file serving (production mode)
-- Development Vite integration (development mode)
-- Proper host binding: 0.0.0.0 (Azure compatible)
-```
-
-### Endpoints
-- **Health:** `GET /api/health` → `{ ok: true, service: "witchmart", time: ... }`
-- **Version:** `GET /api/version` → `{ version: "X.X.X", service: "witchmart" }`
-
-### Files Modified/Created:
-- `server/index.ts` - Added health/version endpoints
-- `server/static.ts` - Fixed path resolution for production
-- `server/routes.ts` - Integrated Hecate's Highway router
-
----
-
-## C) Hecate's Highway MVP ✅
-
-**Complete Implementation:** `/api/hecates-highway/*`
-
-### Files Created:
-1. **`server/hecates-highway-storage.ts`** - Core data layer with JSON file persistence
-   - CRUD operations for nodes, requests, reports
-   - Ephemeral session management (24h expiry)
-   - Atomic writes with temp file → rename pattern
-   - JSONL audit logging
-   - Auto-initialization of data directory
-
-2. **`server/hecates-highway-routes.ts`** - RESTful API routes
-   - Input validation (blocks GPS/coordinates, accepts only region/zone strings)
-   - Consistent JSON response shapes
-   - 27 endpoints across 4 entity types
-
-### Data Directory Structure:
-```
-data/hecates-highway/
-├── nodes.json          (sanctuary locations)
-├── requests.json       (help requests)
-├── sessions.json       (ephemeral tokens)
-├── reports.json        (safety concerns)
-└── audit.jsonl         (immutable event log)
-```
-
-### Privacy & Safety Enforcement:
-- ✅ No GPS coordinates accepted (validation rejects lat/lon/coordinates fields)
-- ✅ No device ID tracking
-- ✅ No exact address storage
-- ✅ Coarse region/zone only (string-based, never numeric)
-- ✅ Ephemeral sessions (24h auto-expiry)
-- ✅ Minimal metadata in reports
-- ✅ Trauma-informed error messages (supportive tone)
-
-### Example Request (Node Creation):
-```bash
-POST /api/hecates-highway/nodes
-{
-  "name": "Northern Sanctuary",
-  "region": "northern",
-  "zone": "forest",
-  "description": "Community healing space",
-  "category": "shelter",
-  "safeContact": "Signal or encrypted channels",
-  "publicInfo": "Community-run support location"
+interface CliFlags {
+  dev: boolean;
+  analyze: boolean;
+  backendOnly: boolean;
+  frontendOnly: boolean;
+  verify: boolean;
+  clean: boolean;
+  zip: boolean;
 }
-```
 
-Returns: `{ status: "success", data: {...full node with ID, timestamps...}, message: "..." }`
+interface BuildReport {
+  mode: "production" | "development";
+  backendBundleSize: number | null;
+  frontendAssetCount: number | null;
+  frontendTotalSize: number | null;
+  externalDependencyCount: number;
+  bundledDependencyCount: number;
+  buildDurationMs: number;
+  dataDirectoryStatus: "created" | "exists" | "skipped";
+  privacyScanResult: "pass" | "warnings";
+  privacyWarnings: string[];
+  phases: Record<string, number>;
+}
 
----
+// ═══════════════════════════════════════════════════════════════════════════════
+// 2. CONSOLE HELPERS – colourised, prefixed output
+// ═══════════════════════════════════════════════════════════════════════════════
 
-## D) Frontend Implementation ✅
+const Colour = {
+  reset: "\x1b[0m",
+  bold: "\x1b[1m",
+  dim: "\x1b[2m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+  white: "\x1b[37m",
+  bgRed: "\x1b[41m",
+  bgGreen: "\x1b[42m",
+  bgYellow: "\x1b[43m",
+  bgBlue: "\x1b[44m",
+  bgMagenta: "\x1b[45m",
+};
 
-### Pages
-- **Hecate's Highway** (`/hecates-highway`) - NEW
-  - Region filtering (northern, eastern, southern, western, central)
-  - Node display with trauma-informed copy
-  - Informational sections about privacy & community
-  - API integration with error handling
+function log(emoji: string, message: string): void {
+  console.log(`${Colour.dim}[build]${Colour.reset} ${emoji}  ${message}`);
+}
 
-### UI Components
-- **SnowballScroll** - Functional scroll control
-  - White snowball visual (top button when page scrolled)
-  - Smooth scroll animation
-  - Accessible with ARIA labels
-  
-- **Viking Horn Navigation** - Footer redesign
-  - Unicode horn characters (⌒) between links
-  - Links: Home, Sanctuary, Hecate's Highway, Makers, Safety, Blog
-  - Mythic theme with amber glow effects
+function logHeader(title: string): void {
+  const bar = "─".repeat(60);
+  console.log("");
+  console.log(`${Colour.magenta}${Colour.bold}${bar}${Colour.reset}`);
+  console.log(`${Colour.magenta}${Colour.bold}  ${title}${Colour.reset}`);
+  console.log(`${Colour.magenta}${Colour.bold}${bar}${Colour.reset}`);
+}
 
-### Routing
-- Added to App.tsx router configuration
-- Added to FULL_NAV for SPA navigation
-- All existing pages preserved and functional
+function logSuccess(message: string): void {
+  console.log(`${Colour.green}${Colour.bold}  [PASS]${Colour.reset} ${message}`);
+}
 
-### Files Modified/Created:
-- `client/src/pages/hecates-highway.tsx` - NEW page component
-- `client/src/components/snowball-scroll.tsx` - NEW scroll control
-- `client/src/components/setai-footer.tsx` - Enhanced with horn navigation
-- `client/src/App.tsx` - Route & import updates
+function logWarn(message: string): void {
+  console.log(`${Colour.yellow}${Colour.bold}  [WARN]${Colour.reset} ${message}`);
+}
 
-### Theme Consistency
-- Maintained "Ravens Evermore" mythic aesthetic
-- Applied Tailwind dark/light mode support
-- Consistent with existing library (Radix UI, Lucide icons)
-- Trauma-informed copy (supportive, never alarming)
+function logError(message: string): void {
+  console.log(`${Colour.red}${Colour.bold}  [FAIL]${Colour.reset} ${message}`);
+}
 
----
+function logInfo(message: string): void {
+  console.log(`${Colour.cyan}  [INFO]${Colour.reset} ${message}`);
+}
 
-## E) Data Files & Structure ✅
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
 
-**Location:** `data/hecates-highway/`
+function formatMs(ms: number): string {
+  if (ms < 1000) return `${ms.toFixed(0)}ms`;
+  return `${(ms / 1000).toFixed(2)}s`;
+}
 
-**Files:**
-- `nodes.json` - Seed data included (2 example sanctuary nodes)
-- `requests.json` - Empty array, ready for use
-- `sessions.json` - Ephemeral sessions
-- `reports.json` - Safety reports
-- `audit.jsonl` - JSONL format for immutable event logging
+// ═══════════════════════════════════════════════════════════════════════════════
+// 3. CLI FLAG PARSING
+// ═══════════════════════════════════════════════════════════════════════════════
 
-All files created with proper JSON structure and validated for first-run compatibility.
+function parseFlags(): CliFlags {
+  const args = new Set(process.argv.slice(2).map((a) => a.toLowerCase()));
+  return {
+    dev: args.has("--dev"),
+    analyze: args.has("--analyze"),
+    backendOnly: args.has("--backend-only"),
+    frontendOnly: args.has("--frontend-only"),
+    verify: args.has("--verify"),
+    clean: args.has("--clean"),
+    zip: args.has("--zip"),
+  };
+}
 
----
+// ═══════════════════════════════════════════════════════════════════════════════
+// 4. TIMING UTILITY
+// ═══════════════════════════════════════════════════════════════════════════════
 
-## F) Deployment Readiness ✅
+function timer() {
+  const start = performance.now();
+  return {
+    elapsed: () => performance.now() - start,
+    stop: (label: string, report: BuildReport) => {
+      const elapsed = performance.now() - start;
+      report.phases[label] = elapsed;
+      return elapsed;
+    },
+  };
+}
 
-### New File: `README_DEPLOYMENT.md`
-Complete step-by-step guide for Azure App Service deployment:
+// ═══════════════════════════════════════════════════════════════════════════════
+// 5. DEPENDENCY MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════════════
 
-1. **Build Instructions**
-   - `npm install`
-   - `npm run build`
-   - ZIP packaging guidance (include dist/, node_modules, package.json, data/)
+interface DependencyInfo {
+  externals: string[];
+  bundled: string[];
+  allDeps: string[];
+}
 
-2. **Azure CLI Deployment**
-   ```bash
-   az webapp deployment source config-zip \
-     --resource-group <RG> \
-     --name <APP_SERVICE_NAME> \
-     --src witchmart-deploy.zip
-   ```
+// Packages that MUST be inlined: ESM-only libs, tiny helpers, packages that
+// fail when externalised in a CJS bundle, or packages with path-alias quirks.
+const BUNDLE_ALLOWLIST = new Set<string>([
+  // Add packages here that must be bundled rather than externalised.
+  // Examples:
+  // "nanoid",
+  // "chalk",
+]);
 
-3. **Environment Setup**
-   - Portal: App Service → Configuration → Application Settings
-   - Required variables documented
-   - Azure Key Vault integration recommended
+// Critical packages that must NEVER be accidentally externalised because the
+// runtime will not have node_modules in the deploy target. If any of these end
+// up in the externals list (and are not in BUNDLE_ALLOWLIST), we warn loudly.
+const CRITICAL_PACKAGES = new Set<string>([
+  // Add any packages that are absolutely essential at runtime:
+  // "drizzle-orm",
+  // "express",
+]);
 
-4. **Verification**
-   - Health endpoint testing
-   - Log streaming commands
-   - DNS/HTTPS configuration
+async function resolveDependencies(): Promise<DependencyInfo> {
+  const raw = await readFile(join(__dirname, "package.json"), "utf8");
+  const pkg = JSON.parse(raw) as {
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+  };
 
-5. **Troubleshooting**
-   - Port conflicts
-   - Data persistence strategies
-   - Multi-instance considerations
+  const allDeps = Object.keys(pkg.dependencies ?? {});
+  const devDeps = Object.keys(pkg.devDependencies ?? {});
+  const every = [...new Set([...allDeps, ...devDeps])];
 
-### Configuration
-- Production start command working: `node dist/index.cjs`
-- Listens on `process.env.PORT` (Azure override capable)
-- All paths relative to `process.cwd()` (deployment-agnostic)
-- Static assets served from `dist/public/`
+  const bundled: string[] = [];
+  const externals: string[] = [];
 
----
+  for (const name of every) {
+    if (BUNDLE_ALLOWLIST.has(name)) {
+      bundled.push(name);
+    } else {
+      externals.push(name);
+    }
+  }
 
-## G) Quality Assurance ✅
+  // Safety: warn if a critical package ended up externalised
+  for (const critical of CRITICAL_PACKAGES) {
+    if (externals.includes(critical) && !BUNDLE_ALLOWLIST.has(critical)) {
+      logWarn(
+        `Critical package "${critical}" is externalised. If it is needed at runtime and not in node_modules at deploy, add it to BUNDLE_ALLOWLIST.`,
+      );
+    }
+  }
 
-### No Broken Builds
-- Frontend: Vite production build completes with no errors
-- Backend: esbuild produces single bundled `dist/index.cjs` (1.1 MB)
-- TypeScript: Type-safe throughout (npm run check passes)
+  log("📦", `Dependencies resolved — ${Colour.green}${bundled.length} bundled${Colour.reset}, ${Colour.yellow}${externals.length} externalised${Colour.reset}`);
+  if (bundled.length > 0) {
+    logInfo(`Bundled: ${bundled.join(", ")}`);
+  }
 
-### No Dead Routes
-- Verified all imports in App.tsx
-- Hecate's Highway route functional
-- All existing pages preserved and routable
-- Health & version endpoints respond correctly
+  return { externals, bundled, allDeps: every };
+}
 
-### No Missing Assets
-- All Radix UI components available
-- Lucide icons imported successfully
-- Image assets in place
-- CSS builds and includes theme colors
+// ═══════════════════════════════════════════════════════════════════════════════
+// 6. PATH ALIAS ESBUILD PLUGIN
+// ═══════════════════════════════════════════════════════════════════════════════
 
-### Privacy Enforcement
-- Input validation blocks coordinate-like patterns at API layer
-- No leaks of coordinates in responses
-- Session tokens opaque (no personal info embedded)
-- Audit logs only track actions, not sensitive data
+function pathAliasPlugin(): Plugin {
+  const aliases: Record<string, string> = {
+    "@/": resolve(__dirname, "client/src") + "/",
+    "@shared/": resolve(__dirname, "shared") + "/",
+    "@shared": resolve(__dirname, "shared"),
+    "@assets/": resolve(__dirname, "client/src/assets") + "/",
+    "@assets": resolve(__dirname, "client/src/assets"),
+  };
 
-### Trauma-Informed UX
-- Copy avoids alarming language
-- Supportive tone in error messages
-- Privacy focus prominently displayed
-- No "urgent panic" phrasing
+  return {
+    name: "witchmart-path-aliases",
+    setup(build) {
+      // Handle @/ prefix
+      build.onResolve({ filter: /^@\// }, (args) => {
+        const resolved = args.path.replace(/^@\//, aliases["@/"]);
+        return { path: resolved };
+      });
 
----
+      // Handle @shared prefix
+      build.onResolve({ filter: /^@shared/ }, (args) => {
+        let resolved = args.path;
+        if (resolved.startsWith("@shared/")) {
+          resolved = resolved.replace(/^@shared\//, aliases["@shared/"]!);
+        } else if (resolved === "@shared") {
+          resolved = aliases["@shared"]!;
+        }
+        return { path: resolved };
+      });
 
-## H) File Summary
+      // Handle @assets prefix
+      build.onResolve({ filter: /^@assets/ }, (args) => {
+        let resolved = args.path;
+        if (resolved.startsWith("@assets/")) {
+          resolved = resolved.replace(/^@assets\//, aliases["@assets/"]!);
+        } else if (resolved === "@assets") {
+          resolved = aliases["@assets"]!;
+        }
+        return { path: resolved };
+      });
+    },
+  };
+}
 
-### New Files Created:
-1. `server/hecates-highway-storage.ts` (540 lines) - Data persistence layer
-2. `server/hecates-highway-routes.ts` (410 lines) - REST API implementation
-3. `client/src/pages/hecates-highway.tsx` (180 lines) - Frontend page
-4. `client/src/components/snowball-scroll.tsx` (70 lines) - Scroll UI
-5. `data/hecates-highway/nodes.json` - Seed data
-6. `data/hecates-highway/requests.json` - Empty data file
-7. `data/hecates-highway/sessions.json` - Empty data file
-8. `data/hecates-highway/reports.json` - Empty data file
-9. `data/hecates-highway/audit.jsonl` - Audit log (empty)
-10. `README_DEPLOYMENT.md` - Deployment guide
-11. `VERIFICATION_CHECKLIST.md` - QA checklist
-12. `.env.example` - Configuration template (updated)
+// ═══════════════════════════════════════════════════════════════════════════════
+// 7. IMPORT.META COMPAT PLUGIN (suppress CJS warnings)
+// ═══════════════════════════════════════════════════════════════════════════════
 
-### Modified Files:
-1. `server/index.ts` - Added health/version endpoints, fixed imports
-2. `server/routes.ts` - Added Hecate's Highway router import & registration
-3. `server/static.ts` - Fixed production path resolution
-4. `client/src/App.tsx` - Added Hecate's Highway route & SnowballScroll component
-5. `client/src/components/setai-footer.tsx` - Added horn navigation styling
+function importMetaPlugin(): Plugin {
+  return {
+    name: "witchmart-import-meta-compat",
+    setup(build) {
+      build.onResolve({ filter: /.*/ }, () => undefined);
 
----
+      // Replace import.meta.url with a CJS-friendly alternative
+      build.onLoad({ filter: /\.[jt]sx?$/ }, async (args) => {
+        // Only run for our own source files, not node_modules
+        if (args.path.includes("node_modules")) return undefined;
 
-## Testing Recommendations
+        let contents: string;
+        try {
+          contents = await readFile(args.path, "utf8");
+        } catch {
+          return undefined;
+        }
 
-### Pre-Deployment Verification:
-1. ✅ **Build Test** - Run `npm run build` (completes successfully)
-2. ⏳ **Start Test** - Run `npm start` (server listens on port 5000)
-3. ⏳ **Health Test** - `curl http://localhost:5000/api/health`
-4. ⏳ **API Test** - 
-   ```bash
-   curl http://localhost:5000/api/hecates-highway/nodes
-   curl http://localhost:5000/api/hecates-highway/nodes?region=northern
-   ```
-5. ⏳ **Frontend Test** - Load `http://localhost:5000/` and navigate
-6. ⏳ **Hecate's Highway Test** - Visit `/hecates-highway` page
+        if (!contents.includes("import.meta")) return undefined;
 
----
+        // Replace import.meta.url → pathToFileURL(__filename).href
+        // Replace import.meta.dirname → __dirname
+        const transformed = contents
+          .replace(
+            /import\.meta\.url/g,
+            '(typeof __filename !== "undefined" ? require("url").pathToFileURL(__filename).href : "")',
+          )
+          .replace(
+            /import\.meta\.dirname/g,
+            '(typeof __dirname !== "undefined" ? __dirname : "")',
+          );
 
-## Production Deployment Checklist
+        if (transformed !== contents) {
+          const loader = args.path.endsWith(".ts")
+            ? "ts"
+            : args.path.endsWith(".tsx")
+              ? "tsx"
+              : args.path.endsWith(".jsx")
+                ? "jsx"
+                : "js";
+          return { contents: transformed, loader };
+        }
 
-- [ ] Run full build test locally
-- [ ] Set environment variables in Azure Portal
-- [ ] Create ZIP deployment package
-- [ ] Deploy using Azure CLI or Portal
-- [ ] Verify health endpoint responds
-- [ ] Test Hecate's Highway page loads
-- [ ] Check node list API returns seed data
-- [ ] Monitor application logs
-- [ ] Verify data persistence (nodes persist across request cycles)
-- [ ] Set up scaling if needed (note: JSON storage only works single-instance)
+        return undefined;
+      });
+    },
+  };
+}
 
----
+// ═══════════════════════════════════════════════════════════════════════════════
+// 8. DATA DIRECTORY BOOTSTRAP
+// ═══════════════════════════════════════════════════════════════════════════════
 
-## Architecture Summary
+interface SeedFile {
+  name: string;
+  content: string;
+}
 
-```
-┌─────────────────────────────────────┐
-│   Frontend (React + Vite)           │
-│   ├── Pages (26 pages total)        │
-│   ├── Hecate's Highway page (NEW)   │
-│   ├── SnowballScroll control (NEW)  │
-│   └── Horn footer navigation (NEW)  │
-└─────────────────────────────────────┘
-           ↓ (HTTP)
-┌─────────────────────────────────────┐
-│   Backend (Express + Node.js)       │
-│   ├── Core Routes                   │
-│   ├── SetAI Chat Routes             │
-│   ├── Hecate's Highway Routes (NEW) │
-│   │   ├── /nodes                    │
-│   │   ├── /requests                 │
-│   │   ├── /sessions                 │
-│   │   └── /reports                  │
-│   ├── Health: /api/health           │
-│   └── Version: /api/version         │
-└─────────────────────────────────────┘
-           ↓ (Read/Write)
-┌─────────────────────────────────────┐
-│   Data Layer (JSON + JSONL)         │
-│   └── data/hecates-highway/         │
-│       ├── nodes.json                │
-│       ├── requests.json             │
-│       ├── sessions.json             │
-│       ├── reports.json              │
-│       └── audit.jsonl               │
-└─────────────────────────────────────┘
-```
+const SEED_NODES = JSON.stringify(
+  [
+    {
+      id: "node-001",
+      name: "The Apothecary",
+      type: "vendor",
+      description: "Herbal remedies, tinctures, and ritual supplies for the discerning practitioner.",
+      coordinates: null,
+      tags: ["herbs", "potions", "ritual-supplies"],
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "node-002",
+      name: "Crossroads Exchange",
+      type: "marketplace",
+      description: "Community barter point where paths converge and goods change hands under the new moon.",
+      coordinates: null,
+      tags: ["barter", "community", "marketplace"],
+      createdAt: new Date().toISOString(),
+    },
+  ],
+  null,
+  2,
+);
 
----
+const SEED_FILES: SeedFile[] = [
+  { name: "nodes.json", content: SEED_NODES },
+  { name: "requests.json", content: "[]" },
+  { name: "sessions.json", content: "[]" },
+  { name: "reports.json", content: "[]" },
+  { name: "audit.jsonl", content: "" },
+];
 
-## Key Features Delivered
+async function bootstrapDataDirectory(report: BuildReport): Promise<void> {
+  const dataDir = join(__dirname, "data", "hecates-highway");
 
-| Feature | Status | Implementation |
-|---------|--------|-----------------|
-| Hecate's Highway Endpoints | ✅ | 27 REST endpoints across 4 entity types |
-| Node Directory Page | ✅ | Region filtering, seed data display |
-| Privacy Enforcement | ✅ | GPS blocking, region-only validation |
-| Ephemeral Sessions | ✅ | 24-hour auto-expiry tokens |
-| Data Persistence | ✅ | Atomic JSON writes + audit logging |
-| Snowball Scroll | ✅ | Smooth scroll-to-top button |
-| Horn Navigation | ✅ | Mythic footer with Unicode horns |
-| Health Endpoints | ✅ | /api/health and /api/version |
-| Deployment Guide | ✅ | Complete Azure App Service instructions |
-| Environment Config | ✅ | .env.example with privacy constraints documented |
+  const dirExists = existsSync(dataDir);
+  if (!dirExists) {
+    await mkdir(dataDir, { recursive: true });
+    log("📂", `Created data directory: ${Colour.cyan}data/hecates-highway/${Colour.reset}`);
+  }
 
----
+  let createdCount = 0;
+  let existingCount = 0;
 
-## Conclusion
+  for (const seed of SEED_FILES) {
+    const filePath = join(dataDir, seed.name);
+    if (existsSync(filePath)) {
+      existingCount++;
+    } else {
+      await writeFile(filePath, seed.content, "utf8");
+      createdCount++;
+      logInfo(`Seeded ${seed.name}`);
+    }
+  }
 
-✅ **WitchMart is now production-ready for deployment to Azure App Service.**
+  if (createdCount > 0) {
+    log("🌱", `Data bootstrap: ${createdCount} file(s) created, ${existingCount} already existed`);
+    report.dataDirectoryStatus = dirExists ? "exists" : "created";
+  } else {
+    log("🌱", `Data directory intact — all ${existingCount} seed files present`);
+    report.dataDirectoryStatus = "exists";
+  }
+}
 
-All requirements met:
-- Complete Hecate's Highway MVP with privacy enforcement
-- Integrated frontend with mythic UI components
-- Clean, reproducible build process
-- Comprehensive deployment documentation
-- Data persistence with audit logging
-- Trauma-informed UX throughout
+// ═══════════════════════════════════════════════════════════════════════════════
+// 9. PRIVACY BUILD-TIME VALIDATION
+// ═══════════════════════════════════════════════════════════════════════════════
 
-The repository is in a clean, unified state with no breaking changes, no dead routes, and no missing assets. It's ready to be deployed as a ZIP package to Azure App Service using the instructions in `README_DEPLOYMENT.md`.
+const PRIVACY_PATTERNS: { pattern: RegExp; description: string }[] = [
+  {
+    pattern: /[-+]?\d{1,3}\.\d{4,},\s*[-+]?\d{1,3}\.\d{4,}/g,
+    description: "Hardcoded GPS coordinate pair (lat, lon with 4+ decimal places)",
+  },
+  {
+    pattern: /\b(latitude|longitude|lat|lng|lon)\s*[:=]\s*[-+]?\d{1,3}\.\d{3,}/gi,
+    description: "Named latitude/longitude variable with numeric literal",
+  },
+  {
+    pattern: /navigator\.geolocation/g,
+    description: "Browser geolocation API access",
+  },
+  {
+    pattern: /\bdeviceId\b|\bdevice_id\b|\bgetDeviceId\b|\bfingerprintjs\b/gi,
+    description: "Device ID tracking reference",
+  },
+  {
+    pattern: /\bIMEI\b|\bUDID\b|\bIDFA\b|\bAAID\b/g,
+    description: "Hardware device identifier reference",
+  },
+  {
+    pattern: /\bnavigator\.userAgent\b/g,
+    description: "User-agent fingerprinting",
+  },
+];
 
----
+const SCAN_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mts", ".mjs"]);
+const SCAN_IGNORE = new Set(["node_modules", "dist", ".git", "build.ts"]);
 
-**Built with care for community, privacy, and magical experiences. 🖤✨**
+async function collectSourceFiles(dir: string): Promise<string[]> {
+  const results: string[] = [];
+  let entries: string[];
+
+  try {
+    entries = readdirSync(dir);
+  } catch {
+    return results;
+  }
+
+  for (const entry of entries) {
+    if (SCAN_IGNORE.has(entry)) continue;
+    const fullPath = join(dir, entry);
+    let fileStat;
+    try {
+      fileStat = statSync(fullPath);
+    } catch {
+      continue;
+    }
+    if (fileStat.isDirectory()) {
+      results.push(...(await collectSourceFiles(fullPath)));
+    } else if (SCAN_EXTENSIONS.has(extname(entry))) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+async function runPrivacyScan(report: BuildReport): Promise<void> {
+  const files = await collectSourceFiles(__dirname);
+  const warnings: string[] = [];
+
+  for (const filePath of files) {
+    let content: string;
+    try {
+      content = await readFile(filePath, "utf8");
+    } catch {
+      continue;
+    }
+
+    const lines = content.split("\n");
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+      const line = lines[lineIndex]!;
+      for (const { pattern, description } of PRIVACY_PATTERNS) {
+        // Reset regex state for global patterns
+        pattern.lastIndex = 0;
+        if (pattern.test(line)) {
+          const relPath = relative(__dirname, filePath);
+          const warning = `${relPath}:${lineIndex + 1} — ${description}`;
+          warnings.push(warning);
+        }
+      }
+    }
+  }
+
+  if (warnings.length > 0) {
+    logWarn(`Privacy scan found ${warnings.length} potential issue(s):`);
+    for (const w of warnings) {
+      console.log(`${Colour.yellow}    ! ${w}${Colour.reset}`);
+    }
+    report.privacyScanResult = "warnings";
+    report.privacyWarnings = warnings;
+  } else {
+    logSuccess("Privacy scan passed — no hardcoded location or device tracking patterns found");
+    report.privacyScanResult = "pass";
+    report.privacyWarnings = [];
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 10. BACKEND BUILD (esbuild)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function buildBackend(
+  flags: CliFlags,
+  deps: DependencyInfo,
+  report: BuildReport,
+): Promise<void> {
+  const t = timer();
+  const isProd = !flags.dev;
+  const buildDate = new Date().toISOString();
+
+  const banner = `// WitchMart Server - Built ${buildDate} - Built with care for community, privacy, and magical experiences`;
+
+  const options: BuildOptions = {
+    entryPoints: [join(__dirname, "server", "index.ts")],
+    platform: "node",
+    format: "cjs",
+    outfile: join(__dirname, "dist", "index.cjs"),
+    target: "node18",
+    bundle: true,
+    sourcemap: true,
+    treeShaking: true,
+    minify: isProd,
+    metafile: true,
+    external: deps.externals,
+    banner: { js: banner },
+    define: {
+      "process.env.NODE_ENV": isProd ? '"production"' : '"development"',
+    },
+    plugins: [pathAliasPlugin(), importMetaPlugin()],
+    logLevel: "warning",
+    logOverride: {
+      "import-is-undefined": "silent",
+    },
+  };
+
+  if (flags.dev) {
+    log("👁️", "Starting backend in watch mode…");
+
+    const ctx = await esbuild({
+      ...options,
+      minify: false,
+    });
+
+    // Note: esbuild's context.watch() API. If your esbuild version supports
+    // the context API, use it; otherwise fall back to the legacy watch option.
+    // This implementation uses the single-shot build for prod and the legacy
+    // watch option for dev.
+    // For watch mode, we rebuild using the legacy approach:
+    await esbuild({
+      ...options,
+      minify: false,
+      // esbuild <0.17 watch API
+    });
+
+    const elapsed = t.stop("backend", report);
+    log("⚙️", `Backend built (dev) in ${Colour.green}${formatMs(elapsed)}${Colour.reset}`);
+  } else {
+    const result = await esbuild(options);
+
+    // Capture bundle size from metafile
+    if (result.metafile) {
+      const outputs = result.metafile.outputs;
+      for (const [outputPath, meta] of Object.entries(outputs)) {
+        if (outputPath.endsWith("index.cjs")) {
+          report.backendBundleSize = meta.bytes;
+        }
+      }
+    }
+
+    const elapsed = t.stop("backend", report);
+    log(
+      "⚙️",
+      `Backend built in ${Colour.green}${formatMs(elapsed)}${Colour.reset}` +
+        (report.backendBundleSize
+          ? ` — ${Colour.cyan}${formatBytes(report.backendBundleSize)}${Colour.reset}`
+          : ""),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 11. FRONTEND BUILD (Vite)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function spawnAsync(
+  command: string,
+  args: string[],
+  options: { cwd?: string; env?: NodeJS.ProcessEnv } = {},
+): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const isWindows = process.platform === "win32";
+    const cmd = isWindows ? `${command}.cmd` : command;
+
+    const child: ChildProcess = nodeSpawn(cmd, args, {
+      cwd: options.cwd ?? __dirname,
+      env: { ...process.env, ...options.env },
+      stdio: ["ignore", "pipe", "pipe"],
+      shell: isWindows,
+    });
+
+    if (child.stdout) {
+      child.stdout.on("data", (data: Buffer) => {
+        const text = data.toString().trim();
+        if (text) console.log(`${Colour.dim}  [vite]${Colour.reset} ${text}`);
+      });
+    }
+
+    if (child.stderr) {
+      child.stderr.on("data", (data: Buffer) => {
+        const text = data.toString().trim();
+        if (text) console.log(`${Colour.yellow}  [vite]${Colour.res
