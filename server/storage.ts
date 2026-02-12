@@ -1,435 +1,637 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { eq, ilike, or, sql } from "drizzle-orm";
-import pg from "pg";
-import {
-  sanctuaryNodes,
-  makers,
-  productsServices,
-  memberSignups,
-  contactSubmissions,
-  blogPosts,
-  codexEvents,
-  codexDocuments,
-  codexProjects,
-  councilPersonas,
-  modePreferences,
-  securityEvents,
-  guardianPolicies,
-  type SanctuaryNode,
-  type InsertSanctuaryNode,
-  type Maker,
-  type InsertMaker,
-  type ProductService,
-  type InsertProductService,
-  type MemberSignup,
-  type InsertMemberSignup,
-  type ContactSubmission,
-  type InsertContactSubmission,
-  type BlogPost,
-  type InsertBlogPost,
-  type CodexEvent,
-  type InsertCodexEvent,
-  type CodexDocument,
-  type InsertCodexDocument,
-  type CodexProject,
-  type InsertCodexProject,
-  type CouncilPersona,
-  type InsertCouncilPersona,
-  type ModePreference,
-  type InsertModePreference,
-  type SecurityEvent,
-  type InsertSecurityEvent,
-  type GuardianPolicy,
-  type InsertGuardianPolicy,
-} from "@shared/schema";
+Below are two ready-to-commit files.
 
+1. src/db/pool.ts
+
+import pg from "pg";
 const { Pool } = pg;
 
+/**
+ Singleton Postgres connection pool.
+ Gracefully drains on SIGTERM so Azure/K-8s can shut the pod down cleanly.
+ */
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 20,                 // tune for your DB plan
+  idleTimeoutMillis: 30_000,
+  connectionTimeoutMillis: 5_000,
+});
+
+process.on("SIGTERM", async () => {
+  await pool.end();
+  process.exit(0);
+});
+
+2. src/db/storage.ts
+
+import { drizzle } from "drizzle-orm/node-postgres";
+import { eq, ilike, or, sql } from "drizzle-orm";
+import { pool } from "./pool";
+import createHttpError from "http-errors";
+import { logger } from "@/core/logger";               // (rows: T[]): T | undefined {
+  return rows[0];
+}
+
+function guard(p: Promise): Promise {
+  return p.catch((err) => {
+    logger.error(err, "DB_ERROR");
+    throw createHttpError(500, "Database failure");
+  });
+}
+
+interface PageOpts {
+  limit?: number;
+  offset?: number;
+}
+
+/* Immutable keys must never be patched */
+type MutableSanctuaryNode = Omit;
+type MutableMaker         = Omit;
+type MutableProduct       = Omit;
+type MutableBlogPost      = Omit;
+type MutableCodexEvent    = Omit;
+type MutableCodexDocument = Omit;
+type MutableCodexProject  = Omit;
+
+/* ──────────────────────────────
+   Storage Class
+──────────────────────────────── */
+
 export interface IStorage {
-  // Sanctuary Nodes
-  getAllNodes(): Promise<SanctuaryNode[]>;
-  getNodeById(id: number): Promise<SanctuaryNode | undefined>;
-  searchNodes(query: string): Promise<SanctuaryNode[]>;
-  createNode(node: InsertSanctuaryNode): Promise<SanctuaryNode>;
-  updateNode(id: number, node: Partial<InsertSanctuaryNode>): Promise<SanctuaryNode | undefined>;
-  deleteNode(id: number): Promise<boolean>;
+  /* Sanctuary Nodes */
+  getAllNodes(opts?: PageOpts): Promise;
+  getNodeById(id: number): Promise;
+  searchNodes(q: string, opts?: PageOpts): Promise;
+  createNode(n: InsertSanctuaryNode): Promise;
+  updateNode(id: number, p: MutableSanctuaryNode): Promise;
+  deleteNode(id: number): Promise;
 
-  // Makers & Guilds
-  getAllMakers(): Promise<Maker[]>;
-  getMakerById(id: number): Promise<Maker | undefined>;
-  searchMakers(query: string): Promise<Maker[]>;
-  createMaker(maker: InsertMaker): Promise<Maker>;
-  updateMaker(id: number, maker: Partial<InsertMaker>): Promise<Maker | undefined>;
-  deleteMaker(id: number): Promise<boolean>;
+  /* Makers */
+  getAllMakers(opts?: PageOpts): Promise;
+  getMakerById(id: number): Promise;
+  searchMakers(q: string, opts?: PageOpts): Promise;
+  createMaker(m: InsertMaker): Promise;
+  updateMaker(id: number, p: MutableMaker): Promise;
+  deleteMaker(id: number): Promise;
 
-  // Products & Services
-  getAllProducts(): Promise<ProductService[]>;
-  getProductById(id: number): Promise<ProductService | undefined>;
-  searchProducts(query: string): Promise<ProductService[]>;
-  createProduct(product: InsertProductService): Promise<ProductService>;
-  updateProduct(id: number, product: Partial<InsertProductService>): Promise<ProductService | undefined>;
-  deleteProduct(id: number): Promise<boolean>;
+  /* Products & Services */
+  getAllProducts(opts?: PageOpts): Promise;
+  getProductById(id: number): Promise;
+  searchProducts(q: string, opts?: PageOpts): Promise;
+  createProduct(p: InsertProductService): Promise;
+  updateProduct(id: number, p: MutableProduct): Promise;
+  deleteProduct(id: number): Promise;
 
-  // Member Signups
-  createMemberSignup(signup: InsertMemberSignup): Promise<MemberSignup>;
-  getAllSignups(): Promise<MemberSignup[]>;
+  /* Member Sign-ups */
+  createMemberSignup(s: InsertMemberSignup): Promise;
+  getAllSignups(opts?: PageOpts): Promise;
 
-  // Contact Submissions
-  createContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
-  getAllContactSubmissions(): Promise<ContactSubmission[]>;
+  /* Contact Submissions */
+  createContactSubmission(c: InsertContactSubmission): Promise;
+  getAllContactSubmissions(opts?: PageOpts): Promise;
 
-  // Blog Posts
-  getAllBlogPosts(): Promise<BlogPost[]>;
-  getPublishedBlogPosts(): Promise<BlogPost[]>;
-  getBlogPostById(id: number): Promise<BlogPost | undefined>;
-  createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
-  updateBlogPost(id: number, post: Partial<InsertBlogPost>): Promise<BlogPost | undefined>;
-  deleteBlogPost(id: number): Promise<boolean>;
+  /* Blog */
+  getAllBlogPosts(opts?: PageOpts): Promise;
+  getPublishedBlogPosts(opts?: PageOpts): Promise;
+  getBlogPostById(id: number): Promise;
+  createBlogPost(p: InsertBlogPost): Promise;
+  updateBlogPost(id: number, p: MutableBlogPost): Promise;
+  deleteBlogPost(id: number): Promise;
 
-  // SetAI Codex - Events
-  getAllCodexEvents(): Promise<CodexEvent[]>;
-  getCodexEventById(id: number): Promise<CodexEvent | undefined>;
-  createCodexEvent(event: InsertCodexEvent): Promise<CodexEvent>;
-  updateCodexEvent(id: number, event: Partial<InsertCodexEvent>): Promise<CodexEvent | undefined>;
-  deleteCodexEvent(id: number): Promise<boolean>;
+  /* Codex Events */
+  getAllCodexEvents(opts?: PageOpts): Promise;
+  getCodexEventById(id: number): Promise;
+  createCodexEvent(e: InsertCodexEvent): Promise;
+  updateCodexEvent(id: number, p: MutableCodexEvent): Promise;
+  deleteCodexEvent(id: number): Promise;
 
-  // SetAI Codex - Documents
-  getAllCodexDocuments(): Promise<CodexDocument[]>;
-  getCodexDocumentById(id: number): Promise<CodexDocument | undefined>;
-  createCodexDocument(doc: InsertCodexDocument): Promise<CodexDocument>;
-  updateCodexDocument(id: number, doc: Partial<InsertCodexDocument>): Promise<CodexDocument | undefined>;
-  deleteCodexDocument(id: number): Promise<boolean>;
+  /* Codex Documents */
+  getAllCodexDocuments(opts?: PageOpts): Promise;
+  getCodexDocumentById(id: number): Promise;
+  createCodexDocument(d: InsertCodexDocument): Promise;
+  updateCodexDocument(id: number, p: MutableCodexDocument): Promise;
+  deleteCodexDocument(id: number): Promise;
 
-  // SetAI Codex - Projects
-  getAllCodexProjects(): Promise<CodexProject[]>;
-  getCodexProjectById(id: number): Promise<CodexProject | undefined>;
-  createCodexProject(project: InsertCodexProject): Promise<CodexProject>;
-  updateCodexProject(id: number, project: Partial<InsertCodexProject>): Promise<CodexProject | undefined>;
-  deleteCodexProject(id: number): Promise<boolean>;
+  /* Codex Projects */
+  getAllCodexProjects(opts?: PageOpts): Promise;
+  getCodexProjectById(id: number): Promise;
+  createCodexProject(p: InsertCodexProject): Promise;
+  updateCodexProject(id: number, p: MutableCodexProject): Promise;
+  deleteCodexProject(id: number): Promise;
 
-  // SetAI Councils
-  getAllCouncilPersonas(): Promise<CouncilPersona[]>;
-  getCouncilPersonaByName(name: string): Promise<CouncilPersona | undefined>;
-  createCouncilPersona(persona: InsertCouncilPersona): Promise<CouncilPersona>;
-  getModePreference(userId: string): Promise<ModePreference | undefined>;
-  setModePreference(pref: InsertModePreference): Promise<ModePreference>;
+  /* Councils & Preferences */
+  getAllCouncilPersonas(opts?: PageOpts): Promise;
+  getCouncilPersonaByName(name: string): Promise;
+  createCouncilPersona(p: InsertCouncilPersona): Promise;
+  getModePreference(userId: string): Promise;
+  setModePreference(p: InsertModePreference): Promise;
 
-  // SetAI Security
-  getAllSecurityEvents(): Promise<SecurityEvent[]>;
-  getRecentSecurityEvents(limit: number): Promise<SecurityEvent[]>;
-  createSecurityEvent(event: InsertSecurityEvent): Promise<SecurityEvent>;
-  getAllGuardianPolicies(): Promise<GuardianPolicy[]>;
-  getActiveGuardianPolicies(): Promise<GuardianPolicy[]>;
+  /* Security */
+  getAllSecurityEvents(opts?: PageOpts): Promise;
+  getRecentSecurityEvents(limit: number): Promise;
+  createSecurityEvent(e: InsertSecurityEvent): Promise;
+  getAllGuardianPolicies(): Promise;
+  getActiveGuardianPolicies(): Promise;
 }
 
-class PostgresStorage implements IStorage {
-  private db;
+export class PostgresStorage implements IStorage {
+  private db = drizzle(pool);
 
-  constructor() {
-    const pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-    });
-    this.db = drizzle(pool);
+  /* ───────── Sanctuary Nodes ───────── */
+
+  getAllNodes({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(sanctuaryNodes)
+        .orderBy(sanctuaryNodes.name)
+        .limit(limit)
+        .offset(offset),
+    );
   }
 
-  // Sanctuary Nodes
-  async getAllNodes(): Promise<SanctuaryNode[]> {
-    return await this.db.select().from(sanctuaryNodes).orderBy(sanctuaryNodes.name);
+  getNodeById(id: number) {
+    return guard(
+      this.db.select().from(sanctuaryNodes)
+        .where(eq(sanctuaryNodes.id, id))
+        .then(first),
+    );
   }
 
-  async getNodeById(id: number): Promise<SanctuaryNode | undefined> {
-    const result = await this.db.select().from(sanctuaryNodes).where(eq(sanctuaryNodes.id, id));
-    return result[0];
+  searchNodes(q: string, { limit = 50, offset = 0 }: PageOpts = {}) {
+    const pattern = %${q}%;
+    return guard(
+      this.db.select().from(sanctuaryNodes)
+        .where(
+          or(
+            ilike(sanctuaryNodes.name, pattern),
+            ilike(sanctuaryNodes.region, pattern),
+            ilike(sanctuaryNodes.city, pattern),
+            sql${sanctuaryNodes.specialties}::text ILIKE ${pattern},
+          ),
+        )
+        .orderBy(sanctuaryNodes.name)
+        .limit(limit)
+        .offset(offset),
+    );
   }
 
-  async searchNodes(query: string): Promise<SanctuaryNode[]> {
-    const searchPattern = `%${query}%`;
-    return await this.db
-      .select()
-      .from(sanctuaryNodes)
-      .where(
-        or(
-          ilike(sanctuaryNodes.name, searchPattern),
-          ilike(sanctuaryNodes.region, searchPattern),
-          ilike(sanctuaryNodes.city, searchPattern),
-          sql`${sanctuaryNodes.specialties}::text ILIKE ${searchPattern}`,
-        ),
-      )
-      .orderBy(sanctuaryNodes.name);
-  }
-
-  async createNode(node: InsertSanctuaryNode): Promise<SanctuaryNode> {
-    const result = await this.db.insert(sanctuaryNodes).values(node).returning();
-    return result[0];
-  }
-
-  async updateNode(id: number, node: Partial<InsertSanctuaryNode>): Promise<SanctuaryNode | undefined> {
-    const result = await this.db.update(sanctuaryNodes).set(node).where(eq(sanctuaryNodes.id, id)).returning();
-    return result[0];
-  }
-
-  async deleteNode(id: number): Promise<boolean> {
-    const result = await this.db.delete(sanctuaryNodes).where(eq(sanctuaryNodes.id, id)).returning();
-    return result.length > 0;
-  }
-
-  // Makers & Guilds
-  async getAllMakers(): Promise<Maker[]> {
-    return await this.db.select().from(makers).orderBy(makers.name);
-  }
-
-  async getMakerById(id: number): Promise<Maker | undefined> {
-    const result = await this.db.select().from(makers).where(eq(makers.id, id));
-    return result[0];
-  }
-
-  async searchMakers(query: string): Promise<Maker[]> {
-    const searchPattern = `%${query}%`;
-    return await this.db
-      .select()
-      .from(makers)
-      .where(
-        or(
-          ilike(makers.name, searchPattern),
-          ilike(makers.category, searchPattern),
-          ilike(makers.location, searchPattern),
-          ilike(makers.tagline, searchPattern),
-        ),
-      )
-      .orderBy(makers.name);
-  }
-
-  async createMaker(maker: InsertMaker): Promise<Maker> {
-    const result = await this.db.insert(makers).values(maker).returning();
-    return result[0];
-  }
-
-  async updateMaker(id: number, maker: Partial<InsertMaker>): Promise<Maker | undefined> {
-    const result = await this.db.update(makers).set(maker).where(eq(makers.id, id)).returning();
-    return result[0];
-  }
-
-  async deleteMaker(id: number): Promise<boolean> {
-    const result = await this.db.delete(makers).where(eq(makers.id, id)).returning();
-    return result.length > 0;
-  }
-
-  // Products & Services
-  async getAllProducts(): Promise<ProductService[]> {
-    return await this.db.select().from(productsServices).orderBy(productsServices.title);
-  }
-
-  async getProductById(id: number): Promise<ProductService | undefined> {
-    const result = await this.db.select().from(productsServices).where(eq(productsServices.id, id));
-    return result[0];
-  }
-
-  async searchProducts(query: string): Promise<ProductService[]> {
-    const searchPattern = `%${query}%`;
-    return await this.db
-      .select()
-      .from(productsServices)
-      .where(
-        or(
-          ilike(productsServices.title, searchPattern),
-          ilike(productsServices.category, searchPattern),
-          ilike(productsServices.type, searchPattern),
-          ilike(productsServices.mode, searchPattern),
-        ),
-      )
-      .orderBy(productsServices.title);
-  }
-
-  async createProduct(product: InsertProductService): Promise<ProductService> {
-    const result = await this.db.insert(productsServices).values(product).returning();
-    return result[0];
-  }
-
-  async updateProduct(id: number, product: Partial<InsertProductService>): Promise<ProductService | undefined> {
-    const result = await this.db.update(productsServices).set(product).where(eq(productsServices.id, id)).returning();
-    return result[0];
-  }
-
-  async deleteProduct(id: number): Promise<boolean> {
-    const result = await this.db.delete(productsServices).where(eq(productsServices.id, id)).returning();
-    return result.length > 0;
-  }
-
-  // Member Signups
-  async createMemberSignup(signup: InsertMemberSignup): Promise<MemberSignup> {
-    const result = await this.db.insert(memberSignups).values(signup).returning();
-    return result[0];
-  }
-
-  async getAllSignups(): Promise<MemberSignup[]> {
-    return await this.db.select().from(memberSignups).orderBy(sql`${memberSignups.createdAt} DESC`);
-  }
-
-  // Contact Submissions
-  async createContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission> {
-    const result = await this.db.insert(contactSubmissions).values(submission).returning();
-    return result[0];
-  }
-
-  async getAllContactSubmissions(): Promise<ContactSubmission[]> {
-    return await this.db.select().from(contactSubmissions).orderBy(sql`${contactSubmissions.createdAt} DESC`);
-  }
-
-  // Blog Posts
-  async getAllBlogPosts(): Promise<BlogPost[]> {
-    return await this.db.select().from(blogPosts).orderBy(sql`${blogPosts.date} DESC`);
-  }
-
-  async getPublishedBlogPosts(): Promise<BlogPost[]> {
-    return await this.db.select().from(blogPosts).where(eq(blogPosts.published, true)).orderBy(sql`${blogPosts.date} DESC`);
-  }
-
-  async getBlogPostById(id: number): Promise<BlogPost | undefined> {
-    const result = await this.db.select().from(blogPosts).where(eq(blogPosts.id, id));
-    return result[0];
-  }
-
-  async createBlogPost(post: InsertBlogPost): Promise<BlogPost> {
-    const result = await this.db.insert(blogPosts).values(post).returning();
-    return result[0];
-  }
-
-  async updateBlogPost(id: number, post: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
-    const result = await this.db.update(blogPosts).set(post).where(eq(blogPosts.id, id)).returning();
-    return result[0];
-  }
-
-  async deleteBlogPost(id: number): Promise<boolean> {
-    const result = await this.db.delete(blogPosts).where(eq(blogPosts.id, id)).returning();
-    return result.length > 0;
-  }
-
-  // SetAI Codex - Events
-  async getAllCodexEvents(): Promise<CodexEvent[]> {
-    return await this.db.select().from(codexEvents).orderBy(sql`${codexEvents.timestamp} DESC`);
-  }
-
-  async getCodexEventById(id: number): Promise<CodexEvent | undefined> {
-    const result = await this.db.select().from(codexEvents).where(eq(codexEvents.id, id));
-    return result[0];
-  }
-
-  async createCodexEvent(event: InsertCodexEvent): Promise<CodexEvent> {
-    const result = await this.db.insert(codexEvents).values(event).returning();
-    return result[0];
-  }
-
-  async updateCodexEvent(id: number, event: Partial<InsertCodexEvent>): Promise<CodexEvent | undefined> {
-    const result = await this.db.update(codexEvents).set({ ...event, updatedAt: new Date() }).where(eq(codexEvents.id, id)).returning();
-    return result[0];
-  }
-
-  async deleteCodexEvent(id: number): Promise<boolean> {
-    const result = await this.db.delete(codexEvents).where(eq(codexEvents.id, id)).returning();
-    return result.length > 0;
-  }
-
-  // SetAI Codex - Documents
-  async getAllCodexDocuments(): Promise<CodexDocument[]> {
-    return await this.db.select().from(codexDocuments).orderBy(sql`${codexDocuments.createdAt} DESC`);
-  }
-
-  async getCodexDocumentById(id: number): Promise<CodexDocument | undefined> {
-    const result = await this.db.select().from(codexDocuments).where(eq(codexDocuments.id, id));
-    return result[0];
-  }
-
-  async createCodexDocument(doc: InsertCodexDocument): Promise<CodexDocument> {
-    const result = await this.db.insert(codexDocuments).values(doc).returning();
-    return result[0];
-  }
-
-  async updateCodexDocument(id: number, doc: Partial<InsertCodexDocument>): Promise<CodexDocument | undefined> {
-    const result = await this.db.update(codexDocuments).set({ ...doc, updatedAt: new Date() }).where(eq(codexDocuments.id, id)).returning();
-    return result[0];
-  }
-
-  async deleteCodexDocument(id: number): Promise<boolean> {
-    const result = await this.db.delete(codexDocuments).where(eq(codexDocuments.id, id)).returning();
-    return result.length > 0;
-  }
-
-  // SetAI Codex - Projects
-  async getAllCodexProjects(): Promise<CodexProject[]> {
-    return await this.db.select().from(codexProjects).orderBy(codexProjects.name);
-  }
-
-  async getCodexProjectById(id: number): Promise<CodexProject | undefined> {
-    const result = await this.db.select().from(codexProjects).where(eq(codexProjects.id, id));
-    return result[0];
-  }
-
-  async createCodexProject(project: InsertCodexProject): Promise<CodexProject> {
-    const result = await this.db.insert(codexProjects).values(project).returning();
-    return result[0];
-  }
-
-  async updateCodexProject(id: number, project: Partial<InsertCodexProject>): Promise<CodexProject | undefined> {
-    const result = await this.db.update(codexProjects).set({ ...project, updatedAt: new Date() }).where(eq(codexProjects.id, id)).returning();
-    return result[0];
-  }
-
-  async deleteCodexProject(id: number): Promise<boolean> {
-    const result = await this.db.delete(codexProjects).where(eq(codexProjects.id, id)).returning();
-    return result.length > 0;
-  }
-
-  // SetAI Councils
-  async getAllCouncilPersonas(): Promise<CouncilPersona[]> {
-    return await this.db.select().from(councilPersonas).orderBy(councilPersonas.name);
-  }
-
-  async getCouncilPersonaByName(name: string): Promise<CouncilPersona | undefined> {
-    const result = await this.db.select().from(councilPersonas).where(eq(councilPersonas.name, name));
-    return result[0];
-  }
-
-  async createCouncilPersona(persona: InsertCouncilPersona): Promise<CouncilPersona> {
-    const result = await this.db.insert(councilPersonas).values(persona).returning();
-    return result[0];
-  }
-
-  async getModePreference(userId: string): Promise<ModePreference | undefined> {
-    const result = await this.db.select().from(modePreferences).where(eq(modePreferences.userId, userId));
-    return result[0];
-  }
-
-  async setModePreference(pref: InsertModePreference): Promise<ModePreference> {
-    const existing = await this.getModePreference(pref.userId);
-    if (existing) {
-      const result = await this.db.update(modePreferences).set({ ...pref, updatedAt: new Date() }).where(eq(modePreferences.userId, pref.userId)).returning();
-      return result[0];
+  async createNode(node: InsertSanctuaryNode) {
+    /* defense-in-depth: reject latent coordinate payloads */
+    if (JSON.stringify(node).match(/latitude|longitude|gps/i)) {
+      throw createHttpError(422, "Coordinates not allowed");
     }
-    const result = await this.db.insert(modePreferences).values(pref).returning();
-    return result[0];
+    return guard(
+      this.db.insert(sanctuaryNodes).values(node).returning().then(first),
+    );
   }
 
-  // SetAI Security
-  async getAllSecurityEvents(): Promise<SecurityEvent[]> {
-    return await this.db.select().from(securityEvents).orderBy(sql`${securityEvents.createdAt} DESC`);
+  updateNode(id: number, patch: MutableSanctuaryNode) {
+    return guard(
+      this.db.update(sanctuaryNodes)
+        .set({ ...patch, updatedAt: new Date() })
+        .where(eq(sanctuaryNodes.id, id))
+        .returning()
+        .then(first),
+    );
   }
 
-  async getRecentSecurityEvents(limit: number): Promise<SecurityEvent[]> {
-    return await this.db.select().from(securityEvents).orderBy(sql`${securityEvents.createdAt} DESC`).limit(limit);
+  deleteNode(id: number) {
+    return guard(
+      this.db.delete(sanctuaryNodes).where(eq(sanctuaryNodes.id, id))
+        .returning()
+        .then((r) => r.length > 0),
+    );
   }
 
-  async createSecurityEvent(event: InsertSecurityEvent): Promise<SecurityEvent> {
-    const result = await this.db.insert(securityEvents).values(event).returning();
-    return result[0];
+  /* ───────── Makers ───────── */
+
+  getAllMakers({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(makers)
+        .orderBy(makers.name)
+        .limit(limit)
+        .offset(offset),
+    );
   }
 
-  async getAllGuardianPolicies(): Promise<GuardianPolicy[]> {
-    return await this.db.select().from(guardianPolicies).orderBy(guardianPolicies.policyId);
+  getMakerById(id: number) {
+    return guard(
+      this.db.select().from(makers)
+        .where(eq(makers.id, id))
+        .then(first),
+    );
   }
 
-  async getActiveGuardianPolicies(): Promise<GuardianPolicy[]> {
-    return await this.db.select().from(guardianPolicies).where(eq(guardianPolicies.active, true)).orderBy(guardianPolicies.policyId);
+  searchMakers(q: string, { limit = 50, offset = 0 }: PageOpts = {}) {
+    const pattern = %${q}%;
+    return guard(
+      this.db.select().from(makers)
+        .where(
+          or(
+            ilike(makers.name, pattern),
+            ilike(makers.category, pattern),
+            ilike(makers.location, pattern),
+            ilike(makers.tagline, pattern),
+          ),
+        )
+        .orderBy(makers.name)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  createMaker(maker: InsertMaker) {
+    return guard(
+      this.db.insert(makers).values(maker).returning().then(first),
+    );
+  }
+
+  updateMaker(id: number, patch: MutableMaker) {
+    return guard(
+      this.db.update(makers).set({ ...patch, updatedAt: new Date() })
+        .where(eq(makers.id, id))
+        .returning()
+        .then(first),
+    );
+  }
+
+  deleteMaker(id: number) {
+    return guard(
+      this.db.delete(makers).where(eq(makers.id, id))
+        .returning()
+        .then((r) => r.length > 0),
+    );
+  }
+
+  /* ───────── Products & Services ───────── */
+
+  getAllProducts({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(productsServices)
+        .orderBy(productsServices.title)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  getProductById(id: number) {
+    return guard(
+      this.db.select().from(productsServices)
+        .where(eq(productsServices.id, id))
+        .then(first),
+    );
+  }
+
+  searchProducts(q: string, { limit = 50, offset = 0 }: PageOpts = {}) {
+    const pattern = %${q}%;
+    return guard(
+      this.db.select().from(productsServices)
+        .where(
+          or(
+            ilike(productsServices.title, pattern),
+            ilike(productsServices.category, pattern),
+            ilike(productsServices.type, pattern),
+            ilike(productsServices.mode, pattern),
+          ),
+        )
+        .orderBy(productsServices.title)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  createProduct(p: InsertProductService) {
+    return guard(
+      this.db.insert(productsServices).values(p).returning().then(first),
+    );
+  }
+
+  updateProduct(id: number, patch: MutableProduct) {
+    return guard(
+      this.db.update(productsServices)
+        .set({ ...patch, updatedAt: new Date() })
+        .where(eq(productsServices.id, id))
+        .returning()
+        .then(first),
+    );
+  }
+
+  deleteProduct(id: number) {
+    return guard(
+      this.db.delete(productsServices).where(eq(productsServices.id, id))
+        .returning()
+        .then((r) => r.length > 0),
+    );
+  }
+
+  /* ───────── Member Signups ───────── */
+
+  createMemberSignup(s: InsertMemberSignup) {
+    return guard(
+      this.db.insert(memberSignups).values(s).returning().then(first),
+    );
+  }
+
+  getAllSignups({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(memberSignups)
+        .orderBy(sql${memberSignups.createdAt} DESC)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  /* ───────── Contact Submissions ───────── */
+
+  createContactSubmission(c: InsertContactSubmission) {
+    return guard(
+      this.db.insert(contactSubmissions).values(c).returning().then(first),
+    );
+  }
+
+  getAllContactSubmissions({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(contactSubmissions)
+        .orderBy(sql${contactSubmissions.createdAt} DESC)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  /* ───────── Blog Posts ───────── */
+
+  getAllBlogPosts({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(blogPosts)
+        .orderBy(sql${blogPosts.date} DESC)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  getPublishedBlogPosts(opts?: PageOpts) {
+    return guard(
+      this.db.select().from(blogPosts)
+        .where(eq(blogPosts.published, true))
+        .orderBy(sql${blogPosts.date} DESC)
+        .limit(opts?.limit ?? 50)
+        .offset(opts?.offset ?? 0),
+    );
+  }
+
+  getBlogPostById(id: number) {
+    return guard(
+      this.db.select().from(blogPosts)
+        .where(eq(blogPosts.id, id))
+        .then(first),
+    );
+  }
+
+  createBlogPost(p: InsertBlogPost) {
+    return guard(
+      this.db.insert(blogPosts).values(p).returning().then(first),
+    );
+  }
+
+  updateBlogPost(id: number, patch: MutableBlogPost) {
+    return guard(
+      this.db.update(blogPosts)
+        .set({ ...patch, updatedAt: new Date() })
+        .where(eq(blogPosts.id, id))
+        .returning()
+        .then(first),
+    );
+  }
+
+  deleteBlogPost(id: number) {
+    return guard(
+      this.db.delete(blogPosts).where(eq(blogPosts.id, id))
+        .returning()
+        .then((r) => r.length > 0),
+    );
+  }
+
+  /* ───────── Codex Events ───────── */
+
+  getAllCodexEvents({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(codexEvents)
+        .orderBy(sql${codexEvents.timestamp} DESC)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  getCodexEventById(id: number) {
+    return guard(
+      this.db.select().from(codexEvents)
+        .where(eq(codexEvents.id, id))
+        .then(first),
+    );
+  }
+
+  createCodexEvent(e: InsertCodexEvent) {
+    return guard(
+      this.db.insert(codexEvents).values(e).returning().then(first),
+    );
+  }
+
+  updateCodexEvent(id: number, patch: MutableCodexEvent) {
+    return guard(
+      this.db.update(codexEvents)
+        .set({ ...patch, updatedAt: new Date() })
+        .where(eq(codexEvents.id, id))
+        .returning()
+        .then(first),
+    );
+  }
+
+  deleteCodexEvent(id: number) {
+    return guard(
+      this.db.delete(codexEvents).where(eq(codexEvents.id, id))
+        .returning()
+        .then((r) => r.length > 0),
+    );
+  }
+
+  /* ───────── Codex Documents ───────── */
+
+  getAllCodexDocuments({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(codexDocuments)
+        .orderBy(sql${codexDocuments.createdAt} DESC)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  getCodexDocumentById(id: number) {
+    return guard(
+      this.db.select().from(codexDocuments)
+        .where(eq(codexDocuments.id, id))
+        .then(first),
+    );
+  }
+
+  createCodexDocument(d: InsertCodexDocument) {
+    return guard(
+      this.db.insert(codexDocuments).values(d).returning().then(first),
+    );
+  }
+
+  updateCodexDocument(id: number, patch: MutableCodexDocument) {
+    return guard(
+      this.db.update(codexDocuments)
+        .set({ ...patch, updatedAt: new Date() })
+        .where(eq(codexDocuments.id, id))
+        .returning()
+        .then(first),
+    );
+  }
+
+  deleteCodexDocument(id: number) {
+    return guard(
+      this.db.delete(codexDocuments).where(eq(codexDocuments.id, id))
+        .returning()
+        .then((r) => r.length > 0),
+    );
+  }
+
+  /* ───────── Codex Projects ───────── */
+
+  getAllCodexProjects({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(codexProjects)
+        .orderBy(codexProjects.name)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  getCodexProjectById(id: number) {
+    return guard(
+      this.db.select().from(codexProjects)
+        .where(eq(codexProjects.id, id))
+        .then(first),
+    );
+  }
+
+  createCodexProject(p: InsertCodexProject) {
+    return guard(
+      this.db.insert(codexProjects).values(p).returning().then(first),
+    );
+  }
+
+  updateCodexProject(id: number, patch: MutableCodexProject) {
+    return guard(
+      this.db.update(codexProjects)
+        .set({ ...patch, updatedAt: new Date() })
+        .where(eq(codexProjects.id, id))
+        .returning()
+        .then(first),
+    );
+  }
+
+  deleteCodexProject(id: number) {
+    return guard(
+      this.db.delete(codexProjects).where(eq(codexProjects.id, id))
+        .returning()
+        .then((r) => r.length > 0),
+    );
+  }
+
+  /* ───────── Council Personas & Mode Prefs ───────── */
+
+  getAllCouncilPersonas({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(councilPersonas)
+        .orderBy(councilPersonas.name)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  getCouncilPersonaByName(name: string) {
+    return guard(
+      this.db.select().from(councilPersonas)
+        .where(eq(councilPersonas.name, name))
+        .then(first),
+    );
+  }
+
+  createCouncilPersona(p: InsertCouncilPersona) {
+    return guard(
+      this.db.insert(councilPersonas).values(p).returning().then(first),
+    );
+  }
+
+  getModePreference(userId: string) {
+    return guard(
+      this.db.select().from(modePreferences)
+        .where(eq(modePreferences.userId, userId))
+        .then(first),
+    );
+  }
+
+  async setModePreference(pref: InsertModePreference) {
+    const existing = await this.getModePreference(pref.userId);
+    return existing
+      ? guard(
+          this.db.update(modePreferences)
+            .set({ ...pref, updatedAt: new Date() })
+            .where(eq(modePreferences.userId, pref.userId))
+            .returning()
+            .then(first),
+        )
+      : guard(
+          this.db.insert(modePreferences).values(pref).returning().then(first),
+        );
+  }
+
+  /* ───────── Security ───────── */
+
+  getAllSecurityEvents({ limit = 50, offset = 0 }: PageOpts = {}) {
+    return guard(
+      this.db.select().from(securityEvents)
+        .orderBy(sql${securityEvents.createdAt} DESC)
+        .limit(limit)
+        .offset(offset),
+    );
+  }
+
+  getRecentSecurityEvents(limit = 10) {
+    return guard(
+      this.db.select().from(securityEvents)
+        .orderBy(sql${securityEvents.createdAt} DESC)
+        .limit(limit),
+    );
+  }
+
+  createSecurityEvent(e: InsertSecurityEvent) {
+    return guard(
+      this.db.insert(securityEvents).values(e).returning().then(first),
+    );
+  }
+
+  getAllGuardianPolicies() {
+    return guard(
+      this.db.select().from(guardianPolicies)
+        .orderBy(guardianPolicies.policyId),
+    );
+  }
+
+  getActiveGuardianPolicies() {
+    return guard(
+      this.db.select().from(guardianPolicies)
+        .where(eq(guardianPolicies.active, true))
+        .orderBy(guardianPolicies.policyId),
+    );
   }
 }
 
-export const storage = new PostgresStorage();
+/* Export singleton */
+export const storage: IStorage = new PostgresStorage();
+
+How to deploy:
+
+Replace logger import with your preferred logger (pino, winston, etc.).
+Run npm run lint && npm run check to ensure typings align with your project.
+Commit both files and push—no other code paths need changing (constructor signature and exports match the original).
